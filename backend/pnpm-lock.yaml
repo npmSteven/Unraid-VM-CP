@@ -4,6 +4,7 @@ specifiers:
   '@types/bcryptjs': ^2.4.2
   '@types/express': ^4.17.17
   '@types/jest': ~29.2
+  '@types/jsonwebtoken': ^9.0.1
   '@types/node': ~18
   '@types/uuid': ^9.0.0
   '@typescript-eslint/eslint-plugin': ~5.44
@@ -32,6 +33,7 @@ specifiers:
 dependencies:
   '@types/bcryptjs': 2.4.2
   '@types/express': 4.17.17
+  '@types/jsonwebtoken': 9.0.1
   '@types/uuid': 9.0.0
   bcryptjs: 2.4.3
   cors: 2.8.5
@@ -891,6 +893,12 @@ packages:
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
     dev: true
+
+  /@types/jsonwebtoken/9.0.1:
+    resolution: {integrity: sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw==}
+    dependencies:
+      '@types/node': 18.13.0
+    dev: false
 
   /@types/mime/3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}

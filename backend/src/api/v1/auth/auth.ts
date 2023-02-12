@@ -1,37 +1,55 @@
 import express, { Request, Response } from 'express';
-import { check, validationResult } from 'express-validator';
+import jsonwebtoken from 'jsonwebtoken';
 
-import { respondError, respondErrorValidation, respondInternalServerError, respondSuccess } from '../../../services/responses.js';
+import { config } from '../../../config.js';
+
+// Responses
+import { respondInternalServerError, respondSuccess } from '../../../services/responses.js';
+
+// Validation
+import { checkPassword, checkUsername } from '../../../validation/user.js';
+import { validateReq } from '../../../middleware/validateReq.js';
 
 const router = express.Router();
 
-router.post('/login', 
-  check('username')
-    .exists()
-    .isLength({ min: 3, max: 16 })
-    .isString()
-    .withMessage('Username must be a string and between 3 and 16 characters long'),
-  check('password')
-    .exists()
-    .isLength({ min: 3, max: 16 })
-    .isString()
-    .withMessage('Password must be a string and between 3 and 16 characters long'),
-  async (req: Request, res: Response) => {
-  try {
-    validationResult(req).throw();
+type ILoginBody = {
+  username: string
+  password: string
+}
 
-    
+/**
+ * Login route needs to handle giving access tokens to both users from db and a root user
+ */
+router.post('/login',
+  [
+    checkUsername,
+    checkPassword,
+    validateReq,
+  ],
+  async (req: Request<{}, {}, ILoginBody>, res: Response) => {
+    try {
+      const { username, password } = req.body;
 
-    return res.json(respondSuccess({
-      accessToken: 'test',
-    }))
-  } catch (error) {
-    if (error?.errors) {
-      return res.status(400).json(respondErrorValidation(error.errors));
+      // Unraid User Root
+      const { unraid, jwt } = config;
+      if (unraid.username === username && unraid.password === password) {
+        const accessToken = jsonwebtoken.sign(unraid.username, jwt.secret, { expiresIn: '30d' });
+        return res.json(respondSuccess({
+          accessToken,
+        }))
+      }
+
+      // DB User
+      
+
+      return res.json(respondSuccess({
+        accessToken: 'test',
+      }))
+    } catch (error) {
+      console.error('ERROR - /login', error);
+      return res.status(500).json(respondInternalServerError());
     }
-    console.error('ERROR - /login', error);
-    return res.status(500).json(respondInternalServerError());
   }
-});
+);
 
 export default router;
