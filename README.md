@@ -18,7 +18,7 @@ Unraid VM CP is a project that provides additional functionality for [Unraid](ht
 
 ## License
 
-This project is licensed under the Apache License Version 2.0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL 3.0 - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
