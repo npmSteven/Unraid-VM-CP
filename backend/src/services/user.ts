@@ -15,3 +15,13 @@ export const createUser = async (username: string, password: string): Promise<Mo
     throw error;
   }
 }
+
+export const getUserByUsername = async (username: string): Promise<Model<IUser, IUser>> => {
+  try {
+    const user = await UserModel.findOne({ where: { username } });
+    return user;
+  } catch (error) {
+    console.error('ERROR - createUser():', error);
+    throw error;
+  }
+};

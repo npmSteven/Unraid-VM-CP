@@ -26,7 +26,6 @@ app.use(express.json());
     // Routes
     app.use('/api/v1/auth', authRoute);
 
-
     // Start express
     app.listen(config.server.port, () => {
       console.log(`Backend has started on port ${config.server.port}`)

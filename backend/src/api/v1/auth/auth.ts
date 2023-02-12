@@ -1,14 +1,18 @@
 import express, { Request, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
+import bcryptjs from 'bcryptjs';
 
 import { config } from '../../../config.js';
 
 // Responses
-import { respondInternalServerError, respondSuccess } from '../../../services/responses.js';
+import { respondErrorMessage, respondInternalServerError, respondSuccess } from '../../../services/responses.js';
 
 // Validation
 import { checkPassword, checkUsername } from '../../../validation/user.js';
 import { validateReq } from '../../../middleware/validateReq.js';
+
+// Services
+import { getUserByUsername } from '../../../services/user.js';
 
 const router = express.Router();
 
@@ -30,20 +34,26 @@ router.post('/login',
     try {
       const { username, password } = req.body;
 
-      // Unraid User Root
+      // Unraid User
       const { unraid, jwt } = config;
+      
       if (unraid.username === username && unraid.password === password) {
-        const accessToken = jsonwebtoken.sign(unraid.username, jwt.secret, { expiresIn: '30d' });
+        const accessToken = jsonwebtoken.sign({ isUnraidUser: true, id: unraid.username }, jwt.secret, { expiresIn: '30d' });
         return res.json(respondSuccess({
           accessToken,
         }))
       }
 
       // DB User
-      
+      const user = await getUserByUsername(username);
+      if (!user) return res.status(403).json(respondErrorMessage('Username or password is incorrect'));
+      const isMatch: boolean = await bcryptjs.compare(password, user.dataValues.password);
+      if (!isMatch) return res.status(403).json(respondErrorMessage('Username or password is incorrect'));
+
+      const accessToken = jsonwebtoken.sign({ isUnraidUser: false, id: user.dataValues.id }, jwt.secret, { expiresIn: '30d' });
 
       return res.json(respondSuccess({
-        accessToken: 'test',
+        accessToken,
       }))
     } catch (error) {
       console.error('ERROR - /login', error);
