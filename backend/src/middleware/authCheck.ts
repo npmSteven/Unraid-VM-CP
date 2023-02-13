@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import jsonwebtoken from 'jsonwebtoken';
 
 import { config } from '../config.js';
 import { respondErrorMessage, respondInternalServerError } from '../services/responses.js';
 
-export const authCheck = async (req: Request, res: Response, next: NextFunction) => {
+export const authCheck = async (req: any, res: Response, next: NextFunction) => {
   try {
     // Check headers for "Authorization"
     const authorization = req.header('Authorization');
