@@ -7,6 +7,7 @@ import { syncModels } from './models/syncModels.js';
 
 // Routes
 import authRoute from './api/v1/auth/auth.js';
+import userRoute from './api/v1/users/users.js';
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.json());
 
     // Routes
     app.use('/api/v1/auth', authRoute);
+    app.use('/api/v1/users', userRoute);
 
     // Start express
     app.listen(config.server.port, () => {

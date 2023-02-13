@@ -21,7 +21,17 @@ export const getUserByUsername = async (username: string): Promise<Model<IUser, 
     const user = await UserModel.findOne({ where: { username } });
     return user;
   } catch (error) {
-    console.error('ERROR - createUser():', error);
+    console.error('ERROR - getUserByUsername():', error);
+    throw error;
+  }
+};
+
+export const getUserById = async (id: string): Promise<Model<IUser, IUser>> => {
+  try {
+    const user = await UserModel.findByPk(id);
+    return user;
+  } catch (error) {
+    console.error('ERROR - getUserById():', error);
     throw error;
   }
 };
