@@ -1,4 +1,7 @@
 import express, { Response } from 'express';
+import { Model } from 'sequelize';
+
+import { config } from '../../../config.js';
 
 // Validation
 import { validateReq } from '../../../middleware/validateReq.js';
@@ -6,13 +9,13 @@ import { checkPassword, checkUsername } from '../../../validation/user.js';
 
 // Middlware
 import { authCheck } from '../../../middleware/authCheck.js';
-import { config } from '../../../config.js';
 
 // Types
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
+import { IUser } from '../../../types/IUser.js';
 
 // Services
-import { createUser, getUserById, getUserByUsername } from '../../../services/user.js';
+import { createUser, getUserById, getUserByUsername, getUsers } from '../../../services/user.js';
 import { sanitiseUser } from '../../../services/sanitise.js';
 import { respondErrorMessage, respondInternalServerError, respondSuccess } from '../../../services/responses.js';
 
@@ -24,13 +27,15 @@ router.get('/',
   ], async (req: IRequestAuth, res: Response) => {
     try {
       if (req.user.isUnraidUser) {
-        return res.json(respondSuccess({ id: req.user.id, isUnraidUser: req.user.isUnraidUser }));
+        const users = await getUsers();
+        const sanitisedUsers = users.map((u: Model<IUser, IUser>) => sanitiseUser(u.dataValues))
+        return res.json(respondSuccess({ user: { id: req.user.id, isUnraidUser: req.user.isUnraidUser }, users: sanitisedUsers }));
       }
 
       const user = await getUserById(req.user.id);
       if (!user) return res.status(404).json(respondErrorMessage('Unable to find user'));
 
-      return res.json(respondSuccess(sanitiseUser(user.dataValues)));
+      return res.json(respondSuccess({ user: sanitiseUser(user.dataValues) }));
     } catch (error) {
       console.error('ERROR - /users', error);
       return res.status(500).json(respondInternalServerError());
@@ -73,7 +78,7 @@ router.post('/',
 
       const newUser = await createUser(username, password);
 
-      return res.json(respondSuccess(sanitiseUser(newUser.dataValues)))
+      return res.json(respondSuccess({ user: sanitiseUser(newUser.dataValues) }))
     } catch (error) {
       console.error('ERROR - /users', error);
       return res.status(500).json(respondInternalServerError());

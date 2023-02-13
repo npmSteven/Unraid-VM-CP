@@ -35,3 +35,13 @@ export const getUserById = async (id: string): Promise<Model<IUser, IUser>> => {
     throw error;
   }
 };
+
+export const getUsers = async (): Promise<Model<IUser, IUser>[]> => {
+  try {
+    const users = await UserModel.findAll();
+    return users;
+  } catch (error) {
+    console.error('ERROR - getUsers():', error);
+    throw error;
+  }
+}
