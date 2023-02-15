@@ -15,6 +15,10 @@ const getCookie = () => {
   return cookieState?.unraid;
 }
 
+/**
+ * Use login on endpoint instead of getVMs function
+ * so that we can better error handle if login fails
+ */
 export const login = async () => {
   try {
     const response = await axios({
@@ -60,10 +64,13 @@ const getVMsHTML = async () => {
   }
 }
 
+// Add better errors
+// when we are unable to get VMs
 export const getVMs = async () => {
   try {
     const vmsHTML = await getVMsHTML();
-
+    // console.log(vmsHTML);
+    
     const $ = cheerio.load(vmsHTML, { xmlMode: true });
     const vms = $('.sortable').map((i, el) => {
       const onclickAttr = $(el).find('.outer span.hand').attr('onclick');
@@ -106,7 +113,6 @@ export const getVMs = async () => {
         isAutoStart,
       }
     }).toArray()
-
 
     return vms;
   } catch (error) {
