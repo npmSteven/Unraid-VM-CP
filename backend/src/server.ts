@@ -8,7 +8,9 @@ import { syncModels } from './models/syncModels.js';
 // Routes
 import authRoute from './api/v1/auth/auth.js';
 import userRoute from './api/v1/users/users.js';
-import { getVMs } from './services/unraid.js';
+import vmRoute from './api/v1/vms/vms.js';
+
+import { login } from './services/unraid.js';
 
 const app = express();
 
@@ -19,7 +21,7 @@ app.use(express.json());
 
 (async () => {
   try {
-    const vms = getVMs()
+    await login();
     
     // Connect to DB
     await sequelize.authenticate();
@@ -30,6 +32,7 @@ app.use(express.json());
     // Routes
     app.use('/api/v1/auth', authRoute);
     app.use('/api/v1/users', userRoute);
+    app.use('/api/v1/vms', vmRoute);
 
     // Start express
     app.listen(config.server.port, () => {

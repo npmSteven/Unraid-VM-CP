@@ -1,38 +1,74 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
+
 import { config } from '../config.js';
 
 const { unraid } = config;
 
-const login = async () => {
-  try {
-    const loginURL = `http://${unraid.ip}/login`
+const cookieState: any = {};
 
+const setCookie = (cookie) => {
+  cookieState.unraid = cookie;
+}
+
+const getCookie = () => {
+  return cookieState?.unraid;
+}
+
+export const login = async () => {
+  try {
+    const response = await axios({
+      url: `http://${unraid.ip}/login`,
+      method: 'post',
+      data: {
+        username: unraid.username,
+        password: unraid.password,
+      },
+      maxRedirects: 0,
+      validateStatus: (status) => status >= 200 && status < 303,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': '*/*',
+      },
+      responseType: 'stream',
+    });
+    const cookies = response.headers['set-cookie'];
+    if (!cookies) throw new Error('Unable to get cookie');
+    const unraidCookie = cookies.find((cookie) => cookie.startsWith('unraid_'));
+    setCookie(unraidCookie)
   } catch (error) {
     console.error('ERROR - login():', error);
     throw error;
   }
 }
 
-const getVMsHTML = () => {
-  // const VMMachinesURL = `http://${unraid.ip}/plugins/dynamix.vm.manager/include/VMMachines.php`
-
-  // axios({
-  //   url: VMMachinesURL,
-  //   headers: {
-  //     Cookie: ''
-  //   }
-  // })
+const getVMsHTML = async () => {
+  try {
+    await login();
+    const VMMachinesURL = `http://${unraid.ip}/plugins/dynamix.vm.manager/include/VMMachines.php`
+    const response = await axios({
+      url: VMMachinesURL,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Cookie': getCookie(),
+      },
+    })
+    return response.data;
+  } catch (error) {
+    console.error('ERROR - getVMsHTML()', error);
+    throw error;
+  }
 }
 
-export const getVMs = () => {
+export const getVMs = async () => {
   try {
+    const vmsHTML = await getVMsHTML();
 
-    const $ = cheerio.load('vmsHTML', { xmlMode: true });
+    const $ = cheerio.load(vmsHTML, { xmlMode: true });
     const vms = $('.sortable').map((i, el) => {
       const onclickAttr = $(el).find('.outer span.hand').attr('onclick');
       const parentId = $(el).attr('parent-id');
-      
+
       const id = onclickAttr.match(/addVMContext\('.*?','(.*?)'/)[1];
       const name = $(el).find('.inner a').text();
       const graphics = $(el).find('td:nth-child(6)').text();
@@ -50,12 +86,12 @@ export const getVMs = () => {
         const ipType = $(element).find('td:nth-child(3)').text().trim();
         const ipAddress = $(element).find('td:nth-child(4)').text().trim();
         const ipPrefix = $(element).find('td:nth-child(5)').text().trim();
-      
+
         if (ipType === 'ipv4' || ipType === 'ipv6') {
           ips.push({ type: ipType, address: ipAddress, prefix: ipPrefix });
         }
       });
-      
+
       return {
         id,
         name,
