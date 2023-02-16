@@ -1,11 +1,19 @@
 import express, { Response } from 'express';
+
+// Middleware
 import { authCheck } from '../../../middleware/authCheck.js';
+
+// Services
 import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
 import { respondSuccess } from '../../../services/responses.js';
-import { getVMById, getVMByUnraidVMId, getVMs } from '../../../services/unraid.js';
+import { getVMByUnraidVMId, getVMs } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
 import { checkIsVMLinkedToUser, getVMsByUserId, linkVMToUser } from '../../../services/vm.js';
+
+// Types
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
+
+// Validation
 import { checkUUID } from '../../../validation/validation.js';
 
 const router = express.Router();

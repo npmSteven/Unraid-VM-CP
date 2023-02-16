@@ -119,7 +119,7 @@ export const getVMs = async () => {
       }
     }).toArray()
 
-    cache.put('vms', vms, 5000); // Cache the response for 5 seconds
+    // cache.put('vms', vms, 5000); // Cache the response for 5 seconds
 
     return vms;
   } catch (error) {
