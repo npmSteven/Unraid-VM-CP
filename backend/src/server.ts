@@ -10,8 +10,6 @@ import authRoute from './api/v1/auth/auth.js';
 import userRoute from './api/v1/users/users.js';
 import vmRoute from './api/v1/vms/vms.js';
 
-import { login } from './services/unraid.js';
-
 const app = express();
 
 // Cors
@@ -20,9 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 (async () => {
-  try {
-    await login();
-    
+  try {    
     // Connect to DB
     await sequelize.authenticate();
 

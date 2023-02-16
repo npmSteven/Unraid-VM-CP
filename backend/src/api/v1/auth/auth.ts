@@ -4,8 +4,6 @@ import bcryptjs from 'bcryptjs';
 
 import { config } from '../../../config.js';
 
-// Responses
-import { respondErrorMessage, respondInternalServerError, respondSuccess } from '../../../services/responses.js';
 
 // Validation
 import { checkPassword, checkUsername } from '../../../validation/user.js';
@@ -13,6 +11,8 @@ import { validateReq } from '../../../middleware/validateReq.js';
 
 // Services
 import { getUserByUsername } from '../../../services/user.js';
+import { errorHandler, UnauthorizedError } from '../../../services/ErrorHandler.js';
+import { respondSuccess } from '../../../services/responses.js';
 
 const router = express.Router();
 
@@ -46,9 +46,9 @@ router.post('/login',
 
       // DB User
       const user = await getUserByUsername(username);
-      if (!user) return res.status(403).json(respondErrorMessage('Username or password is incorrect'));
+      if (!user) throw new UnauthorizedError('Username or password is incorrect');
       const isMatch: boolean = await bcryptjs.compare(password, user.dataValues.password);
-      if (!isMatch) return res.status(403).json(respondErrorMessage('Username or password is incorrect'));
+      if (!isMatch) throw new UnauthorizedError('Username or password is incorrect');
 
       const accessToken = jsonwebtoken.sign({ isUnraidUser: false, id: user.dataValues.id }, jwt.secret, { expiresIn: '30d' });
 
@@ -57,7 +57,7 @@ router.post('/login',
       }))
     } catch (error) {
       console.error('ERROR - /login', error);
-      return res.status(500).json(respondInternalServerError());
+      return errorHandler(res, error);
     }
   }
 );

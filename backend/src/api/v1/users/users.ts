@@ -17,7 +17,8 @@ import { IUser } from '../../../types/IUser.js';
 // Services
 import { createUser, getUserById, getUserByUsername, getUsers } from '../../../services/user.js';
 import { sanitiseUser } from '../../../services/sanitise.js';
-import { respondErrorMessage, respondInternalServerError, respondSuccess } from '../../../services/responses.js';
+import { respondSuccess } from '../../../services/responses.js';
+import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
 
 const router = express.Router();
 
@@ -33,12 +34,12 @@ router.get('/',
       }
 
       const user = await getUserById(req.user.id);
-      if (!user) return res.status(404).json(respondErrorMessage('Unable to find user'));
+      if (!user) throw new NotFoundError('Unable to find user');
 
       return res.json(respondSuccess({ user: sanitiseUser(user.dataValues) }));
     } catch (error) {
       console.error('ERROR - /users', error);
-      return res.status(500).json(respondInternalServerError());
+      return errorHandler(res, error);
     }
   }
 )
@@ -61,7 +62,7 @@ router.post('/',
     try {
       // Check is Unraid user
       if (!req?.user?.isUnraidUser) {
-        return res.status(403).json(respondErrorMessage('You must be logged in as an unraid user, to call this endpoint'));
+        throw new ForbiddenError('You must be logged in as an unraid user, to call this endpoint');
       }
 
       const { username, password } = req.body;
@@ -69,19 +70,19 @@ router.post('/',
 
       // Check if username is unraid username
       if (username === unraid.username) {
-        return res.status(409).json(respondErrorMessage('Cannot use a username that an unraid user has'));
+        throw new ConflictRequestError('Cannot use a username that an unraid user has')
       }
 
       // Check if username is already taken
       const user = await getUserByUsername(username);
-      if (user) return res.status(409).json(respondErrorMessage('A user already exists with this username'));
-
+      if (user) throw new ConflictRequestError('A user already exists with this username')
+      
       const newUser = await createUser(username, password);
 
       return res.json(respondSuccess({ user: sanitiseUser(newUser.dataValues) }))
     } catch (error) {
       console.error('ERROR - /users', error);
-      return res.status(500).json(respondInternalServerError());
+      return errorHandler(res, error);
     }
   }
 )

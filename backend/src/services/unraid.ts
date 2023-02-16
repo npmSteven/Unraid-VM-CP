@@ -2,6 +2,7 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 
 import { config } from '../config.js';
+import { ForbiddenError } from './ErrorHandler.js';
 
 const { unraid } = config;
 
@@ -37,7 +38,7 @@ export const login = async () => {
       responseType: 'stream',
     });
     const cookies = response.headers['set-cookie'];
-    if (!cookies) throw new Error('Unable to get cookie');
+    if (!cookies) throw new ForbiddenError('Unable to login to unraid');
     const unraidCookie = cookies.find((cookie) => cookie.startsWith('unraid_'));
     setCookie(unraidCookie)
   } catch (error) {
@@ -48,13 +49,16 @@ export const login = async () => {
 
 const getVMsHTML = async () => {
   try {
-    await login();
+    const cookie = getCookie();
+    if (!cookie) {
+      throw new ForbiddenError('Not authenticated with unraid');
+    }
     const VMMachinesURL = `http://${unraid.ip}/plugins/dynamix.vm.manager/include/VMMachines.php`
     const response = await axios({
       url: VMMachinesURL,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Cookie': getCookie(),
+        'Cookie': cookie,
       },
     })
     return response.data;
@@ -69,7 +73,6 @@ const getVMsHTML = async () => {
 export const getVMs = async () => {
   try {
     const vmsHTML = await getVMsHTML();
-    // console.log(vmsHTML);
     
     const $ = cheerio.load(vmsHTML, { xmlMode: true });
     const vms = $('.sortable').map((i, el) => {
