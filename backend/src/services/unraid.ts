@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
+import cache from 'memory-cache';
 
 import { config } from '../config.js';
 import { ForbiddenError } from './ErrorHandler.js';
@@ -64,7 +65,14 @@ const getVMsHTML = async () => {
   }
 }
 
+/**
+ * Note: We cache the response for 5 seconds as sometimes we call this function multiple times
+ */
 export const getVMs = async () => {
+  const cachedVms = cache.get('vms');
+  if (cachedVms) {
+    return cachedVms;
+  }
   try {
     const vmsHTML = await getVMsHTML();
     
@@ -111,6 +119,8 @@ export const getVMs = async () => {
       }
     }).toArray()
 
+    cache.put('vms', vms, 5000); // Cache the response for 5 seconds
+
     return vms;
   } catch (error) {
     console.error('ERROR - getVMs()', error);
@@ -128,10 +138,10 @@ export const getVMsByIds = async (vmIds) => {
   }
 }
 
-export const getVMById = async (vmId: string) => {
+export const getVMByUnraidVMId = async (unraidVMId: string) => {
   try {
     const vms = await getVMs();
-    return vms.find((vm) => vm.id === vmId);
+    return vms.find((vm) => vm.id === unraidVMId);
   } catch (error) {
     console.error('ERROR - getVMsByIds()', error);
     throw error;

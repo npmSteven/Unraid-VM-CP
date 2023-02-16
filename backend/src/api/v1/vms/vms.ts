@@ -1,10 +1,10 @@
 import express, { Response } from 'express';
 import { authCheck } from '../../../middleware/authCheck.js';
-import { errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
+import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
 import { respondSuccess } from '../../../services/responses.js';
-import { getVMById, getVMs } from '../../../services/unraid.js';
+import { getVMById, getVMByUnraidVMId, getVMs } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
-import { getVMsByUserId, linkVMToUser } from '../../../services/vm.js';
+import { checkIsVMLinkedToUser, getVMsByUserId, linkVMToUser } from '../../../services/vm.js';
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
 import { checkUUID } from '../../../validation/validation.js';
 
@@ -28,10 +28,10 @@ router.get('/', authCheck,
   }
 );
 
-router.post('/:vmId/users/:userId',
+router.post('/:unraidVMId/users/:userId',
   [
     authCheck,
-    checkUUID('vmId'),
+    checkUUID('unraidVMId'),
     checkUUID('userId'),
   ],
   async (req: IRequestAuth, res: Response) => {
@@ -40,16 +40,23 @@ router.post('/:vmId/users/:userId',
         throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
       }
 
-      const { userId, vmId } = req.params;
+      const { userId, unraidVMId } = req.params;
+
       // Check if provided user id exists
       const user = await getUserById(userId);
       if (!user) throw new NotFoundError('Provided user id does not exist');
 
-      // Check if vmId exists
-      const vm = await getVMById(vmId);
+      // Check if unraidVMId exists
+      const vm = await getVMByUnraidVMId(unraidVMId);
       if (!vm) throw new NotFoundError('Provided vm id does not exist');
 
-      const vmLink = await linkVMToUser(vmId, userId);
+      // Check if the vm is allready linked to the user
+      const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, userId);
+      if (isVMLinkedToUser) {
+        throw new ConflictRequestError('VM is already linked to this user');
+      }
+
+      const vmLink = await linkVMToUser(unraidVMId, userId);
       return res.json(respondSuccess(vmLink));
     } catch (error) {
       console.error('ERROR - /:vmId/users/:userId', error);

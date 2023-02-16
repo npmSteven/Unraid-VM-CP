@@ -11,8 +11,14 @@ export const VMModel: ModelStatic<Model<IVM, IVM>> = sequelize.define('vms', {
     allowNull: false,
     unique: true,
     primaryKey: true,
+    defaultValue: () => v4(),
   },
   
+  unraidVMId: {
+    type: DataTypes.UUIDV4,
+    allowNull: false,
+  },
+
   userId: {
     type: DataTypes.UUIDV4,
     allowNull: false,
