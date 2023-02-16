@@ -68,7 +68,7 @@ const getVMsHTML = async () => {
 /**
  * Note: We cache the response for 5 seconds as sometimes we call this function multiple times
  */
-export const getVMs = async () => {
+export const getVMsUnraid = async () => {
   const cachedVms = cache.get('vms');
   if (cachedVms) {
     return cachedVms;
@@ -128,20 +128,20 @@ export const getVMs = async () => {
   }
 }
 
-export const getVMsByIds = async (vmIds) => {
+export const getVMsByIdsUnraid = async (unraidVMIds) => {
   try {
-    const vms = await getVMs();
-    return vms.filter((vm) => vmIds.includes(vm.id));
+    const unraidVMs = await getVMsUnraid();
+    return unraidVMs.filter((unraidVM) => unraidVMIds.includes(unraidVM.id));
   } catch (error) {
     console.error('ERROR - getVMsByIds()', error);
     throw error;
   }
 }
 
-export const getVMByUnraidVMId = async (unraidVMId: string) => {
+export const getVMByIdUnraid = async (unraidVMId: string) => {
   try {
-    const vms = await getVMs();
-    return vms.find((vm) => vm.id === unraidVMId);
+    const unraidVMs = await getVMsUnraid();
+    return unraidVMs.find((unraidVM) => unraidVM.id === unraidVMId);
   } catch (error) {
     console.error('ERROR - getVMsByIds()', error);
     throw error;

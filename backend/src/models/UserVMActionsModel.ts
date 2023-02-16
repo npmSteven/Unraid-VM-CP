@@ -18,18 +18,10 @@ export const UserVMActionsModel: ModelStatic<Model<IUserVMActions, IUserVMAction
   vmId: {
     type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: 'vms',
-      key: 'id',
-    }
   },
   userId: {
     type: DataTypes.UUIDV4,
     allowNull: false,
-    references: {
-      model: 'users',
-      key: 'id',
-    }
   },
 
   action: {
