@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { check, oneOf } from "express-validator";
 
 export const checkUsername = check('username')
   .exists()
@@ -13,6 +13,26 @@ export const checkPassword = check('password')
 export const checkUUID = (fieldName) => check(fieldName)
   .notEmpty()
   .withMessage(`${fieldName} is required`)
-  .isUUID(4)
+  .isUUID()
   .withMessage(`${fieldName} is not a valid UUID`);
   
+const vmProperties = [
+  'canStart',
+  'canStop',
+  'canRemoveVM',
+  'canRemoveVMAndDisks',
+  'canForceStop',
+  'canRestart',
+  'canPause',
+  'canHibernate',
+  'canResume',
+];
+
+const checkVMPermissions = () => {
+  return [
+    oneOf(
+      vmProperties.map(prop => check(prop).isBoolean().withMessage(`${prop} should be a boolean`)),
+      'At least one property should be provided'
+    )
+  ];
+};

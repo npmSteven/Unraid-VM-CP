@@ -9,7 +9,7 @@ import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } fro
 import { respondSuccess } from '../../../services/responses.js';
 import { getVMByIdUnraid, getVMsUnraid } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
-import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMsByUserId, linkVMToUser, unlinkVMFromUser } from '../../../services/vm.js';
+import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser } from '../../../services/vm.js';
 
 // Types
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
@@ -99,6 +99,50 @@ router.get('/users/:userId/linkable',
       return res.json(respondSuccess(vms));
     } catch (error) {
       console.error('ERROR - /vms/users/:userId', error);
+      return errorHandler(res, error);
+    }
+  }
+);
+
+/**
+ * Get a single VM of a user
+ */
+router.get('/:unraidVMId/users/:userId',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    checkUUID('userId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      if (!req?.user?.isUnraidUser) {
+        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
+      }
+
+      const { userId, unraidVMId } = req.params;
+
+      // Check if provided user id exists
+      const user = await getUserById(userId);
+      if (!user) throw new NotFoundError('Provided user id does not exist');
+
+      // Check if unraidVMId exists
+      const vm = await getVMByIdUnraid(unraidVMId);
+      if (!vm) throw new NotFoundError('Provided vm id does not exist');
+
+
+      // Check if the vm is linked to the user
+      const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, userId);
+      if (!isVMLinkedToUser) {
+        throw new ForbiddenError('VM is not linked to this user');
+      }
+
+      const unraidVM = await getVMByUserIdAndUnraidVMId(userId, unraidVMId);
+      console.log(unraidVM);
+      
+      return res.json(respondSuccess(unraidVM));
+    } catch (error) {
+      console.error('ERROR - /:vmId/users/:userId', error);
       return errorHandler(res, error);
     }
   }

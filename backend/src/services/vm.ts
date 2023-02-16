@@ -1,9 +1,12 @@
 import { Model } from "sequelize";
+import cache from 'memory-cache';
+
 import { UserVMPermissionsModel } from "../models/UserVMPermissionsModel.js";
 import { VMModel } from "../models/VMModel.js";
+import { IUserVMPermissions } from "../types/IUserVMPermissions.js";
 import { IVM } from "../types/IVM.js";
 import { NotFoundError } from "./ErrorHandler.js";
-import { getVMsByIdsUnraid, getVMsUnraid } from "./unraid.js";
+import { getVMByIdUnraid, getVMsByIdsUnraid, getVMsUnraid } from "./unraid.js";
 
 export const getVMsByUserId = async (id: string) => {
   try {
@@ -14,15 +17,28 @@ export const getVMsByUserId = async (id: string) => {
 
     // Get the permissions for each VM
     const userVMPermissions = await getUserVMPermissions(id);
-    
+
     const unraidVMsWithPermissions = unraidVMs.map(unraidVM => {
       const id = userVMs.find(userVM => userVM.dataValues.unraidVMId === unraidVM.id).dataValues.id;
       const permissions = userVMPermissions.find((userVMPermission) => userVMPermission.dataValues.vmId == id);
       unraidVM.permissions = permissions.dataValues;
       return unraidVM;
     });
-    
+
     return unraidVMsWithPermissions;
+  } catch (error) {
+    console.error('ERROR - getVMsByUserId()', error);
+    throw error;
+  }
+}
+
+export const getVMByUserIdAndUnraidVMId = async (userId: string, unraidVMId: string) => {
+  try {
+    const unraidVM = await getVMByIdUnraid(unraidVMId);
+    const userVM = await VMModel.findOne({ where: { userId, unraidVMId } });
+    const userVMPermissions = await getUserVMPermissionByUserIdAndVMId(userId, userVM.dataValues.id);
+    unraidVM.permissions = userVMPermissions.dataValues;
+    return unraidVM;
   } catch (error) {
     console.error('ERROR - getVMsByUserId()', error);
     throw error;
@@ -62,6 +78,10 @@ export const linkVMToUser = async (unraidVMId: string, userId: string): Promise<
       unraidVMId,
       userId,
     });
+
+    // Clear vms cache
+    cache.del('vms');
+
     return vm;
   } catch (error) {
     console.error('ERROR - linkVMToUser():', error);
@@ -75,6 +95,10 @@ export const unlinkVMFromUser = async (unraidVMId: string, userId: string): Prom
     if (!vm) {
       throw new NotFoundError('Cannot find linked vm, unable to delete');
     }
+
+    // Clear vms cache
+    cache.del('vms');
+
     await vm.destroy();
     return vm;
   } catch (error) {
@@ -83,12 +107,16 @@ export const unlinkVMFromUser = async (unraidVMId: string, userId: string): Prom
   }
 }
 
-export const createUserVMPermissions = async (vmId: string, userId: string) => {
+export const createUserVMPermissions = async (vmId: string, userId: string): Promise<Model<IUserVMPermissions, IUserVMPermissions>> => {
   try {
     const userVMPermissions = await UserVMPermissionsModel.create({
       vmId,
       userId,
     });
+
+    // Clear vms cache
+    cache.del('vms');
+
     return userVMPermissions;
   } catch (error) {
     console.error('ERROR - createVMUserPermissions():', error);
@@ -96,7 +124,7 @@ export const createUserVMPermissions = async (vmId: string, userId: string) => {
   }
 };
 
-export const deleteUserVMPermissions = async (vmId: string, userId: string) => {
+export const deleteUserVMPermissions = async (vmId: string, userId: string): Promise<Model<IUserVMPermissions, IUserVMPermissions>> => {
   try {
     const userVMPermissions = await UserVMPermissionsModel.findOne({
       where: {
@@ -109,6 +137,9 @@ export const deleteUserVMPermissions = async (vmId: string, userId: string) => {
       throw new NotFoundError('Cannot find permissions for the vm and user, unable to delete');
     }
 
+    // Clear vms cache
+    cache.del('vms');
+
     await userVMPermissions.destroy();
 
     return userVMPermissions;
@@ -118,7 +149,17 @@ export const deleteUserVMPermissions = async (vmId: string, userId: string) => {
   }
 };
 
-export const getUserVMPermissions = async (userId: string) => {
+export const getUserVMPermissionByUserIdAndVMId = async (userId: string, vmId: string): Promise<Model<IUserVMPermissions, IUserVMPermissions>> => {
+  try {
+    const vmPermissions = await UserVMPermissionsModel.findOne({ where: { userId, vmId } });
+    return vmPermissions;
+  } catch (error) {
+    console.error('ERROR - deleteUserVMPermissions():', error);
+    throw error;
+  }
+};
+
+export const getUserVMPermissions = async (userId: string): Promise<Model<IUserVMPermissions, IUserVMPermissions>[]> => {
   try {
     const vmPermissions = await UserVMPermissionsModel.findAll({ where: { userId } });
     return vmPermissions;

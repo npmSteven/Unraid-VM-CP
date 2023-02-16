@@ -4,6 +4,7 @@ import cache from 'memory-cache';
 
 import { config } from '../config.js';
 import { ForbiddenError } from './ErrorHandler.js';
+import { IUnraidVM } from '../types/IUnraidVM.js';
 
 const { unraid } = config;
 
@@ -68,7 +69,7 @@ const getVMsHTML = async () => {
 /**
  * Note: We cache the response for 5 seconds as sometimes we call this function multiple times
  */
-export const getVMsUnraid = async () => {
+export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
   const cachedVms = cache.get('vms');
   if (cachedVms) {
     return cachedVms;
@@ -77,7 +78,7 @@ export const getVMsUnraid = async () => {
     const vmsHTML = await getVMsHTML();
     
     const $ = cheerio.load(vmsHTML, { xmlMode: true });
-    const vms = $('.sortable').map((i, el) => {
+    const vms: IUnraidVM[] = $('.sortable').map((i, el) => {
       const onclickAttr = $(el).find('.outer span.hand').attr('onclick');
       const parentId = $(el).attr('parent-id');
 
@@ -119,7 +120,7 @@ export const getVMsUnraid = async () => {
       }
     }).toArray()
 
-    // cache.put('vms', vms, 5000); // Cache the response for 5 seconds
+    cache.put('vms', vms, 60000); // Cache the response for 60 seconds
 
     return vms;
   } catch (error) {
@@ -131,7 +132,8 @@ export const getVMsUnraid = async () => {
 export const getVMsByIdsUnraid = async (unraidVMIds) => {
   try {
     const unraidVMs = await getVMsUnraid();
-    return unraidVMs.filter((unraidVM) => unraidVMIds.includes(unraidVM.id));
+    const filteredUnraidVMs = unraidVMs.filter((unraidVM) => unraidVMIds.includes(unraidVM.id));
+    return filteredUnraidVMs;
   } catch (error) {
     console.error('ERROR - getVMsByIds()', error);
     throw error;
