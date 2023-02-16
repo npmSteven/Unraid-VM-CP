@@ -5,7 +5,7 @@ import { config } from '../../../config.js';
 
 // Validation
 import { validateReq } from '../../../middleware/validateReq.js';
-import { checkPassword, checkUsername } from '../../../validation/user.js';
+import { checkPassword, checkUsername } from '../../../validation/validation.js';
 
 // Middlware
 import { authCheck } from '../../../middleware/authCheck.js';

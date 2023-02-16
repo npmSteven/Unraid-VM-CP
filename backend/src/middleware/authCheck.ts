@@ -5,7 +5,6 @@ import { config } from '../config.js';
 import { BadRequestError, errorHandler } from '../services/ErrorHandler.js';
 import { respondErrorMessage } from '../services/responses.js';
 import { login } from '../services/unraid.js';
-import { IRequestAuthUser } from '../types/IRequestAuth.js';
 
 export const authCheck = async (req: any, res: Response, next: NextFunction) => {
   try {

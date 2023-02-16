@@ -16,10 +16,6 @@ const getCookie = () => {
   return cookieState?.unraid;
 }
 
-/**
- * Use login on endpoint instead of getVMs function
- * so that we can better error handle if login fails
- */
 export const login = async () => {
   try {
     const response = await axios({
@@ -68,8 +64,6 @@ const getVMsHTML = async () => {
   }
 }
 
-// Add better errors
-// when we are unable to get VMs
 export const getVMs = async () => {
   try {
     const vmsHTML = await getVMsHTML();
@@ -120,6 +114,26 @@ export const getVMs = async () => {
     return vms;
   } catch (error) {
     console.error('ERROR - getVMs()', error);
+    throw error;
+  }
+}
+
+export const getVMsByIds = async (vmIds) => {
+  try {
+    const vms = await getVMs();
+    return vms.filter((vm) => vmIds.includes(vm.id));
+  } catch (error) {
+    console.error('ERROR - getVMsByIds()', error);
+    throw error;
+  }
+}
+
+export const getVMById = async (vmId: string) => {
+  try {
+    const vms = await getVMs();
+    return vms.find((vm) => vm.id === vmId);
+  } catch (error) {
+    console.error('ERROR - getVMsByIds()', error);
     throw error;
   }
 }

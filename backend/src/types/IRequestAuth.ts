@@ -1,6 +1,6 @@
 import { Request } from 'express';
 
-export type IRequestAuthUser = {
+type IRequestAuthUser = {
   id: string
   isUnraidUser: boolean
 }

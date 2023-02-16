@@ -1,28 +1,29 @@
+import { Model } from "sequelize";
+import { VMModel } from "../models/VMModel.js";
+import { IVM } from "../types/IVM.js";
+import { getVMsByIds } from "./unraid.js";
 
-/**
- * The objective of this function is to ensure that unraid vms are always in-sync with the db
- * we will treat unraid as the source of truth
- */
-export const syncUnraidVMsWithDB = async () => {
+export const getVMsByUserId = async (id: string) => {
   try {
-    // Get the vms from unraid
-    
-
-    // Loop through each VM and check if it is in the DB
-    // if it isn't in the db then we will add it
-    // if it is in the DB we should try and compare the contents of each and update
-
-
-    // Compare the vms from unraid to the DB and remove any additional vms
-    // We should do this as in unraid the user may have deleted a vm that has been synced
-    // we should ensure the get vms worked so that we aren't deleting vms from db for no reason
-
-
-    // Finally we should return the synced DB
-
-
+    const userVMs = await VMModel.findAll({ where: { userId: id } });
+    const vmIds = userVMs.map((userVM: Model<IVM>) => userVM.dataValues.id);
+    const vms = await getVMsByIds(vmIds);
+    return vms;
   } catch (error) {
-    console.error('ERROR - syncUnraidVMsWithDB()', error);
+    console.error('ERROR - getVMsByUserId()', error);
+    throw error;
+  }
+}
+
+export const linkVMToUser = async (vmId: string, userId: string): Promise<Model<IVM, IVM>> => {
+  try {
+    const vm = await VMModel.create({
+      id: vmId,
+      userId,
+    });
+    return vm;
+  } catch (error) {
+    console.error('ERROR - linkVMToUser():', error);
     throw error;
   }
 }

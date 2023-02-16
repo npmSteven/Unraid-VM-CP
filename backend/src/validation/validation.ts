@@ -9,3 +9,10 @@ export const checkPassword = check('password')
   .exists()
   .isLength({ min: 6, max: 255 })
   .withMessage('Password must be between 6 and 255 characters long');
+
+export const checkUUID = (fieldName) => check(fieldName)
+  .notEmpty()
+  .withMessage(`${fieldName} is required`)
+  .isUUID(4)
+  .withMessage(`${fieldName} is not a valid UUID`);
+  
