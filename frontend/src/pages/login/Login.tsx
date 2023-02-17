@@ -1,6 +1,8 @@
 import type { Component } from 'solid-js';
 
-export const App: Component = () => {
+import styles from './Login.module.css';
+
+export const Login: Component = () => {
   return (
     <div>
     </div>

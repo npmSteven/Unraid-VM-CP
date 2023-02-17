@@ -1,6 +1,8 @@
 import type { Component } from 'solid-js';
 
-export const App: Component = () => {
+import styles from './VMs.module.css';
+
+export const VMs: Component = () => {
   return (
     <div>
     </div>
