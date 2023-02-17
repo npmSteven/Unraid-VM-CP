@@ -1,9 +1,13 @@
 import { Component, createSignal, JSX } from 'solid-js';
-import { BsThreeDotsVertical } from 'solid-icons/bs'
-import { IVMStatus } from '../../types/IVMStatus';
-import { VMStatus } from '../VMStatus/VMStatus';
-import styles from './VMCard.module.css';
 import Dismiss from 'solid-dismiss';
+
+import { BsThreeDotsVertical } from 'solid-icons/bs'
+
+import { IVMStatus } from '../../types/IVMStatus';
+
+import { VMStatus } from '../VMStatus/VMStatus';
+
+import styles from './VMCard.module.css';
 
 interface Props {
   name: string;
@@ -70,7 +74,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
                 top: '50px',
                 background: 'black',
                 color: 'white',
-                padding: '10px',
+                padding: '5px',
               }}
             >
               <p>Popup text!</p>

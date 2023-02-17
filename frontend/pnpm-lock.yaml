@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@tanstack/solid-query': ^4.24.6
   solid-dismiss: ^1.6.5
   solid-icons: ^1.0.4
   solid-js: ^1.6.10
@@ -9,6 +10,7 @@ specifiers:
   vite-plugin-solid: ^2.5.0
 
 dependencies:
+  '@tanstack/solid-query': 4.24.6_solid-js@1.6.10
   solid-dismiss: 1.6.5_solid-js@1.6.10
   solid-icons: 1.0.4_solid-js@1.6.10
   solid-js: 1.6.10
@@ -570,6 +572,19 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@tanstack/query-core/4.24.6:
+    resolution: {integrity: sha512-Tfru6YTDTCpX7dKVwHp/sosw/dNjEdzrncduUjIkQxn7n7u+74HT2ZrGtwwrU6Orws4x7zp3FKRqBPWVVhpx9w==}
+    dev: false
+
+  /@tanstack/solid-query/4.24.6_solid-js@1.6.10:
+    resolution: {integrity: sha512-ksUfW4Lwwl85kogQuP46oyqPGBqbSfNMRTu9Ey3FDPjfYzObW4j9opI3TjRoSkOapqVg5KOaobhzu8N2Wp0JBg==}
+    peerDependencies:
+      solid-js: ^1.5.7
+    dependencies:
+      '@tanstack/query-core': 4.24.6
+      solid-js: 1.6.10
+    dev: false
 
   /ansi-styles/3.2.1:
     resolution: {integrity: sha512-VT0ZI6kZRdTh8YyJw3SMbYm/u+NqfsAxEpWO0Pf9sq8/e94WxxOpPKx9FR1FlyCtOVDNOQ+8ntlqFxiRc+r5qA==}
