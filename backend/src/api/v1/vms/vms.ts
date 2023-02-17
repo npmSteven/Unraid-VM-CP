@@ -15,7 +15,7 @@ import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
 
 // Validation
-import { checkUUID } from '../../../validation/validation.js';
+import { checkUUID, checkVMPermissions } from '../../../validation/validation.js';
 
 const router = express.Router();
 
@@ -138,7 +138,6 @@ router.get('/:unraidVMId/users/:userId',
       }
 
       const unraidVM = await getVMByUserIdAndUnraidVMId(userId, unraidVMId);
-      console.log(unraidVM);
       
       return res.json(respondSuccess(unraidVM));
     } catch (error) {
@@ -221,6 +220,48 @@ router.delete('/:unraidVMId/users/:userId',
       const permissions = await deleteUserVMPermissions(vmLink.dataValues.id, userId);
 
       return res.json(respondSuccess({ ...vmLink.dataValues, permissions: permissions.dataValues }));
+    } catch (error) {
+      console.error('ERROR - /:vmId/users/:userId', error);
+      return errorHandler(res, error);
+    }
+  }
+);
+
+/**
+ * Update permissions for a VM
+ */
+router.put('/:unraidVMId/users/:userId/permissions',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    checkUUID('userId'),
+    checkVMPermissions,
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      if (!req?.user?.isUnraidUser) {
+        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
+      }
+
+      const { userId, unraidVMId } = req.params;
+
+      // Check if provided user id exists
+      const user = await getUserById(userId);
+      if (!user) throw new NotFoundError('Provided user id does not exist');
+
+      // Check if unraidVMId exists
+      const vm = await getVMByIdUnraid(unraidVMId);
+      if (!vm) throw new NotFoundError('Provided vm id does not exist');
+
+      // Check if the vm is already linked to the user
+      const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, userId);
+      if (!isVMLinkedToUser) {
+        throw new ConflictRequestError('Unable to update the permissions of a VM that is not linked to a user');
+      }
+
+
+      return res.json(respondSuccess({  }));
     } catch (error) {
       console.error('ERROR - /:vmId/users/:userId', error);
       return errorHandler(res, error);

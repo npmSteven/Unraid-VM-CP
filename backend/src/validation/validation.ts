@@ -28,11 +28,7 @@ const vmProperties = [
   'canResume',
 ];
 
-const checkVMPermissions = () => {
-  return [
-    oneOf(
-      vmProperties.map(prop => check(prop).isBoolean().withMessage(`${prop} should be a boolean`)),
-      'At least one property should be provided'
-    )
-  ];
-};
+export const checkVMPermissions = oneOf(
+  vmProperties.map(prop => check(prop).isBoolean().withMessage(`${prop} should be a boolean`)),
+  'At least one property should be provided'
+);
