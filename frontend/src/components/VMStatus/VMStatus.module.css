@@ -1,0 +1,26 @@
+.status {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 1rem;
+  margin: 5px;
+}
+
+.started {
+  background: #33FF00;
+  box-shadow: 0px 0px 4px 5px rgba(0, 255, 102, 0.25);
+}
+
+.paused {
+  background: #FFA800;
+  box-shadow: 0px 0px 4px 5px rgba(255, 168, 0, 0.25);
+}
+
+.stopped {
+  background: #FF0000;
+  box-shadow: 0px 0px 4px 5px rgba(255, 0, 0, 0.25);
+}
+
+.unavailable {
+  background: #929292;
+  box-shadow: 0px 0px 4px 5px rgba(146, 146, 146, 0.25);
+}

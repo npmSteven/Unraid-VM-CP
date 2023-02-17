@@ -1,0 +1,16 @@
+.card {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.47);
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardHeaderTitle {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
