@@ -1,72 +1,82 @@
-import type { Component } from 'solid-js';
-
-import type { IVMStatus } from '../../types/IVMStatus';
-
+import { Component, createSignal, JSX } from 'solid-js';
+import { BsThreeDotsVertical } from 'solid-icons/bs'
+import { IVMStatus } from '../../types/IVMStatus';
 import { VMStatus } from '../VMStatus/VMStatus';
-
 import styles from './VMCard.module.css';
+import Dismiss from 'solid-dismiss';
 
-type IProps = {
-  name: string
-  status: IVMStatus
-  os: string
-  memory: string
-  graphics: string
-  storage: string
-  cpus: string
-  isAutoStart: boolean
-  ip: string
+interface Props {
+  name: string;
+  status: IVMStatus;
+  os: string;
+  memory: string;
+  graphics: string;
+  storage: string;
+  cpus: string;
+  isAutoStart: boolean;
+  ip?: string;
 }
 
-export const VMCard: Component<IProps> = (props) => {
+export const VMCard: Component<Props> = (props: Props): JSX.Element => {
+  const [open, setOpen] = createSignal(false);
+  let btnEl;
+
+  const renderInformationRow = (title: string, description: string) => (
+    <div class={styles.informationRow}>
+      <div class={styles.informationRowTitle}>{title}</div>
+      <div class={styles.informationRowDescription}>{description ?? 'Not set'}</div>
+    </div>
+  );
+
   return (
     <div class={styles.card}>
-      {/* Name & Status */}
-      <div class={styles.cardHeader}>
-        <div class={styles.cardHeaderTitle}>{props.name ?? 'Not set'}</div>
-        <VMStatus status={props.status} />
+      <div class={styles.cardContainer}>
+        <div class={styles.cardHeader}>
+          <div class={styles.cardHeaderTitle}>{props.name || 'Not set'}</div>
+        </div>
+        <div class={styles.information}>
+          <div class={styles.informationColumn}>
+            {renderInformationRow('OS', props.os)}
+            {renderInformationRow('Ram', props.memory)}
+            {renderInformationRow('Graphics', props.graphics)}
+          </div>
+          <div class={styles.informationColumn}>
+            {renderInformationRow('Storage', props.storage)}
+            {renderInformationRow('CPUs', props.cpus)}
+            {renderInformationRow('Auto Start', JSON.stringify(props.isAutoStart))}
+          </div>
+          <div class={styles.informationColumn}>
+            {renderInformationRow('IP', props.ip || 'QEMU might need to be installed')}
+          </div>
+        </div>
       </div>
-      {/* Information (OS, Storage, Ram, etc) */}
-      <div class={styles.information}>
-        {/* Column 1 */}
-        <div class={styles.informationColumn}>
-          {/* Rows */}
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>OS</div>
-            <div class={styles.informationRowDescription}>{props.os ?? 'Not set'}</div>
-          </div>
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>Ram</div>
-            <div class={styles.informationRowDescription}>{props.memory ?? 'Not set'}</div>
-          </div>
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>Graphics</div>
-            <div class={styles.informationRowDescription}>{props.graphics ?? 'Not set'}</div>
-          </div>
-        </div>
-        {/* Column 2 */}
-        <div class={styles.informationColumn}>
-          {/* Rows */}
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>Storage</div>
-            <div class={styles.informationRowDescription}>{props.storage ?? 'Not set'}</div>
-          </div>
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>CPUs</div>
-            <div class={styles.informationRowDescription}>{props.cpus ?? 'Not set'}</div>
-          </div>
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>Auto Start</div>
-            <div class={styles.informationRowDescription}>{JSON.stringify(props.isAutoStart)}</div>
-          </div>
-        </div>
-        {/* Column 3 */}
-        <div class={styles.informationColumn}>
-          {/* Rows */}
-          <div class={styles.informationRow}>
-            <div class={styles.informationRowTitle}>IP</div>
-            <div class={styles.informationRowDescription}>{props.ip ?? 'QEMU might need to be installed'}</div>
-          </div>
+      <div class={styles.statusContainer}>
+        <VMStatus status={props.status} />
+        <div
+          style={{ position: 'relative' }}
+        >
+          <button class={styles.actionButton} ref={btnEl}>
+            <BsThreeDotsVertical size={24} />
+          </button>
+          <Dismiss
+            menuButton={btnEl}
+            open={open}
+            setOpen={setOpen}
+            closeWhenOverlayClicked={false}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: '50px',
+                background: 'black',
+                color: 'white',
+                padding: '10px',
+              }}
+            >
+              <p>Popup text!</p>
+              <button onClick={() => console.log('here')}>hello</button>
+            </div>
+          </Dismiss>
         </div>
       </div>
     </div>
