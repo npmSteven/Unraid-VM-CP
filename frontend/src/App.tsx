@@ -10,7 +10,17 @@ export const App: Component = () => {
         margin: '5px',
       }}
     >
-      <VMCard />
+      <VMCard
+        status='started'
+        name='Steven-PC'
+        os='Windows 11'
+        storage='1tb'
+        memory='1024M'
+        cpus='6'
+        graphics='RTX3080Ti'
+        ip='192.168.1.150'
+        isAutoStart={false}
+      />
     </div>
   );
 };

@@ -8,9 +8,32 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
 .cardHeaderTitle {
   font-weight: 700;
   font-size: 1.3rem;
+}
+
+.information {
+  display: flex;
+  justify-content: space-between;
+}
+
+.informationColumn {
+
+}
+
+.informationRow {
+  margin-bottom: 10px;
+}
+
+.informationRowTitle {
+  color: rgba(0, 0, 0, 0.39);
+  margin-bottom: 5px;
+}
+
+.informationRowDescription {
+
 }
