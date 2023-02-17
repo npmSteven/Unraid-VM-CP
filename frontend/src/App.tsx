@@ -1,6 +1,7 @@
 import type { Component } from 'solid-js';
 
 import { VMCard } from './components/VMCard/VMCard';
+import { VMDropdown } from './components/VMDropdown/VMDropdown';
 
 export const App: Component = () => {
   return (
@@ -29,6 +30,7 @@ export const App: Component = () => {
         ip='192.168.1.150'
         isAutoStart={false}
       />
+      <VMDropdown />
     </div>
   );
 };
