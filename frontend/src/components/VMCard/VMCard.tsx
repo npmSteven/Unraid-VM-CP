@@ -9,17 +9,19 @@ import { VMStatus } from '../VMStatus/VMStatus';
 
 import styles from './VMCard.module.css';
 import { VMDropdown } from '../VMDropdown/VMDropdown';
+import { VMAdminDropdown } from '../VMAdminDropdown/VMAdminDropdown';
 
-interface Props {
-  name: string;
-  status: IVMStatus;
-  os: string;
-  memory: string;
-  graphics: string;
-  storage: string;
-  cpus: string;
-  isAutoStart: boolean;
-  ip?: string;
+type Props = {
+  name: string
+  status: IVMStatus
+  os: string
+  memory: string
+  graphics: string
+  storage: string
+  cpus: string
+  isAutoStart: boolean
+  ip?: string
+  isAdmin?: boolean
 }
 
 export const VMCard: Component<Props> = (props: Props): JSX.Element => {
@@ -69,7 +71,8 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            <VMDropdown status={props.status} />
+            {!props.isAdmin && <VMDropdown status={props.status} />}
+            {props.isAdmin && <VMAdminDropdown />}
           </Dismiss>
         </div>
       </div>
