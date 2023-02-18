@@ -53,7 +53,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             {renderInformationRow('Auto Start', JSON.stringify(props.isAutoStart))}
           </div>
           <div class={styles.informationColumn}>
-            {renderInformationRow('IP', props.ip || 'QEMU might need to be installed')}
+            {renderInformationRow('IP', props.ip || 'QEMU Agent not found')}
           </div>
         </div>
       </div>

@@ -19,7 +19,6 @@ export const App: Component = () => {
           memory='1024M'
           cpus='6'
           graphics='RTX3080Ti'
-          ip='192.168.1.150'
           isAutoStart={false}
         />
         <VMCard
