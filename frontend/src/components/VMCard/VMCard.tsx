@@ -8,6 +8,7 @@ import { IVMStatus } from '../../types/IVMStatus';
 import { VMStatus } from '../VMStatus/VMStatus';
 
 import styles from './VMCard.module.css';
+import { VMDropdown } from '../VMDropdown/VMDropdown';
 
 interface Props {
   name: string;
@@ -68,18 +69,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            <div
-              style={{
-                position: 'absolute',
-                top: '50px',
-                background: 'black',
-                color: 'white',
-                padding: '5px',
-              }}
-            >
-              <p>Popup text!</p>
-              <button onClick={() => console.log('here')}>hello</button>
-            </div>
+            <VMDropdown status={props.status} />
           </Dismiss>
         </div>
       </div>

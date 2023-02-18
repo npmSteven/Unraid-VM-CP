@@ -1,7 +1,6 @@
 import type { Component } from 'solid-js';
 
 import { VMCard } from './components/VMCard/VMCard';
-import { VMDropdown } from './components/VMDropdown/VMDropdown';
 
 export const App: Component = () => {
   return (
@@ -20,7 +19,7 @@ export const App: Component = () => {
         isAutoStart={false}
       />
       <VMCard
-        status='started'
+        status='paused'
         name='Steven-PC'
         os='Windows 11'
         storage='1tb'
@@ -30,7 +29,17 @@ export const App: Component = () => {
         ip='192.168.1.150'
         isAutoStart={false}
       />
-      <VMDropdown />
+      <VMCard
+        status='stopped'
+        name='Steven-PC'
+        os='Windows 11'
+        storage='1tb'
+        memory='1024M'
+        cpus='6'
+        graphics='RTX3080Ti'
+        ip='192.168.1.150'
+        isAutoStart={false}
+      />
     </div>
   );
 };
