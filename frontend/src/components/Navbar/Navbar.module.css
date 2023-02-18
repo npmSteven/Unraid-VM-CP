@@ -50,6 +50,7 @@
   border-left: 1px solid rgb(224, 224, 224);
   padding-left: 15px;
   margin-right: 15px;
+  margin-left: 10px;
   cursor: pointer;
 }
 
@@ -61,3 +62,12 @@
   margin-right: 10px;
 }
 
+@media only screen and (max-width: 550px) {
+  .nav {
+    flex-direction: column;
+    height: 75px;
+  }
+  .brand {
+    margin-bottom: 10px;
+  }
+}

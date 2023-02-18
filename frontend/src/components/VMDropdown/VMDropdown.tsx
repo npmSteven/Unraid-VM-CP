@@ -1,5 +1,8 @@
 import type { Component } from 'solid-js';
 
+import type { IDropdownSection } from '../../types/IDropdownSection';
+import type { IVMStatus } from '../../types/IVMStatus';
+
 // Icons
 import { FaSolidPowerOff } from 'solid-icons/fa'
 import { FaRegularCirclePause } from 'solid-icons/fa'
@@ -11,18 +14,9 @@ import { FaRegularCirclePlay } from 'solid-icons/fa'
 import { ImSleepy } from 'solid-icons/im'
 import { FiTrash2 } from 'solid-icons/fi'
 
-import styles from './VMDropdown.module.css';
-import { IVMStatus } from '../../types/IVMStatus';
+// Components
+import { Dropdown } from '../Dropdown/Dropdown';
 
-type IDropdownAction = {
-  text: string
-  icon: any;
-}
-
-type IDropdownSection = {
-  title: string
-  actions: IDropdownAction[]
-}
 
 const startedSections: IDropdownSection[] = [
   {
@@ -108,20 +102,6 @@ export const VMDropdown: Component<Props> = (props: Props) => {
   }
 
   return (
-    <div class={styles.dropdownContainer}>
-      {getSectionsByStatus().map((section: IDropdownSection) => (
-        <div class={styles.dropdownSection}>
-          <div class={styles.dropdownSectionTitle}>{section.title}</div>
-          <div class={styles.dropdownSectionList}>
-            {section.actions.map((action: IDropdownAction) => (
-              <button class={styles.dropdownSectionListItem}>
-                {action.icon}
-                <span>{action.text}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
+    <Dropdown sections={getSectionsByStatus()} />
   );
 };

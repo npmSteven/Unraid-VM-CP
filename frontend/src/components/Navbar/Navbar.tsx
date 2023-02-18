@@ -1,10 +1,15 @@
-import type { Component } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 
 import { FaSolidChevronDown } from 'solid-icons/fa'
 
 import styles from './Navbar.module.css';
+import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
+import Dismiss from 'solid-dismiss';
 
 export const Navbar: Component = () => {
+  const [open, setOpen] = createSignal(false);
+  let btnEl;
+
   return (
     <nav class={styles.nav}>
       {/* Left */}
@@ -23,13 +28,29 @@ export const Navbar: Component = () => {
           </li>
         </ul>
         {/* Profile */}
-        <div class={styles.profile}>
-          {/* Profile Icon */}
-          <img class={styles.profileImage} src="https://ui-avatars.com/api/?name=Steven&size=25" alt="Profile image" />
-          {/* Username */}
-          <span class={styles.username}>Steven</span>
-          {/* Dropdown */}
-          <FaSolidChevronDown size={18} />
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+          }}
+        >
+          <button class={styles.profile} ref={btnEl}>
+            {/* Profile Icon */}
+            <img class={styles.profileImage} src="https://ui-avatars.com/api/?name=Steven&size=25" alt="Profile image" />
+            {/* Username */}
+            <span class={styles.username}>Steven</span>
+            {/* Dropdown */}
+            <FaSolidChevronDown size={18} />
+          </button>
+          <Dismiss
+            menuButton={btnEl}
+            open={open}
+            setOpen={setOpen}
+            closeWhenOverlayClicked={false}
+          // closeWhenMenuButtonIsClicked={false}
+          >
+            <ProfileDropdown />
+          </Dismiss>
         </div>
       </div>
     </nav>

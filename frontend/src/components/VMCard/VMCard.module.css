@@ -57,3 +57,9 @@
 .actionButton:hover {
   background-color: #eaeaea;
 }
+
+@media only screen and (max-width: 550px) {
+  .information {
+    flex-direction: column;
+  }
+}
