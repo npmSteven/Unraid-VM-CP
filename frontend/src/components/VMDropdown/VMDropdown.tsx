@@ -102,6 +102,6 @@ export const VMDropdown: Component<Props> = (props: Props) => {
   }
 
   return (
-    <Dropdown sections={getSectionsByStatus()} />
+    <Dropdown sections={getSectionsByStatus()} top={55} />
   );
 };

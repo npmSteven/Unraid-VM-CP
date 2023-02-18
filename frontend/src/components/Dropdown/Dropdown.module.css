@@ -3,9 +3,10 @@
   border-radius: 5px;
   overflow: hidden;
   position: absolute;
-  top: 50px;
   right: 0;
+  top: 50px;
   background: white;
+  z-index: 1;
 }
 
 .dropdownSection {
