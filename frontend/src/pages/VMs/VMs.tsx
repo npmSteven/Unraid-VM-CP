@@ -1,10 +1,13 @@
-import { useNavigate, useParams, useRouteData } from '@solidjs/router';
+import { useNavigate, useParams } from '@solidjs/router';
 import { BiRegularArrowBack } from 'solid-icons/bi';
 import { Component, onMount } from 'solid-js';
+
+// Components
 import { Button } from '../../components/Button/Button';
 import { Navbar } from '../../components/Navbar/Navbar';
 import { VMCard } from '../../components/VMCard/VMCard';
 
+// Styles
 import styles from './VMs.module.css';
 
 export const VMs: Component = () => {
