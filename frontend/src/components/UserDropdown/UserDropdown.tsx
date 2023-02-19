@@ -46,6 +46,6 @@ const sections: IDropdownSection[] = [
 export const UserDropdown: Component = () => {
 
   return (
-    <Dropdown sections={sections} top={90}  />
+    <Dropdown sections={sections} top={70}  />
   );
 };

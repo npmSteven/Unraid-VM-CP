@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@modular-forms/solid': ^0.10.0
+  '@solidjs/router': ^0.7.0
   '@tanstack/solid-query': ^4.24.6
   solid-dismiss: ^1.6.5
   solid-icons: ^1.0.4
@@ -12,6 +13,7 @@ specifiers:
 
 dependencies:
   '@modular-forms/solid': 0.10.0_solid-js@1.6.10
+  '@solidjs/router': 0.7.0_solid-js@1.6.10
   '@tanstack/solid-query': 4.24.6_solid-js@1.6.10
   solid-dismiss: 1.6.5_solid-js@1.6.10
   solid-icons: 1.0.4_solid-js@1.6.10
@@ -579,6 +581,14 @@ packages:
     resolution: {integrity: sha512-n5zfpndLSXib6oOG9vXnyoukmtRHa2K/SE4bdz+yM8QqFsuOJNJKGHKtqzlmRm08p9kOpXU62hZFL7b6GQnShw==}
     peerDependencies:
       solid-js: ^1.3.1
+    dependencies:
+      solid-js: 1.6.10
+    dev: false
+
+  /@solidjs/router/0.7.0_solid-js@1.6.10:
+    resolution: {integrity: sha512-8HI84twe5FjYRebSLMAhtkL9bRuTDIlxJK56kjfjU9WKGoUCTaWpCnkuj8Hqde1bWZ0X+GOZxKDfNkn1CjtjxA==}
+    peerDependencies:
+      solid-js: ^1.5.3
     dependencies:
       solid-js: 1.6.10
     dev: false

@@ -12,15 +12,22 @@ import styles from './Button.module.css';
 type Props = {
   text: string
   Icon: IconTypes
+  onClick: JSX.ButtonHTMLAttributes<HTMLButtonElement>['onClick']
   type?: JSX.ButtonHTMLAttributes<HTMLButtonElement>['type']
   class?: JSX.ButtonHTMLAttributes<HTMLButtonElement>['class']
   isLoading?: boolean
+  style?: JSX.ButtonHTMLAttributes<HTMLButtonElement>['style']
 }
 
 export const Button: Component<Props> = (props) => {
   const { Icon } = props;
   return (
-    <button class={`${styles.button} ${props.class ? props.class : ''}`} type={props.type || 'button'}>
+    <button
+      onClick={props.onClick}
+      style={props.style}
+      class={`${styles.button} ${props.class ? props.class : ''}`} 
+      type={props.type || 'button'}
+    >
       <Switch>
         <Match when={!props.isLoading}>
           <Icon size={24} />

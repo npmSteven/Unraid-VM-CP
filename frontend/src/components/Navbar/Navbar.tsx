@@ -9,6 +9,7 @@ import styles from './Navbar.module.css';
 
 // Components
 import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
+import { A } from '@solidjs/router';
 
 export const Navbar: Component = () => {
   const [open, setOpen] = createSignal(false);
@@ -24,12 +25,8 @@ export const Navbar: Component = () => {
       <div class={styles.content}>
         {/* Nav links */}
         <ul class={styles.links}>
-          <li class={styles.link}>
-            <a href="#">Users</a>
-          </li>
-          <li class={styles.link}>
-            <a href="#">VMs</a>
-          </li>
+          <A class={styles.link} href="/users">Users</A>
+          <A class={styles.link} href="/vms">VMs</A>
         </ul>
         {/* Profile */}
         <div

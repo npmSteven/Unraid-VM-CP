@@ -13,7 +13,7 @@ type ILoginForm = {
   password: string;
 };
 
-export const Login: Component = () => {
+const Login: Component = () => {
   const loginForm = createForm<ILoginForm>();
 
   return (
@@ -50,3 +50,5 @@ export const Login: Component = () => {
     </div>
   );
 };
+
+export default Login;

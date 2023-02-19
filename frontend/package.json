@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@modular-forms/solid": "^0.10.0",
+    "@solidjs/router": "^0.7.0",
     "@tanstack/solid-query": "^4.24.6",
     "solid-dismiss": "^1.6.5",
     "solid-icons": "^1.0.4",
