@@ -8,9 +8,9 @@ import { Login } from './pages/Login/Login';
 export const App: Component = () => {
   return (
     <div>
-      <Login />
-      {/* <Navbar /> */}
-      {/* <div
+      {/* <Login /> */}
+        <Navbar />
+      <div
         style={{ display: 'flex', "flex-wrap": 'wrap', "justify-content": 'center' }}
       >
         <VMCard
@@ -45,7 +45,7 @@ export const App: Component = () => {
           ip='192.168.1.150'
           isAutoStart={false}
         />
-      </div> */}
+      </div>
     </div>
   );
 };

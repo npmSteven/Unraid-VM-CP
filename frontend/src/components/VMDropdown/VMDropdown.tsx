@@ -17,30 +17,29 @@ import { FiTrash2 } from 'solid-icons/fi'
 // Components
 import { Dropdown } from '../Dropdown/Dropdown';
 
-
 const startedSections: IDropdownSection[] = [
   {
     title: 'Control',
     actions: [
       {
         text: 'Stop',
-        icon: <FaSolidPowerOff size={18} />,
+        Icon: FaSolidPowerOff,
       },
       {
         text: 'Pause',
-        icon: <FaRegularCirclePause size={18} />,
+        Icon: FaRegularCirclePause,
       },
       {
         text: 'Restart',
-        icon: <FiRefreshCcw size={18} />,
+        Icon: FiRefreshCcw,
       },
       {
         text: 'Hibernate',
-        icon: <ImSleepy size={18} />,
+        Icon: ImSleepy,
       },
       {
         text: 'Force Stop',
-        icon: <AiOutlineStop size={18} />,
+        Icon: AiOutlineStop,
       },
     ],
   },
@@ -52,11 +51,11 @@ const pasuedSections: IDropdownSection[] = [
     actions: [
       {
         text: 'Resume',
-        icon: <FaRegularCirclePlay size={18} />,
+        Icon: FaRegularCirclePlay,
       },
       {
         text: 'Force Stop',
-        icon: <AiOutlineStop size={18} />,
+        Icon: AiOutlineStop,
       },
     ],
   },
@@ -68,15 +67,15 @@ const stoppedSections: IDropdownSection[] = [
     actions: [
       {
         text: 'Start',
-        icon: <FaRegularCirclePlay size={18} />,
+        Icon: FaRegularCirclePlay,
       },
       {
         text: 'Remove VM',
-        icon: <AiOutlineMinusCircle size={18} />,
+        Icon: AiOutlineMinusCircle,
       },
       {
         text: 'Remove VM & Disks',
-        icon: <FiTrash2 size={18} />,
+        Icon: FiTrash2,
       },
     ],
   },

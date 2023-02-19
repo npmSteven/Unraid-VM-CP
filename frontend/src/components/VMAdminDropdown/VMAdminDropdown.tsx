@@ -19,11 +19,11 @@ const sections: IDropdownSection[] = [
     actions: [
       {
         text: 'Unlink',
-        icon: <BiRegularUnlink size={18} />,
+        Icon: BiRegularUnlink,
       },
       {
         text: 'Permissions',
-        icon: <SiOpenaccess size={18} />,
+        Icon: SiOpenaccess,
       }
     ]
   }

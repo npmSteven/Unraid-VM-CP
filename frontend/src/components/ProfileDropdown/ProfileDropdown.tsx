@@ -13,7 +13,7 @@ const sections: IDropdownSection[] = [
     actions: [
       {
         text: 'Logout',
-        icon: <FiLogOut size={18} />,
+        Icon: FiLogOut,
       }
     ]
   }

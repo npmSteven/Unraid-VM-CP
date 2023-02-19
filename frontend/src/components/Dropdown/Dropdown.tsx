@@ -33,12 +33,15 @@ export const Dropdown: Component<Props> = (props: Props) => {
             <div class={styles.dropdownSection}>
               <div class={styles.dropdownSectionTitle}>{section.title}</div>
               <div class={styles.dropdownSectionList}>
-                {section.actions.map((action: IDropdownAction) => (
-                  <button class={styles.dropdownSectionListItem}>
-                    {action.icon}
-                    <span>{action.text}</span>
-                  </button>
-                ))}
+                {section.actions.map((action: IDropdownAction) => {
+                  const { Icon } = action;
+                  return (
+                    <button class={styles.dropdownSectionListItem}>
+                      <Icon size={18} />
+                      <span>{action.text}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           ))}

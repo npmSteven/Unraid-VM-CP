@@ -1,4 +1,6 @@
+import { IconTypes } from "solid-icons";
+
 export type IDropdownAction = {
   text: string
-  icon: any;
+  Icon: IconTypes;
 }
