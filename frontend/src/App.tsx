@@ -1,11 +1,11 @@
 import { Route, Routes } from '@solidjs/router';
-import { Component, lazy } from 'solid-js';
+import { Component } from 'solid-js';
 
 // Pages
-const Users = lazy(() => import('./pages/Users/Users'));
-const VMs = lazy(() => import('./pages/VMs/VMs'));
-const Login = lazy(() => import('./pages/Login/Login'));
-const CreateUser = lazy(() => import('./pages/CreateUser/CreateUser'));
+import Users from './pages/Users/Users';
+import VMs from './pages/VMs/VMs';
+import Login from './pages/Login/Login';
+import CreateUser from './pages/CreateUser/CreateUser';
 
 export const App: Component = () => {
   return (

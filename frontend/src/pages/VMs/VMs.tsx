@@ -1,13 +1,44 @@
-import { Component } from 'solid-js';
+import { useNavigate, useParams, useRouteData } from '@solidjs/router';
+import { BiRegularArrowBack } from 'solid-icons/bi';
+import { Component, onMount } from 'solid-js';
+import { Button } from '../../components/Button/Button';
 import { Navbar } from '../../components/Navbar/Navbar';
 import { VMCard } from '../../components/VMCard/VMCard';
 
 import styles from './VMs.module.css';
 
 export const VMs: Component = () => {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  const isAdminVMCard = !!params.userId;
+
+  onMount(() => {
+    console.log(params.userId);
+  })
+
+  const goToUsers = () => {
+    navigate('/users');
+  }
+
   return (
     <div>
       <Navbar />
+      {isAdminVMCard && (
+        <div
+          style={{
+          }}
+        >
+          <Button
+            text='Back'
+            Icon={BiRegularArrowBack}
+            onClick={goToUsers}
+            style={{
+              margin: '10px',
+            }}
+          />
+        </div>
+      )}
       <div
         style={{
           display: 'flex',
@@ -24,6 +55,7 @@ export const VMs: Component = () => {
           cpus='6'
           graphics='RTX3080Ti'
           isAutoStart={false}
+          isAdmin={isAdminVMCard}
         />
         <VMCard
           status='paused'
@@ -35,6 +67,7 @@ export const VMs: Component = () => {
           graphics='RTX3080Ti'
           ip='192.168.1.150'
           isAutoStart={false}
+          isAdmin={isAdminVMCard}
         />
         <VMCard
           status='stopped'
@@ -46,6 +79,7 @@ export const VMs: Component = () => {
           graphics='RTX3080Ti'
           ip='192.168.1.150'
           isAutoStart={false}
+          isAdmin={isAdminVMCard}
         />
       </div>
     </div>

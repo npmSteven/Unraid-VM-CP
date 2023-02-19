@@ -40,7 +40,7 @@ export const Dropdown: Component<Props> = (props: Props) => {
                 {section.actions.map((action: IDropdownAction) => {
                   const { Icon } = action;
                   return (
-                    <button class={styles.dropdownSectionListItem}>
+                    <button class={styles.dropdownSectionListItem} onClick={action.onClick}>
                       <Icon size={18} />
                       <span>{action.text}</span>
                     </button>

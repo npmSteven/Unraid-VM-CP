@@ -1,4 +1,5 @@
 import { Component } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 
 // Icons
 import { AiOutlineUser } from 'solid-icons/ai';
@@ -14,36 +15,47 @@ import { Dropdown } from '../Dropdown/Dropdown';
 // Styles
 import styles from './UserDropdown.module.css';
 
-const sections: IDropdownSection[] = [
-  {
-    title: 'Admin',
-    actions: [
-      {
-        text: 'Change Username',
-        Icon: AiOutlineUser,
-      },
-      {
-        text: 'Change Password',
-        Icon: RiSystemLockPasswordLine,
-      },
-      {
-        text: 'Delete',
-        Icon: RiSystemDeleteBin2Line,
-      },
-    ],
-  },
-  {
-    title: 'VM',
-    actions: [
-      {
-        text: 'VMs',
-        Icon: FiServer,
-      },
-    ],
-  },
-];
-
 export const UserDropdown: Component = () => {
+
+  const navigate = useNavigate();
+
+  const goToUserVMs = () => {
+    navigate('/users/vm-id/vms')
+  }
+
+  const sections: IDropdownSection[] = [
+    {
+      title: 'Admin',
+      actions: [
+        {
+          text: 'Change Username',
+          Icon: AiOutlineUser,
+          onClick: () => {},
+        },
+        {
+          text: 'Change Password',
+          Icon: RiSystemLockPasswordLine,
+          onClick: () => {},
+        },
+        {
+          text: 'Delete',
+          Icon: RiSystemDeleteBin2Line,
+          onClick: () => {},
+        },
+      ],
+    },
+    {
+      title: 'VM',
+      actions: [
+        {
+          text: 'VMs',
+          Icon: FiServer,
+          onClick: goToUserVMs,
+        },
+      ],
+    },
+  ];
+
 
   return (
     <Dropdown sections={sections} top={70}  />

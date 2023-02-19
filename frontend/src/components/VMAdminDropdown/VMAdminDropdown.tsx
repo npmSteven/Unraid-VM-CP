@@ -20,10 +20,12 @@ const sections: IDropdownSection[] = [
       {
         text: 'Unlink',
         Icon: BiRegularUnlink,
+        onClick: () => {},
       },
       {
         text: 'Permissions',
         Icon: SiOpenaccess,
+        onClick: () => {},
       }
     ]
   }

@@ -19,6 +19,7 @@ const sections: IDropdownSection[] = [
       {
         text: 'Logout',
         Icon: FiLogOut,
+        onClick: () => {},
       }
     ]
   }

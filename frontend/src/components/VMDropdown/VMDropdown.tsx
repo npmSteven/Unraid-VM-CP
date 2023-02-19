@@ -23,22 +23,27 @@ const startedSections: IDropdownSection[] = [
       {
         text: 'Stop',
         Icon: FaSolidPowerOff,
+        onClick: () => {},
       },
       {
         text: 'Pause',
         Icon: FaRegularCirclePause,
+        onClick: () => {},
       },
       {
         text: 'Restart',
         Icon: FiRefreshCcw,
+        onClick: () => {},
       },
       {
         text: 'Hibernate',
         Icon: ImSleepy,
+        onClick: () => {},
       },
       {
         text: 'Force Stop',
         Icon: AiOutlineStop,
+        onClick: () => {},
       },
     ],
   },
@@ -51,10 +56,12 @@ const pasuedSections: IDropdownSection[] = [
       {
         text: 'Resume',
         Icon: FaRegularCirclePlay,
+        onClick: () => {},
       },
       {
         text: 'Force Stop',
         Icon: AiOutlineStop,
+        onClick: () => {},
       },
     ],
   },
@@ -67,14 +74,17 @@ const stoppedSections: IDropdownSection[] = [
       {
         text: 'Start',
         Icon: FaRegularCirclePlay,
+        onClick: () => {},
       },
       {
         text: 'Remove VM',
         Icon: AiOutlineMinusCircle,
+        onClick: () => {},
       },
       {
         text: 'Remove VM & Disks',
         Icon: FiTrash2,
+        onClick: () => {},
       },
     ],
   },
