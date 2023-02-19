@@ -1,9 +1,13 @@
 import { Component, Match, Switch } from 'solid-js';
 
+// Types
 import type { IDropdownSection } from '../../types/IDropdownSection';
 import type { IDropdownAction } from '../../types/IDropdownAction';
 
+// Styles
 import styles from './Dropdown.module.css';
+
+// Components
 import { Spinner } from '../Spinner/Spinner';
 
 type Props = {

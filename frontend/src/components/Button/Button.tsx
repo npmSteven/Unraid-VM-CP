@@ -1,7 +1,12 @@
-import { IconTypes } from 'solid-icons';
 import { Component, JSX, Match, Switch } from 'solid-js';
+
+// Types
+import type { IconTypes } from 'solid-icons';
+
+// Components
 import { Spinner } from '../Spinner/Spinner';
 
+// Styles
 import styles from './Button.module.css';
 
 type Props = {

@@ -1,10 +1,14 @@
 import { Component, createSignal } from 'solid-js';
+import Dismiss from 'solid-dismiss';
 
+// Icons
 import { FaSolidChevronDown } from 'solid-icons/fa'
 
+// Styles
 import styles from './Navbar.module.css';
+
+// Components
 import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
-import Dismiss from 'solid-dismiss';
 
 export const Navbar: Component = () => {
   const [open, setOpen] = createSignal(false);

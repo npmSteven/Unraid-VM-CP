@@ -20,15 +20,15 @@ const sections: IDropdownSection[] = [
     actions: [
       {
         text: 'Change Username',
-        icon: <AiOutlineUser />,
+        Icon: AiOutlineUser,
       },
       {
         text: 'Change Password',
-        icon: <RiSystemLockPasswordLine />,
+        Icon: RiSystemLockPasswordLine,
       },
       {
         text: 'Delete',
-        icon: <RiSystemDeleteBin2Line />,
+        Icon: RiSystemDeleteBin2Line,
       },
     ],
   },
@@ -37,7 +37,7 @@ const sections: IDropdownSection[] = [
     actions: [
       {
         text: 'VMs',
-        icon: <FiServer />,
+        Icon: FiServer,
       },
     ],
   },

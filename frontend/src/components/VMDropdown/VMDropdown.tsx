@@ -1,5 +1,5 @@
+// Types
 import type { Component } from 'solid-js';
-
 import type { IDropdownSection } from '../../types/IDropdownSection';
 import type { IVMStatus } from '../../types/IVMStatus';
 
@@ -9,7 +9,6 @@ import { FaRegularCirclePause } from 'solid-icons/fa'
 import { FiRefreshCcw } from 'solid-icons/fi'
 import { AiOutlineMinusCircle } from 'solid-icons/ai'
 import { AiOutlineStop } from 'solid-icons/ai'
-
 import { FaRegularCirclePlay } from 'solid-icons/fa'
 import { ImSleepy } from 'solid-icons/im'
 import { FiTrash2 } from 'solid-icons/fi'

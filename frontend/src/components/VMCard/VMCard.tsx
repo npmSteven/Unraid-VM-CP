@@ -1,13 +1,17 @@
 import { Component, createSignal, JSX } from 'solid-js';
 import Dismiss from 'solid-dismiss';
 
+// Icons
 import { BsThreeDotsVertical } from 'solid-icons/bs'
 
-import { IVMStatus } from '../../types/IVMStatus';
+// Types
+import type { IVMStatus } from '../../types/IVMStatus';
 
-import { VMStatus } from '../VMStatus/VMStatus';
-
+// Styles
 import styles from './VMCard.module.css';
+
+// Components
+import { VMStatus } from '../VMStatus/VMStatus';
 import { VMDropdown } from '../VMDropdown/VMDropdown';
 import { VMAdminDropdown } from '../VMAdminDropdown/VMAdminDropdown';
 

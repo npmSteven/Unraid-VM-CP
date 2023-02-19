@@ -1,10 +1,15 @@
-import { Component, createSignal, onMount } from 'solid-js';
+import { Component } from 'solid-js';
 
+// Types
 import type { IDropdownSection } from '../../types/IDropdownSection';
 
+// Icons
 import { FiLogOut } from 'solid-icons/fi'
 
+// Styles
 import styles from './ProfileDropdown.module.css';
+
+// Components
 import { Dropdown } from '../Dropdown/Dropdown';
 
 const sections: IDropdownSection[] = [
@@ -21,15 +26,7 @@ const sections: IDropdownSection[] = [
 
 export const ProfileDropdown: Component = () => {
 
-  const [isLoading, setIsLoading] = createSignal(true);
-
-  onMount(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  })
-
   return (
-    <Dropdown sections={sections} isLoading={isLoading()} top={55} />
+    <Dropdown sections={sections} top={55} />
   );
 };

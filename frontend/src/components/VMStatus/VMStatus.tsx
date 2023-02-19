@@ -1,6 +1,9 @@
-import type { Component } from 'solid-js';
+import { Component } from 'solid-js';
+
+// Types
 import type { IVMStatus } from '../../types/IVMStatus';
 
+// Styles
 import styles from './VMStatus.module.css';
 
 type Props = {

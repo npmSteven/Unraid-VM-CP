@@ -1,8 +1,11 @@
-import type { Component } from 'solid-js';
+import { Component } from 'solid-js';
 import { createForm, Form, Field } from '@modular-forms/solid';
 import { BiRegularLogInCircle } from 'solid-icons/bi'
 
+// Styles
 import styles from './Login.module.css';
+
+// Components
 import { Button } from '../../components/Button/Button';
 
 type ILoginForm = {

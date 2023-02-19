@@ -7,6 +7,7 @@ import { BsThreeDotsVertical } from 'solid-icons/bs';
 // Components
 import { UserDropdown } from '../UserDropdown/UserDropdown';
 
+// Styles
 import styles from './UserCard.module.css';
 
 export const UserCard: Component = () => {
