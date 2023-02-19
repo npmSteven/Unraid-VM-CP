@@ -1,13 +1,13 @@
 import type { Component } from 'solid-js';
-import { IVMStatus } from '../../types/IVMStatus';
+import type { IVMStatus } from '../../types/IVMStatus';
 
 import styles from './VMStatus.module.css';
 
-type IProps = {
+type Props = {
   status: IVMStatus;
 }
 
-export const VMStatus: Component<IProps> = (props) => {
+export const VMStatus: Component<Props> = (props) => {
   const { status } = props;
 
   const getStatusClass = () => {
@@ -25,8 +25,6 @@ export const VMStatus: Component<IProps> = (props) => {
 
   return (
     <div class={`${styles.status} ${getStatusClass()}`}>
-      {/* {props.status} */}
-      {/* {getStatusClass()} */}
     </div>
   );
 };
