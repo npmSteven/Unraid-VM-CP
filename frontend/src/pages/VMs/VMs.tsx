@@ -5,6 +5,7 @@ import styles from './VMs.module.css';
 export const VMs: Component = () => {
   return (
     <div>
+      VMs
     </div>
   );
 };

@@ -6,6 +6,7 @@ import styles from './VMPermissions.module.css';
 export const VMPermissions: Component = () => {
   return (
     <div>
+      VMPermissions
     </div>
   );
 };

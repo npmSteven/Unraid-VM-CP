@@ -5,6 +5,7 @@ import styles from './CreateUser.module.css';
 export const CreateUser: Component = () => {
   return (
     <div>
+      Create User
     </div>
   );
 };
