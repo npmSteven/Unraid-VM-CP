@@ -66,6 +66,7 @@ export const VMs: Component = () => {
           >
             {vms().map((vm) => (
               <VMCard
+                id={vm.id}
                 status={vm.state}
                 name={vm.name}
                 os={vm.os}

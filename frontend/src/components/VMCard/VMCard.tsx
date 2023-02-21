@@ -17,6 +17,7 @@ import { VMAdminDropdown } from '../VMAdminDropdown/VMAdminDropdown';
 import { IPermissions } from '../../types/IPermissions';
 
 type Props = {
+  id: string
   name: string
   status: IVMStatus
   os: string
@@ -77,7 +78,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            {!props.isAdmin && <VMDropdown status={props.status} permissions={props.permissions} />}
+            {!props.isAdmin && <VMDropdown id={props.id} name={props.name} status={props.status} permissions={props.permissions} />}
             {props.isAdmin && <VMAdminDropdown />}
           </Dismiss>
         </div>

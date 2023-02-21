@@ -11,3 +11,29 @@ export const getVMsApi = async () => {
     throw error;
   }
 }
+
+export const startVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/start`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - startVMApi()', error);
+    throw error;
+  }
+}
+
+export const stopVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/stop`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - stopVMApi()', error);
+    throw error;
+  }
+}

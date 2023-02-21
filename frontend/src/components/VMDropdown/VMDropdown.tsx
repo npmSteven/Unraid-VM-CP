@@ -1,5 +1,5 @@
 // Types
-import type { Component } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import type { IDropdownSection } from '../../types/IDropdownSection';
 import type { IVMStatus } from '../../types/IVMStatus';
 
@@ -16,15 +16,60 @@ import { FiTrash2 } from 'solid-icons/fi'
 // Components
 import { Dropdown } from '../Dropdown/Dropdown';
 import { IPermissions } from '../../types/IPermissions';
+import { startVMApi, stopVMApi } from '../../services/vms';
+import toast from 'solid-toast';
+import { useVMs } from '../../contexts/vms';
 
 type Props = {
+  id: string
+  name: string
   status: IVMStatus,
-  permissions: IPermissions;
+  permissions: IPermissions | undefined;
 }
 
 export const VMDropdown: Component<Props> = (props: Props) => {
+  const { permissions, id, name } = props;
 
-  const { permissions } = props;
+  const [isLoading, setIsLoading] = createSignal(false);
+
+  const { getVMs } = useVMs();
+
+  const runActionAndGetVMs = async (action: Promise<any>) => {
+    try {
+      setIsLoading(true);
+      await action;
+      await getVMs();
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - runActionAndGetVMs():', error);
+      throw error;
+    }
+  }
+
+  const startVM = async () => {
+    try {
+      toast.promise(runActionAndGetVMs(startVMApi(id)), {
+        loading: `Starting ${name}`,
+        success: `Started ${name}`,
+        error: `There was an issue trying to start ${name}`
+      })
+    } catch (error) {
+      console.error('ERROR - startVM():', error);
+    }
+  }
+
+  const stopVM = async () => {
+    try {
+      toast.promise(runActionAndGetVMs(stopVMApi(id)), {
+        loading: `Stopping ${name}`,
+        success: `Stopped ${name}`,
+        error: `There was an issue trying to stop ${name}`
+      })
+    } catch (error) {
+      console.error('ERROR - startVM():', error);
+    }
+  }
 
   const buildStartedSections = () => {
     const startedSections: IDropdownSection[] = [
@@ -36,15 +81,15 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
     const { actions } = startedSections[0];
     
-    if (permissions.canStop) {
+    if (permissions?.canStop) {
       actions.push({
         text: 'Stop',
         Icon: FaSolidPowerOff,
-        onClick: () => {},
+        onClick: stopVM,
       })
     }
 
-    if (permissions.canPause) {
+    if (permissions?.canPause) {
       actions.push({
         text: 'Pause',
         Icon: FaRegularCirclePause,
@@ -52,21 +97,21 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions.canRestart) {
+    if (permissions?.canRestart) {
       actions.push({
         text: 'Restart',
         Icon: FiRefreshCcw,
         onClick: () => {},
       })
     }
-    if (permissions.canHibernate) {
+    if (permissions?.canHibernate) {
       actions.push({
         text: 'Hibernate',
         Icon: ImSleepy,
         onClick: () => {},
       })
     }
-    if (permissions.canForceStop) {
+    if (permissions?.canForceStop) {
       actions.push({
         text: 'Force Stop',
         Icon: AiOutlineStop,
@@ -87,7 +132,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
     const { actions } = pausedSections[0];
 
-    if (permissions.canResume) {
+    if (permissions?.canResume) {
       actions.push({
         text: 'Resume',
         Icon: FaRegularCirclePlay,
@@ -95,7 +140,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions.canForceStop) {
+    if (permissions?.canForceStop) {
       actions.push({
         text: 'Force Stop',
         Icon: AiOutlineStop,
@@ -116,15 +161,15 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
     const { actions } = stoppedSections[0];
 
-    if (permissions.canStart) {
+    if (permissions?.canStart) {
       actions.push({
         text: 'Start',
         Icon: FaRegularCirclePlay,
-        onClick: () => {},
+        onClick: startVM,
       })
     }
 
-    if (permissions.canRemoveVM) {
+    if (permissions?.canRemoveVM) {
       actions.push({
         text: 'Remove VM',
         Icon: AiOutlineMinusCircle,
@@ -132,7 +177,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions.canRemoveVMAndDisks) {
+    if (permissions?.canRemoveVMAndDisks) {
       actions.push({
         text: 'Remove VM & Disks',
         Icon: FiTrash2,
@@ -158,6 +203,6 @@ export const VMDropdown: Component<Props> = (props: Props) => {
   }
 
   return (
-    <Dropdown sections={getSectionsByStatus()} top={55} />
+    <Dropdown sections={getSectionsByStatus()} isLoading={isLoading()} top={55} />
   );
 };
