@@ -78,6 +78,15 @@ export const App: Component = () => {
           )
         }}
       />
+      <Route
+        path='*'
+        component={() => {
+          return (
+            <Redirect to='/login' when={true}>
+            </Redirect>
+          )
+        }}
+      />
     </Routes>
   );
 };
