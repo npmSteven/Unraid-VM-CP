@@ -18,8 +18,10 @@
     "@modular-forms/solid": "^0.10.0",
     "@solidjs/router": "^0.7.0",
     "@tanstack/solid-query": "^4.24.6",
+    "jwt-decode": "^3.1.2",
     "solid-dismiss": "^1.6.5",
     "solid-icons": "^1.0.4",
-    "solid-js": "^1.6.10"
+    "solid-js": "^1.6.10",
+    "solid-toast": "^0.4.0"
   }
 }

@@ -1,6 +1,7 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
 import { Router } from "@solidjs/router";
+import { Toaster } from 'solid-toast';
 
 import './index.css';
 import { App } from './App';
@@ -15,6 +16,7 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(() => (
   <Router>
+    <Toaster />
     <App />
   </Router>
 ), root!);

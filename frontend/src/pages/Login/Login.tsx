@@ -7,6 +7,8 @@ import styles from './Login.module.css';
 
 // Components
 import { Button } from '../../components/Button/Button';
+import { authLogin } from '../../services/auth';
+import { getUser } from '../../services/users';
 
 type ILoginForm = {
   username: string;
@@ -16,13 +18,20 @@ type ILoginForm = {
 const Login: Component = () => {
   const loginForm = createForm<ILoginForm>();
 
+  const onSubmit = async (login: ILoginForm) => {
+    try {
+      await authLogin(login.username, login.password);
+      const userJson = await getUser();      
+    } catch (error) {
+      console.error('ERROR - onSubmit():', error);
+      
+    }
+  }
+
   return (
     <div class={styles.login}>
-
-
-
       {/* Login Form */}
-      <Form class={styles.form} of={loginForm} onSubmit={() => console.log(loginForm)}>
+      <Form class={styles.form} of={loginForm} onSubmit={onSubmit}>
         <Field of={loginForm} name="username">
           {(field) => (
             <div class={styles.inputContainer}>
@@ -40,6 +49,7 @@ const Login: Component = () => {
           )}
         </Field>
         <Button
+          onClick={() => {}}
           type='submit'
           text='Login'
           Icon={BiRegularLogInCircle}
