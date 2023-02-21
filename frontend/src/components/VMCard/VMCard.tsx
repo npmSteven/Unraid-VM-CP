@@ -14,6 +14,7 @@ import styles from './VMCard.module.css';
 import { VMStatus } from '../VMStatus/VMStatus';
 import { VMDropdown } from '../VMDropdown/VMDropdown';
 import { VMAdminDropdown } from '../VMAdminDropdown/VMAdminDropdown';
+import { IPermissions } from '../../types/IPermissions';
 
 type Props = {
   name: string
@@ -26,6 +27,7 @@ type Props = {
   isAutoStart: boolean
   ip?: string
   isAdmin?: boolean
+  permissions?: IPermissions
 }
 
 export const VMCard: Component<Props> = (props: Props): JSX.Element => {
@@ -75,7 +77,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            {!props.isAdmin && <VMDropdown status={props.status} />}
+            {!props.isAdmin && <VMDropdown status={props.status} permissions={props.permissions} />}
             {props.isAdmin && <VMAdminDropdown />}
           </Dismiss>
         </div>

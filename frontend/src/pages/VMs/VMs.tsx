@@ -3,7 +3,6 @@ import { BiRegularArrowBack } from 'solid-icons/bi';
 import { Component, createSignal, Match, onMount, Switch } from 'solid-js';
 import { useVMs } from '../../contexts/vms';
 
-
 // Components
 import { Button } from '../../components/Button/Button';
 import { Navbar } from '../../components/Navbar/Navbar';
@@ -11,7 +10,6 @@ import { VMCard } from '../../components/VMCard/VMCard';
 
 // Styles
 import styles from './VMs.module.css';
-import toast from 'solid-toast';
 import { Spinner } from '../../components/Spinner/Spinner';
 
 export const VMs: Component = () => {
@@ -77,6 +75,7 @@ export const VMs: Component = () => {
                 graphics={vm.graphics}
                 isAutoStart={vm.isAutoStart}
                 isAdmin={isAdminVMCard}
+                permissions={vm.permissions}
               />
             ))}
           </div>

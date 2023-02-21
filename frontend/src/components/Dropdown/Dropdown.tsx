@@ -37,6 +37,11 @@ export const Dropdown: Component<Props> = (props: Props) => {
             <div class={styles.dropdownSection}>
               <div class={styles.dropdownSectionTitle}>{section.title}</div>
               <div class={styles.dropdownSectionList}>
+                {section.actions.length === 0 && (
+                  <button class={styles.dropdownSectionListItem}>
+                    <span>No Options</span>
+                  </button>
+                )}
                 {section.actions.map((action: IDropdownAction) => {
                   const { Icon } = action;
                   return (

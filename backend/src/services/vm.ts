@@ -112,6 +112,9 @@ export const createUserVMPermissions = async (vmId: string, userId: string): Pro
     const userVMPermissions = await UserVMPermissionsModel.create({
       vmId,
       userId,
+      canStart: true,
+      canStop: true,
+      canRestart: true,
     });
 
     // Clear vms cache
