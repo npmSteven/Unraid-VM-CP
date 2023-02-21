@@ -37,3 +37,16 @@ export const stopVMApi = async (id: string) => {
     throw error;
   }
 }
+
+export const restartVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/restart`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - restartVMApi()', error);
+    throw error;
+  }
+}

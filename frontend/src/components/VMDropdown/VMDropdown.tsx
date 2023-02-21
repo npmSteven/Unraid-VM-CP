@@ -24,10 +24,11 @@ type Props = {
   isLoading: Accessor<boolean>
   startVM: () => Promise<any>
   stopVM: () => Promise<any>
+  restartVM: () => Promise<any>
 }
 
 export const VMDropdown: Component<Props> = (props: Props) => {
-  const { permissions, startVM, stopVM, isLoading } = props;
+  const { permissions, startVM, stopVM, restartVM, isLoading } = props;
   const { isUnraidUser } = useUser();
 
   const buildStartedSections = () => {
@@ -60,7 +61,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Restart',
         Icon: FiRefreshCcw,
-        onClick: () => {},
+        onClick: restartVM,
       })
     }
     if (permissions?.canHibernate || isUnraidUser()) {

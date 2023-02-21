@@ -1,9 +1,7 @@
 import { createSignal } from "solid-js"
 import toast from "solid-toast";
 import { useVMs } from "../contexts/vms";
-import { startVMApi, stopVMApi } from "../services/vms";
-
-
+import { restartVMApi, startVMApi, stopVMApi } from "../services/vms";
 
 export const useVMControls = (id: string, name: string) => {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -13,7 +11,8 @@ export const useVMControls = (id: string, name: string) => {
   const runActionAndGetVMs = async (action: Promise<any>) => {
     try {
       setIsLoading(true);
-      await action;
+      const json = await action;
+      if (!json.success) throw new Error('Failed to run action');
       await getVMs();
       setIsLoading(false);
     } catch (error) {
@@ -43,7 +42,19 @@ export const useVMControls = (id: string, name: string) => {
         error: `There was an issue trying to stop ${name}`
       })
     } catch (error) {
-      console.error('ERROR - startVM():', error);
+      console.error('ERROR - stopVM():', error);
+    }
+  }
+
+  const restartVM = async () => {
+    try {
+      toast.promise(runActionAndGetVMs(restartVMApi(id)), {
+        loading: `Restarting ${name}`,
+        success: `Restarted ${name}`,
+        error: `There was an issue trying to restart ${name}`
+      })
+    } catch (error) {
+      console.error('ERROR - stopVM():', error);
     }
   }
 
@@ -51,5 +62,6 @@ export const useVMControls = (id: string, name: string) => {
     isLoading,
     startVM,
     stopVM,
+    restartVM,
   }
 }

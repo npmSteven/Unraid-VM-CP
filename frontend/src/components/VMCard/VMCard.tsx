@@ -36,7 +36,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
   const [open, setOpen] = createSignal(false);
   let btnEl;
 
-  const { startVM, stopVM, isLoading } = useVMControls(props.id, props.name);
+  const { startVM, stopVM, restartVM, isLoading } = useVMControls(props.id, props.name);
 
   const renderInformationRow = (title: string, description: string) => (
     <div class={styles.informationRow}>
@@ -81,7 +81,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            {!props.isAdmin && <VMDropdown isLoading={isLoading} startVM={startVM} stopVM={stopVM} status={props.status} permissions={props.permissions} />}
+            {!props.isAdmin && <VMDropdown restartVM={restartVM} isLoading={isLoading} startVM={startVM} stopVM={stopVM} status={props.status} permissions={props.permissions} />}
             {props.isAdmin && <VMAdminDropdown />}
           </Dismiss>
         </div>

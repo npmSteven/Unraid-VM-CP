@@ -7,9 +7,9 @@ import { validateReq } from '../../../middleware/validateReq.js';
 // Services
 import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
 import { respondSuccess } from '../../../services/responses.js';
-import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid } from '../../../services/unraid.js';
+import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid, restartVMUnraid } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
-import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser } from '../../../services/vm.js';
+import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser, getUserVMPermissionByUserIdAndVMId } from '../../../services/vm.js';
 
 // Types
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
@@ -279,15 +279,17 @@ router.post('/:unraidVMId/start',
       const { unraidVMId } = req.params;
 
       // Check if unraidVMId exists
-      const vm = await getVMByIdUnraid(unraidVMId);
-      if (!vm) throw new NotFoundError('Provided vm id does not exist');
-      
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
       if (!req.user.isUnraidUser) {
         // Check if the vm is already linked to the user
         const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
         if (!isVMLinkedToUser) {
           throw new ConflictRequestError('VM not linked');
         }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canStart) throw new ForbiddenError('You do not have the permissions'); 
       }
 
       const data = await startVMUnraid(unraidVMId);
@@ -310,22 +312,57 @@ router.post('/:unraidVMId/stop',
       const { unraidVMId } = req.params;
 
       // Check if unraidVMId exists
-      const vm = await getVMByIdUnraid(unraidVMId);
-      if (!vm) throw new NotFoundError('Provided vm id does not exist');
-      
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
       if (!req.user.isUnraidUser) {
         // Check if the vm is already linked to the user
         const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
         if (!isVMLinkedToUser) {
           throw new ConflictRequestError('VM not linked');
         }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canStop) throw new ForbiddenError('You do not have the permissions');  
       }
 
       const data = await stopVMUnraid(unraidVMId);
 
       return res.json(respondSuccess(data));
     } catch (error) {
-      console.error('ERROR - /:unraidVMId/start', error);
+      console.error('ERROR - /:unraidVMId/stop', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/restart',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canRestart) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await restartVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/restart', error);
       return errorHandler(res, error);
     }
   }
