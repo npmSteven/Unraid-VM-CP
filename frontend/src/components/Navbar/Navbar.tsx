@@ -10,8 +10,10 @@ import styles from './Navbar.module.css';
 // Components
 import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
 import { A } from '@solidjs/router';
+import { useUser } from '../../contexts/user';
 
 export const Navbar: Component = () => {
+  const { isUnraidUser } = useUser()
   const [open, setOpen] = createSignal(false);
   let btnEl;
 
@@ -25,7 +27,7 @@ export const Navbar: Component = () => {
       <div class={styles.content}>
         {/* Nav links */}
         <ul class={styles.links}>
-          <A class={styles.link} href="/users">Users</A>
+          {isUnraidUser() && <A class={styles.link} href="/users">Users</A>}
           <A class={styles.link} href="/vms">VMs</A>
         </ul>
         {/* Profile */}

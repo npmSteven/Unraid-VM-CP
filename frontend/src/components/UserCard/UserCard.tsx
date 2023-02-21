@@ -10,7 +10,12 @@ import { UserDropdown } from '../UserDropdown/UserDropdown';
 // Styles
 import styles from './UserCard.module.css';
 
-export const UserCard: Component = () => {
+type Props = {
+  id: string
+  username: string
+}
+
+export const UserCard: Component<Props> = (props: Props) => {
   const [open, setOpen] = createSignal(false);
   let btnEl;
 
@@ -25,8 +30,8 @@ export const UserCard: Component = () => {
         class={styles.userCard}
         ref={btnEl}
       >
-        <img class={styles.userImage} src="https://ui-avatars.com/api/?name=Steven&size=40" alt="Profile image" />
-        <span class={styles.username}>Steven</span>
+        <img class={styles.userImage} src={`https://ui-avatars.com/api/?name=${props.username}n&size=40`} alt="Profile image" />
+        <span class={styles.username}>{props.username}</span>
         <BsThreeDotsVertical size={24} />
       </button>
       <Dismiss

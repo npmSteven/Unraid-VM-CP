@@ -1,6 +1,6 @@
 import { request } from "./api";
 
-export const getUser = async () => {
+export const getUserApi = async () => {
   try {
     const json = await request({ 
       path: '/users',

@@ -1,6 +1,8 @@
 import { useNavigate, useParams } from '@solidjs/router';
 import { BiRegularArrowBack } from 'solid-icons/bi';
-import { Component, onMount } from 'solid-js';
+import { Component, createSignal, Match, onMount, Switch } from 'solid-js';
+import { useVMs } from '../../contexts/vms';
+
 
 // Components
 import { Button } from '../../components/Button/Button';
@@ -9,15 +11,28 @@ import { VMCard } from '../../components/VMCard/VMCard';
 
 // Styles
 import styles from './VMs.module.css';
+import toast from 'solid-toast';
+import { Spinner } from '../../components/Spinner/Spinner';
 
 export const VMs: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
+  const { vms, getVMs } = useVMs();
+  const [isLoading, setIsLoading] = createSignal(false);
 
   const isAdminVMCard = !!params.userId;
 
-  onMount(() => {
-    console.log(params.userId);
+
+  onMount(async () => {
+    try {
+      console.log(params.userId);
+      setIsLoading(true);
+      await getVMs();
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - VMs - onMount():', error);
+    }
   })
 
   const goToUsers = () => {
@@ -42,49 +57,36 @@ export const VMs: Component = () => {
           />
         </div>
       )}
-      <div
-        style={{
-          display: 'flex',
-          "flex-wrap": 'wrap',
-          "justify-content": 'center',
-        }}
-      >
-        <VMCard
-          status='started'
-          name='Steven-PC'
-          os='Windows 11'
-          storage='1tb'
-          memory='1024M'
-          cpus='6'
-          graphics='RTX3080Ti'
-          isAutoStart={false}
-          isAdmin={isAdminVMCard}
-        />
-        <VMCard
-          status='paused'
-          name='Steven-PC'
-          os='Windows 11'
-          storage='1tb'
-          memory='1024M'
-          cpus='6'
-          graphics='RTX3080Ti'
-          ip='192.168.1.150'
-          isAutoStart={false}
-          isAdmin={isAdminVMCard}
-        />
-        <VMCard
-          status='stopped'
-          name='Steven-PC'
-          os='Windows 11'
-          storage='1tb'
-          memory='1024M'
-          cpus='6'
-          graphics='RTX3080Ti'
-          ip='192.168.1.150'
-          isAutoStart={false}
-          isAdmin={isAdminVMCard}
-        />
-      </div>
+      <Switch>
+        <Match when={!isLoading()}>
+          <div
+            style={{
+              display: 'flex',
+              "flex-wrap": 'wrap',
+              "justify-content": 'center',
+            }}
+          >
+            {vms().map((vm) => (
+              <VMCard
+                status={vm.state}
+                name={vm.name}
+                os={vm.os}
+                storage={vm.storage}
+                memory={vm.memory}
+                cpus={vm.cpus}
+                graphics={vm.graphics}
+                isAutoStart={vm.isAutoStart}
+                isAdmin={isAdminVMCard}
+              />
+            ))}
+          </div>
+        </Match>
+        <Match when={isLoading()}>
+          <div style={{ display: 'flex', "justify-content": 'center', 'align-items': 'center', "margin-top": '50px' }}>
+            <Spinner size={100} />
+          </div>
+        </Match>
+      </Switch>
     </div>
   );
 };

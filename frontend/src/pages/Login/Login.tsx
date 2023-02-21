@@ -1,5 +1,7 @@
-import { Component } from 'solid-js';
+import { Component, createSignal } from 'solid-js';
 import { createForm, Form, Field } from '@modular-forms/solid';
+
+// Icons
 import { BiRegularLogInCircle } from 'solid-icons/bi'
 
 // Styles
@@ -7,8 +9,8 @@ import styles from './Login.module.css';
 
 // Components
 import { Button } from '../../components/Button/Button';
-import { authLogin } from '../../services/auth';
-import { getUser } from '../../services/users';
+import { useAuth } from '../../contexts/auth';
+import { useUser } from '../../contexts/user';
 
 type ILoginForm = {
   username: string;
@@ -16,15 +18,20 @@ type ILoginForm = {
 };
 
 const Login: Component = () => {
+  const [isLoading, setIsLoading] = createSignal(false);
+  const { login } = useAuth();
+  const { getUser } = useUser();
   const loginForm = createForm<ILoginForm>();
 
-  const onSubmit = async (login: ILoginForm) => {
+  const onSubmit = async (l: ILoginForm) => {
     try {
-      await authLogin(login.username, login.password);
-      const userJson = await getUser();      
+      setIsLoading(true);
+      await login(l.username, l.password)
+      await getUser(); 
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error('ERROR - onSubmit():', error);
-      
     }
   }
 
@@ -52,8 +59,10 @@ const Login: Component = () => {
           onClick={() => {}}
           type='submit'
           text='Login'
+          isLoading={isLoading()}
           Icon={BiRegularLogInCircle}
           class={styles.loginButton}
+          disabled={isLoading()}
         />
       </Form>
 

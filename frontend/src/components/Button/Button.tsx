@@ -17,6 +17,7 @@ type Props = {
   class?: JSX.ButtonHTMLAttributes<HTMLButtonElement>['class']
   isLoading?: boolean
   style?: JSX.ButtonHTMLAttributes<HTMLButtonElement>['style']
+  disabled?: JSX.ButtonHTMLAttributes<HTMLButtonElement>['disabled']
 }
 
 export const Button: Component<Props> = (props) => {
@@ -27,6 +28,7 @@ export const Button: Component<Props> = (props) => {
       style={props.style}
       class={`${styles.button} ${props.class ? props.class : ''}`} 
       type={props.type || 'button'}
+      disabled={props.disabled}
     >
       <Switch>
         <Match when={!props.isLoading}>

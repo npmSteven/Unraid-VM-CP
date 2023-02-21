@@ -5,6 +5,9 @@ import { Toaster } from 'solid-toast';
 
 import './index.css';
 import { App } from './App';
+import { AuthProvider } from './contexts/auth';
+import { UserProvider } from './contexts/user';
+import { VMsProvider } from './contexts/vms';
 
 const root = document.getElementById('root');
 
@@ -16,7 +19,13 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(() => (
   <Router>
-    <Toaster />
-    <App />
+    <AuthProvider>
+      <UserProvider>
+        <VMsProvider>
+          <Toaster />
+          <App />
+        </VMsProvider>
+      </UserProvider>
+    </AuthProvider>
   </Router>
 ), root!);

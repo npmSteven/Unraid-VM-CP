@@ -120,7 +120,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
       }
     }).toArray()
 
-    cache.put('vms', vms, 60000); // Cache the response for 60 seconds
+    cache.put('vms', vms, 500); // Cache the response for .5 seconds
 
     return vms;
   } catch (error) {
