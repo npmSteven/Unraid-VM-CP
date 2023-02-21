@@ -18,6 +18,37 @@ const getCookie = () => {
   return cookieState?.unraid;
 }
 
+const csrfTokenState: any = {};
+
+const setCSRFToken = (csrfToken) => {
+  csrfTokenState.csrfToken = csrfToken;
+}
+
+const getCSRFToken = () => {
+  return csrfTokenState.csrfToken;
+}
+
+const getCSRFTokenUnraid = async () => {
+  try {
+    const cookie = getCookie();
+    if (!cookie) {
+      throw new ForbiddenError('Not authenticated with unraid');
+    }
+    const response = await axios({
+      url: `http://${unraid.ip}/Dashboard`,
+      headers: {
+        Cookie: cookie,
+      }
+    });
+    const $ = cheerio.load(response.data);
+    const csrfToken = $('input[name="csrf_token"]').val();
+    setCSRFToken(csrfToken);
+  } catch (error) {
+    console.error('ERROR');
+    throw error;
+  }
+}
+
 export const login = async () => {
   try {
     const response = await axios({
@@ -39,6 +70,7 @@ export const login = async () => {
     if (!cookies) throw new ForbiddenError('Unable to login to unraid');
     const unraidCookie = cookies.find((cookie) => cookie.startsWith('unraid_'));
     setCookie(unraidCookie)
+    await getCSRFTokenUnraid();
   } catch (error) {
     console.error('ERROR - login():', error);
     throw error;
@@ -63,7 +95,7 @@ const requestVMajax = async (unraidVMId: string, action: string) => {
       data: {
         uuid: unraidVMId,
         action: action,
-        csrf_token: 'F9E1B2C07571C3C3'
+        csrf_token: getCSRFToken()
       }
     })
     if (response?.data?.error) {
@@ -241,7 +273,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
       }
     }).toArray()
 
-    cache.put('vms', vms, 500); // Cache the response for .5 seconds
+    // cache.put('vms', vms, 500); // Cache the response for .5 seconds
 
     return vms;
   } catch (error) {
