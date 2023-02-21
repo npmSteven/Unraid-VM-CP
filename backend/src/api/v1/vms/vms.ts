@@ -7,7 +7,7 @@ import { validateReq } from '../../../middleware/validateReq.js';
 // Services
 import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
 import { respondSuccess } from '../../../services/responses.js';
-import { getVMByIdUnraid, getVMsUnraid } from '../../../services/unraid.js';
+import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
 import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser } from '../../../services/vm.js';
 
@@ -138,7 +138,7 @@ router.get('/:unraidVMId/users/:userId',
       }
 
       const unraidVM = await getVMByUserIdAndUnraidVMId(userId, unraidVMId);
-      
+
       return res.json(respondSuccess(unraidVM));
     } catch (error) {
       console.error('ERROR - /:vmId/users/:userId', error);
@@ -261,12 +261,74 @@ router.put('/:unraidVMId/users/:userId/permissions',
       }
 
 
-      return res.json(respondSuccess({  }));
+      return res.json(respondSuccess({}));
     } catch (error) {
       console.error('ERROR - /:vmId/users/:userId', error);
       return errorHandler(res, error);
     }
   }
 );
+
+router.post('/:unraidVMId/start',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vm = await getVMByIdUnraid(unraidVMId);
+      if (!vm) throw new NotFoundError('Provided vm id does not exist');
+      
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+      }
+
+      const data = await startVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/start', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/stop',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vm = await getVMByIdUnraid(unraidVMId);
+      if (!vm) throw new NotFoundError('Provided vm id does not exist');
+      
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+      }
+
+      const data = await stopVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/start', error);
+      return errorHandler(res, error);
+    }
+  }
+)
 
 export default router;

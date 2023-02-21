@@ -13,7 +13,7 @@ import { A } from '@solidjs/router';
 import { useUser } from '../../contexts/user';
 
 export const Navbar: Component = () => {
-  const { isUnraidUser } = useUser()
+  const { isUnraidUser, user } = useUser()
   const [open, setOpen] = createSignal(false);
   let btnEl;
 
@@ -39,9 +39,9 @@ export const Navbar: Component = () => {
         >
           <button class={styles.profile} ref={btnEl}>
             {/* Profile Icon */}
-            <img class={styles.profileImage} src="https://ui-avatars.com/api/?name=Steven&size=25" alt="Profile image" />
+            <img class={styles.profileImage} src={`https://ui-avatars.com/api/?name=${user()?.username || user()?.id}&size=25`} alt="Profile image" />
             {/* Username */}
-            <span class={styles.username}>Steven</span>
+            <span class={styles.username}>{user()?.username || user()?.id}</span>
             {/* Dropdown */}
             <FaSolidChevronDown size={18} />
           </button>
@@ -50,7 +50,6 @@ export const Navbar: Component = () => {
             open={open}
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
-          // closeWhenMenuButtonIsClicked={false}
           >
             <ProfileDropdown />
           </Dismiss>
