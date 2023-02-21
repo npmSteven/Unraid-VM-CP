@@ -15,6 +15,7 @@ import { VMStatus } from '../VMStatus/VMStatus';
 import { VMDropdown } from '../VMDropdown/VMDropdown';
 import { VMAdminDropdown } from '../VMAdminDropdown/VMAdminDropdown';
 import { IPermissions } from '../../types/IPermissions';
+import { useVMControls } from '../../hooks/vm';
 
 type Props = {
   id: string
@@ -34,6 +35,8 @@ type Props = {
 export const VMCard: Component<Props> = (props: Props): JSX.Element => {
   const [open, setOpen] = createSignal(false);
   let btnEl;
+
+  const { startVM, stopVM, isLoading } = useVMControls(props.id, props.name);
 
   const renderInformationRow = (title: string, description: string) => (
     <div class={styles.informationRow}>
@@ -78,7 +81,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            {!props.isAdmin && <VMDropdown id={props.id} name={props.name} status={props.status} permissions={props.permissions} />}
+            {!props.isAdmin && <VMDropdown isLoading={isLoading} startVM={startVM} stopVM={stopVM} status={props.status} permissions={props.permissions} />}
             {props.isAdmin && <VMAdminDropdown />}
           </Dismiss>
         </div>
