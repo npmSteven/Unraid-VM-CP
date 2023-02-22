@@ -88,6 +88,19 @@ export const linkVMToUser = async (unraidVMId: string, userId: string): Promise<
   }
 }
 
+export const getVMByUserIdAndUnraidVMIdNoPermissions = async (unraidVMId: string, userId: string): Promise<Model<IVM, IVM>> => {
+  try {
+    const vm = await VMModel.findOne({ where: { unraidVMId, userId } });
+    if (!vm) {
+      throw new NotFoundError('Cannot find linked vm, unable to delete');
+    }
+    return vm;
+  } catch (error) {
+    console.error('ERROR - getVMByIdAndUnraidVMId():', error);
+    throw error;
+  }
+}
+
 export const unlinkVMFromUser = async (unraidVMId: string, userId: string): Promise<Model<IVM, IVM>> => {
   try {
     const vm = await VMModel.findOne({ where: { unraidVMId, userId } });

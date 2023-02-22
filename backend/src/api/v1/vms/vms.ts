@@ -9,7 +9,7 @@ import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } fro
 import { respondSuccess } from '../../../services/responses.js';
 import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid, restartVMUnraid } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
-import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser, getUserVMPermissionByUserIdAndVMId } from '../../../services/vm.js';
+import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser, getUserVMPermissionByUserIdAndVMId, getUserVMPermissions, getVMByIdAndUnraidVMId, getVMByUserIdAndUnraidVMIdNoPermissions } from '../../../services/vm.js';
 
 // Types
 import { IRequestAuth } from '../../../types/IRequestAuth.js';
@@ -227,6 +227,18 @@ router.delete('/:unraidVMId/users/:userId',
   }
 );
 
+type IUpdatePermissionsBody = {
+  canStart: boolean
+  canStop: boolean
+  canRemoveVM: boolean
+  canRemoveVMAndDisks: boolean
+  canForceStop: boolean
+  canRestart: boolean
+  canPause: boolean
+  canHibernate: boolean
+  canResume: boolean
+}
+
 /**
  * Update permissions for a VM
  */
@@ -235,10 +247,10 @@ router.put('/:unraidVMId/users/:userId/permissions',
     authCheck,
     checkUUID('unraidVMId'),
     checkUUID('userId'),
-    checkVMPermissions,
+    checkVMPermissions(),
     validateReq,
   ],
-  async (req: IRequestAuth, res: Response) => {
+  async (req: IRequestAuth<IUpdatePermissionsBody>, res: Response) => {
     try {
       if (!req?.user?.isUnraidUser) {
         throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
@@ -251,17 +263,43 @@ router.put('/:unraidVMId/users/:userId/permissions',
       if (!user) throw new NotFoundError('Provided user id does not exist');
 
       // Check if unraidVMId exists
-      const vm = await getVMByIdUnraid(unraidVMId);
-      if (!vm) throw new NotFoundError('Provided vm id does not exist');
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
 
       // Check if the vm is already linked to the user
       const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, userId);
       if (!isVMLinkedToUser) {
-        throw new ConflictRequestError('Unable to update the permissions of a VM that is not linked to a user');
+        throw new NotFoundError('Unable to update the permissions of a VM that is not linked to a user');
       }
 
+      const {
+        canStart,
+        canStop,
+        canRemoveVM,
+        canRemoveVMAndDisks,
+        canForceStop,
+        canRestart,
+        canPause,
+        canHibernate,
+        canResume,
+      } = req.body;
+      
+      const vm = await getVMByUserIdAndUnraidVMIdNoPermissions(unraidVMId, userId);
+      const vmPermissions = await getUserVMPermissionByUserIdAndVMId(userId, vm.dataValues.id);
 
-      return res.json(respondSuccess({}));
+      const updatedVMPermissions = await vmPermissions.update({
+        canStart,
+        canStop,
+        canRemoveVM,
+        canRemoveVMAndDisks,
+        canForceStop,
+        canRestart,
+        canPause,
+        canHibernate,
+        canResume,
+      });
+
+      return res.json(respondSuccess(updatedVMPermissions.dataValues));
     } catch (error) {
       console.error('ERROR - /:vmId/users/:userId', error);
       return errorHandler(res, error);
