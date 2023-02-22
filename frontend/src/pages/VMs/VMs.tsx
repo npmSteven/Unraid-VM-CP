@@ -12,6 +12,7 @@ import { VMCard } from '../../components/VMCard/VMCard';
 import styles from './VMs.module.css';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { AiOutlineLink } from 'solid-icons/ai';
+import { PageLoading } from '../../components/PageLoading/PageLoading';
 
 export const VMs: Component = () => {
   const params = useParams();
@@ -60,6 +61,10 @@ export const VMs: Component = () => {
     navigate('/users');
   }
 
+  const goToLinkAVM = () => {
+    navigate(`/users/${params.userId}/vms/link`)
+  }
+
   return (
     <div>
       <Navbar />
@@ -81,7 +86,7 @@ export const VMs: Component = () => {
           <Button
             text='Link a VM'
             Icon={AiOutlineLink}
-            onClick={goToUsers}
+            onClick={goToLinkAVM}
             style={{
               margin: '10px',
             }}
@@ -134,9 +139,7 @@ export const VMs: Component = () => {
           </div>
         </Match>
         <Match when={isLoading()}>
-          <div style={{ display: 'flex', "justify-content": 'center', 'align-items': 'center', "margin-top": '50px' }}>
-            <Spinner size={100} />
-          </div>
+          <PageLoading />
         </Match>
       </Switch>
     </div>

@@ -24,6 +24,18 @@ export const getVMsUserApi = async (id: string) => {
   }
 }
 
+export const getLinkableVMs = async (userId: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/users/${userId}/linkable`,
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - getLinkableVMs():', error);
+    throw error;
+  }
+}
+
 export const linkVMApi = async (unraidVMId: string, userId: string) => {
   try {
     const json = await request({ 

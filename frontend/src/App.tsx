@@ -8,6 +8,7 @@ import Login from './pages/Login/Login';
 import CreateUser from './pages/CreateUser/CreateUser';
 import { useAuth } from './contexts/auth';
 import { useUser } from './contexts/user';
+import LinkVM from './pages/LinkVM/LinkVM';
 
 function Redirect(props: { children: any; when: boolean; to: string }) {
   const navigate = useNavigate();
@@ -64,6 +65,16 @@ export const App: Component = () => {
           return (
             <Redirect to='/login' when={!isAuthenticated()}>
               <VMs />
+            </Redirect>
+          )
+        }}
+      />
+      <Route
+        path='/users/:userId/vms/link'
+        component={() => {
+          return (
+            <Redirect to='/login' when={!isAuthenticated()}>
+              <LinkVM />
             </Redirect>
           )
         }}

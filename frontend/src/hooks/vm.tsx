@@ -75,29 +75,12 @@ export const useVMActions = (id: string, name: string) => {
     }
   }
 
-  const linkVM = async (unraidVMId: string, userId: string) => {
-    try {
-      setIsLoading(true);
-      await toast.promise(unlinkVMApi(unraidVMId, userId), {
-        loading: `Linking ${name}`,
-        success: `Linked ${name}`,
-        error: `There was an issue trying to link ${name}`
-      })
-      await getVMsUser(userId)
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.error('ERROR - linkVM():', error);
-      throw error;
-    }
-  }
 
   return {
     isLoading,
     startVM,
     stopVM,
     restartVM,
-    unlinkVM,
-    linkVM,
+    unlinkVM
   }
 }
