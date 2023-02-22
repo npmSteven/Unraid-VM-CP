@@ -1,4 +1,5 @@
 import { Accessor, Component } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
 
 // Components
 import { Dropdown } from '../Dropdown/Dropdown';
@@ -22,6 +23,12 @@ type Props = {
 
 export const VMAdminDropdown: Component<Props> = (props: Props) => {
 
+  const navigate = useNavigate();
+
+  const goToVMPermissions = () => {
+    navigate(`/users/${props.userId}/vms/${props.id}/permissions`)
+  }
+
   const sections: IDropdownSection[] = [
     {
       title: 'VM',
@@ -34,7 +41,7 @@ export const VMAdminDropdown: Component<Props> = (props: Props) => {
         {
           text: 'Permissions',
           Icon: SiOpenaccess,
-          onClick: () => {},
+          onClick: goToVMPermissions,
         }
       ]
     }

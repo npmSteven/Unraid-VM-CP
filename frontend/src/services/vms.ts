@@ -12,6 +12,18 @@ export const getVMsApi = async () => {
   }
 }
 
+export const getVMApi = async (unraidVMId: string, userId: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${unraidVMId}/users/${userId}`,
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - getVMApi()', error);
+    throw error;
+  }
+}
+
 export const getVMsUserApi = async (id: string) => {
   try {
     const json = await request({ 
