@@ -11,21 +11,44 @@ import { VMCard } from '../../components/VMCard/VMCard';
 // Styles
 import styles from './VMs.module.css';
 import { Spinner } from '../../components/Spinner/Spinner';
+import { AiOutlineLink } from 'solid-icons/ai';
 
 export const VMs: Component = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { vms, getVMs } = useVMs();
+  const { vms, getVMs, getVMsUser, vmsUser } = useVMs();
   const [isLoading, setIsLoading] = createSignal(false);
 
   const isAdminVMCard = !!params.userId;
 
+  const initVMs = async () => {
+    try {
+      await getVMs();
+    } catch (error) {
+      console.error('ERROR - initVMs():', error);
+      throw error;
+    }
+  }
+
+  const initAdminVMs = async () => {
+    try {
+      await getVMsUser(params.userId);
+    } catch (error) {
+      console.error('ERROR - initAdminVMs():', error);
+      throw error;
+    }
+  }
 
   onMount(async () => {
     try {
-      console.log(params.userId);
       setIsLoading(true);
-      await getVMs();
+
+      if (isAdminVMCard) {
+        await initAdminVMs();
+      } else {
+        await initVMs();
+      }
+
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -43,11 +66,21 @@ export const VMs: Component = () => {
       {isAdminVMCard && (
         <div
           style={{
+            display: 'flex',
+            "justify-content": 'space-between'
           }}
         >
           <Button
             text='Back'
             Icon={BiRegularArrowBack}
+            onClick={goToUsers}
+            style={{
+              margin: '10px',
+            }}
+          />
+          <Button
+            text='Link a VM'
+            Icon={AiOutlineLink}
             onClick={goToUsers}
             style={{
               margin: '10px',
@@ -64,22 +97,40 @@ export const VMs: Component = () => {
               "justify-content": 'center',
             }}
           >
-            {vms().map((vm) => (
-              <VMCard
-                id={vm.id}
-                status={vm.state}
-                name={vm.name}
-                os={vm.os}
-                storage={vm.storage}
-                memory={vm.memory}
-                cpus={vm.cpus}
-                graphics={vm.graphics}
-                isAutoStart={vm.isAutoStart}
-                isAdmin={isAdminVMCard}
-                ip={vm.ips.find(({ type }) => type === 'ipv4')?.address}
-                permissions={vm.permissions}
-              />
-            ))}
+            {!isAdminVMCard &&
+              vms().map((vm) => (
+                <VMCard
+                  id={vm.id}
+                  status={vm.state}
+                  name={vm.name}
+                  os={vm.os}
+                  storage={vm.storage}
+                  memory={vm.memory}
+                  cpus={vm.cpus}
+                  graphics={vm.graphics}
+                  isAutoStart={vm.isAutoStart}
+                  isAdmin={isAdminVMCard}
+                  ip={vm.ips.find(({ type }) => type === 'ipv4')?.address}
+                  permissions={vm.permissions}
+                />
+              ))}
+            {isAdminVMCard &&
+              vmsUser().map((vm) => (
+                <VMCard
+                  userId={params.userId}
+                  id={vm.id}
+                  status={vm.state}
+                  name={vm.name}
+                  os={vm.os}
+                  storage={vm.storage}
+                  memory={vm.memory}
+                  cpus={vm.cpus}
+                  graphics={vm.graphics}
+                  isAutoStart={vm.isAutoStart}
+                  isAdmin={isAdminVMCard}
+                  ip={vm.ips.find(({ type }) => type === 'ipv4')?.address}
+                />
+              ))}
           </div>
         </Match>
         <Match when={isLoading()}>

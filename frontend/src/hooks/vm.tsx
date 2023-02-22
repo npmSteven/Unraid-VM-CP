@@ -1,60 +1,94 @@
 import { createSignal } from "solid-js"
 import toast from "solid-toast";
 import { useVMs } from "../contexts/vms";
-import { restartVMApi, startVMApi, stopVMApi } from "../services/vms";
+import { restartVMApi, startVMApi, stopVMApi, unlinkVMApi } from "../services/vms";
 
-export const useVMControls = (id: string, name: string) => {
+export const useVMActions = (id: string, name: string) => {
   const [isLoading, setIsLoading] = createSignal(false);
 
-  const {getVMs} = useVMs();
-
-  const runActionAndGetVMs = async (action: Promise<any>) => {
-    try {
-      setIsLoading(true);
-      const json = await action;
-      if (!json.success) throw new Error('Failed to run action');
-      await getVMs();
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.error('ERROR - runActionAndGetVMs():', error);
-      throw error;
-    }
-  }
+  const { getVMs, getVMsUser } = useVMs();
 
   const startVM = async () => {
     try {
-      toast.promise(runActionAndGetVMs(startVMApi(id)), {
+      setIsLoading(true);
+      await toast.promise(startVMApi(id), {
         loading: `Starting ${name}`,
         success: `Started ${name}`,
         error: `There was an issue trying to start ${name}`
       })
+      await getVMs();
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error('ERROR - startVM():', error);
     }
   }
 
   const stopVM = async () => {
     try {
-      toast.promise(runActionAndGetVMs(stopVMApi(id)), {
+      setIsLoading(true);
+      await toast.promise(stopVMApi(id), {
         loading: `Stopping ${name}`,
         success: `Stopped ${name}`,
         error: `There was an issue trying to stop ${name}`
       })
-    } catch (error) {
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
       console.error('ERROR - stopVM():', error);
     }
   }
 
   const restartVM = async () => {
     try {
-      toast.promise(runActionAndGetVMs(restartVMApi(id)), {
+      setIsLoading(true);
+      await toast.promise(restartVMApi(id), {
         loading: `Restarting ${name}`,
         success: `Restarted ${name}`,
         error: `There was an issue trying to restart ${name}`
       })
-    } catch (error) {
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
       console.error('ERROR - stopVM():', error);
+    }
+  }
+
+  const unlinkVM = async (unraidVMId: string, userId: string) => {
+    try {
+      setIsLoading(true);
+      await toast.promise(unlinkVMApi(unraidVMId, userId), {
+        loading: `Unlinking ${name}`,
+        success: `Unlinked ${name}`,
+        error: `There was an issue trying to unlink ${name}`
+      })
+      await getVMsUser(userId)
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - unlinkVM():', error);
+      throw error;
+    }
+  }
+
+  const linkVM = async (unraidVMId: string, userId: string) => {
+    try {
+      setIsLoading(true);
+      await toast.promise(unlinkVMApi(unraidVMId, userId), {
+        loading: `Linking ${name}`,
+        success: `Linked ${name}`,
+        error: `There was an issue trying to link ${name}`
+      })
+      await getVMsUser(userId)
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - linkVM():', error);
+      throw error;
     }
   }
 
@@ -63,5 +97,7 @@ export const useVMControls = (id: string, name: string) => {
     startVM,
     stopVM,
     restartVM,
+    unlinkVM,
+    linkVM,
   }
 }

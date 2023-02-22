@@ -15,12 +15,16 @@ import { Dropdown } from '../Dropdown/Dropdown';
 // Styles
 import styles from './UserDropdown.module.css';
 
-export const UserDropdown: Component = () => {
+type Props = {
+  id: string
+}
+
+export const UserDropdown: Component<Props> = (props: Props) => {
 
   const navigate = useNavigate();
 
   const goToUserVMs = () => {
-    navigate('/users/vm-id/vms')
+    navigate(`/users/${props.id}/vms`)
   }
 
   const sections: IDropdownSection[] = [

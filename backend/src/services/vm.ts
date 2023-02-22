@@ -1,5 +1,4 @@
 import { Model } from "sequelize";
-import cache from 'memory-cache';
 
 import { UserVMPermissionsModel } from "../models/UserVMPermissionsModel.js";
 import { VMModel } from "../models/VMModel.js";
@@ -12,15 +11,18 @@ export const getVMsByUserId = async (id: string) => {
   try {
     // Get VMs for the user
     const userVMs = await VMModel.findAll({ where: { userId: id } });
+
     const vmIds = userVMs.map((userVM: Model<IVM>) => userVM.dataValues.unraidVMId);
     const unraidVMs = await getVMsByIdsUnraid(vmIds);
 
     // Get the permissions for each VM
     const userVMPermissions = await getUserVMPermissions(id);
 
-    const unraidVMsWithPermissions = unraidVMs.map(unraidVM => {
-      const id = userVMs.find(userVM => userVM.dataValues.unraidVMId === unraidVM.id).dataValues.id;
-      const permissions = userVMPermissions.find((userVMPermission) => userVMPermission.dataValues.vmId == id);
+    const unraidVMsWithPermissions = unraidVMs.filter(unraidVM => {
+      const id = userVMs.find(userVM => userVM?.dataValues?.unraidVMId === unraidVM.id)?.dataValues?.id;
+      if (!id) return false;
+      const permissions = userVMPermissions.find((userVMPermission) => userVMPermission?.dataValues?.vmId == id);
+      if (!permissions) return false;
       unraidVM.permissions = permissions.dataValues;
       return unraidVM;
     });
@@ -79,9 +81,6 @@ export const linkVMToUser = async (unraidVMId: string, userId: string): Promise<
       userId,
     });
 
-    // Clear vms cache
-    cache.del('vms');
-
     return vm;
   } catch (error) {
     console.error('ERROR - linkVMToUser():', error);
@@ -95,9 +94,6 @@ export const unlinkVMFromUser = async (unraidVMId: string, userId: string): Prom
     if (!vm) {
       throw new NotFoundError('Cannot find linked vm, unable to delete');
     }
-
-    // Clear vms cache
-    cache.del('vms');
 
     await vm.destroy();
     return vm;
@@ -116,9 +112,6 @@ export const createUserVMPermissions = async (vmId: string, userId: string): Pro
       canStop: true,
       canRestart: true,
     });
-
-    // Clear vms cache
-    cache.del('vms');
 
     return userVMPermissions;
   } catch (error) {
@@ -139,9 +132,6 @@ export const deleteUserVMPermissions = async (vmId: string, userId: string): Pro
     if (!userVMPermissions) {
       throw new NotFoundError('Cannot find permissions for the vm and user, unable to delete');
     }
-
-    // Clear vms cache
-    cache.del('vms');
 
     await userVMPermissions.destroy();
 

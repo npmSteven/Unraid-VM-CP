@@ -12,6 +12,44 @@ export const getVMsApi = async () => {
   }
 }
 
+export const getVMsUserApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/users/${id}`,
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - getVMsUserApi()', error);
+    throw error;
+  }
+}
+
+export const linkVMApi = async (unraidVMId: string, userId: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${unraidVMId}/users/${userId}`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - linkVMApi():', error);
+    throw error;
+  }
+}
+
+export const unlinkVMApi = async (unraidVMId: string, userId: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${unraidVMId}/users/${userId}`,
+      method: 'DELETE',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - unlinkVMApi():', error);
+    throw error;
+  }
+}
+
 export const startVMApi = async (id: string) => {
   try {
     const json = await request({ 

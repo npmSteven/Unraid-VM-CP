@@ -40,7 +40,7 @@ export const UserCard: Component<Props> = (props: Props) => {
         setOpen={setOpen}
         closeWhenOverlayClicked={false}
       >
-        <UserDropdown />
+        <UserDropdown id={props.id} />
       </Dismiss>
     </div>
   );

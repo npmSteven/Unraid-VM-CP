@@ -15,7 +15,7 @@ import { VMStatus } from '../VMStatus/VMStatus';
 import { VMDropdown } from '../VMDropdown/VMDropdown';
 import { VMAdminDropdown } from '../VMAdminDropdown/VMAdminDropdown';
 import { IPermissions } from '../../types/IPermissions';
-import { useVMControls } from '../../hooks/vm';
+import { useVMActions } from '../../hooks/vm';
 
 type Props = {
   id: string
@@ -27,6 +27,7 @@ type Props = {
   storage: string
   cpus: string
   isAutoStart: boolean
+  userId?: string | undefined
   ip?: string
   isAdmin?: boolean
   permissions?: IPermissions
@@ -36,7 +37,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
   const [open, setOpen] = createSignal(false);
   let btnEl;
 
-  const { startVM, stopVM, restartVM, isLoading } = useVMControls(props.id, props.name);
+  const { startVM, stopVM, restartVM, unlinkVM, isLoading } = useVMActions(props.id, props.name);
 
   const renderInformationRow = (title: string, description: string) => (
     <div class={styles.informationRow}>
@@ -63,7 +64,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             {renderInformationRow('Auto Start', JSON.stringify(props.isAutoStart))}
           </div>
           <div class={styles.informationColumn}>
-            {renderInformationRow('IP', props.ip || 'QEMU Agent not found')}
+            {renderInformationRow('IP', props.ip || '')}
           </div>
         </div>
       </div>
@@ -82,7 +83,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             closeWhenOverlayClicked={false}
           >
             {!props.isAdmin && <VMDropdown restartVM={restartVM} isLoading={isLoading} startVM={startVM} stopVM={stopVM} status={props.status} permissions={props.permissions} />}
-            {props.isAdmin && <VMAdminDropdown />}
+            {props.isAdmin && <VMAdminDropdown userId={props?.userId} id={props.id} unlinkVM={unlinkVM} isLoading={isLoading} />}
           </Dismiss>
         </div>
       </div>
