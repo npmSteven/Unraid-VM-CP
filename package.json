@@ -1,0 +1,23 @@
+{
+  "name": "unraid-vm-cp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build:all": "npm run build:backend && npm run build:frontend",
+    "start:backend": "cd backend && npm run start",
+    "start:frontend": "cd frontend && http-server frontend/dist -p 3000",
+    "start:all": "concurrently --kill-others \"npm run start:backend\" \" npm run start:frontend\"",
+    "build:other": "concurrently --kill-others \"npm run build:backend\" \" npm run build:frontend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "http-server": "^14.1.1",
+    "serve": "^14.2.0"
+  }
+}

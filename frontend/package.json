@@ -8,7 +8,7 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "license": "MIT",
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
   "devDependencies": {
     "typescript": "^4.9.5",
     "vite": "^4.1.1",

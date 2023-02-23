@@ -30,7 +30,7 @@ router.post('/login',
     checkPassword,
     validateReq,
   ],
-  async (req: Request<{}, {}, ILoginBody>, res: Response) => {
+  async (req: Request<any, any, ILoginBody>, res: Response) => {
     try {
       const { username, password } = req.body;
 

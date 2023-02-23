@@ -9,7 +9,7 @@ import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } fro
 import { respondSuccess } from '../../../services/responses.js';
 import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid, restartVMUnraid } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
-import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser, getUserVMPermissionByUserIdAndVMId, getUserVMPermissions, getVMByIdAndUnraidVMId, getVMByUserIdAndUnraidVMIdNoPermissions } from '../../../services/vm.js';
+import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser, getUserVMPermissionByUserIdAndVMId, getVMByUserIdAndUnraidVMIdNoPermissions } from '../../../services/vm.js';
 
 // Types
 import { IRequestAuth } from '../../../types/IRequestAuth.js';

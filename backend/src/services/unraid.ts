@@ -101,7 +101,6 @@ const requestVMajax = async (unraidVMId: string, action: string) => {
     if (response?.data?.error) {
       throw new BadRequestError(response.data.error)
     }
-    
     return response.data;
   } catch (error) {
     console.error('ERROR - requestVMajax():', error);
@@ -130,23 +129,21 @@ export const stopVMUnraid = async (unraidVMId: string) => {
   }
 }
 
-export const removeVMUnraid = async () => {
-  try {
-    
-  } catch (error) {
-    console.error('ERROR - removeVMUnraid():', error);
-    throw error;
-  }
-}
+// export const removeVMUnraid = async () => {
+//   try {
+//   } catch (error) {
+//     console.error('ERROR - removeVMUnraid():', error);
+//     throw error;
+//   }
+// }
 
-export const removeVMAndDisksVMUnraid = async () => {
-  try {
-    
-  } catch (error) {
-    console.error('ERROR - removeVMAndDisksVMUnraid():', error);
-    throw error;
-  }
-}
+// export const removeVMAndDisksVMUnraid = async () => {
+//   try {
+//   } catch (error) {
+//     console.error('ERROR - removeVMAndDisksVMUnraid():', error);
+//     throw error;
+//   }
+// }
 
 export const forceStopVMUnraid = async (unraidVMId: string) => {
   try {
@@ -231,7 +228,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
     const vmsHTML = await getVMsHTML();
     
     const $ = cheerio.load(vmsHTML, { xmlMode: true });
-    const vms: IUnraidVM[] = $('.sortable').map((i, el) => {
+    const vms: IUnraidVM[] = $('.sortable').map((_, el) => {
       const onclickAttr = $(el).find('.outer span.hand').attr('onclick');
       const parentId = $(el).attr('parent-id');
 
@@ -248,7 +245,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
 
       // IP
       const ips = []
-      $(`[child-id="${parentId}"]`).find('tbody tr').each((index, element) => {
+      $(`[child-id="${parentId}"]`).find('tbody tr').each((_, element) => {
         const ipType = $(element).find('td:nth-child(3)').text().trim();
         const ipAddress = $(element).find('td:nth-child(4)').text().trim();
         const ipPrefix = $(element).find('td:nth-child(5)').text().trim();
@@ -272,9 +269,6 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
         isAutoStart,
       }
     }).toArray()
-
-    // cache.put('vms', vms, 500); // Cache the response for .5 seconds
-
     return vms;
   } catch (error) {
     console.error('ERROR - getVMs()', error);

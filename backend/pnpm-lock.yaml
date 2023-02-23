@@ -23,6 +23,7 @@ specifiers:
   jest: ~29.3
   jsonwebtoken: ^9.0.0
   memory-cache: ^0.2.0
+  mime: ^3.0.0
   nodemon: ^2.0.20
   prettier: ~2.8
   rimraf: ~3.0
@@ -49,6 +50,7 @@ dependencies:
   express-validator: 6.14.3
   jsonwebtoken: 9.0.0
   memory-cache: 0.2.0
+  mime: 3.0.0
   sequelize: 6.28.0_sqlite3@5.1.4
   sqlite3: 5.1.4
   tslib: 2.4.1
@@ -3350,6 +3352,12 @@ packages:
   /mime/1.6.0:
     resolution: {integrity: sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==}
     engines: {node: '>=4'}
+    hasBin: true
+    dev: false
+
+  /mime/3.0.0:
+    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
+    engines: {node: '>=10.0.0'}
     hasBin: true
     dev: false
 

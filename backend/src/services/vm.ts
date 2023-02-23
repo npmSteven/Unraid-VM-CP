@@ -64,7 +64,7 @@ export const getLinkableVMs = async (userId: string) => {
   }
 }
 
-export const checkIsVMLinkedToUser = async (unraidVMId: string, userId: string): Promise<Boolean> => {
+export const checkIsVMLinkedToUser = async (unraidVMId: string, userId: string): Promise<any> => {
   try {
     const vm = await VMModel.findOne({ where: { unraidVMId, userId } });
     return !!vm;
