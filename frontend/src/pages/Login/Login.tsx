@@ -3,6 +3,7 @@ import { createForm, Form, Field } from '@modular-forms/solid';
 
 // Icons
 import { BiRegularLogInCircle } from 'solid-icons/bi'
+import { IoServer } from 'solid-icons/io'
 
 // Styles
 import styles from './Login.module.css';
@@ -37,6 +38,12 @@ const Login: Component = () => {
 
   return (
     <div class={styles.login}>
+
+      <div class={styles.brandContainer}>
+        <IoServer class={styles.icon} size={150} />
+        <div class={styles.brand}>Unraid VM CP</div>
+      </div>
+
       {/* Login Form */}
       <Form class={styles.form} of={loginForm} onSubmit={onSubmit}>
         <Field of={loginForm} name="username">
