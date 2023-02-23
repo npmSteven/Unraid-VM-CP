@@ -1,0 +1,16 @@
+.permission {
+  display: flex;
+  margin: 7px;
+  border: 2px solid rgb(196, 196, 196);
+  width: max-content;
+  padding: 5px;
+}
+
+.permission > label {
+  font-size: 18px;
+  width: 200px;
+}
+
+.permission > input {
+  scale: 1.3;
+}
