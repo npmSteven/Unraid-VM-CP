@@ -36,6 +36,7 @@ export const request = async ({
       json.payload.forEach((errorMsg: string) => {
         toast.error(errorMsg)
       })
+      throw new Error('Request failed');
     }
 
     return json;
