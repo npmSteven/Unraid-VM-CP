@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from '@solidjs/router';
 import { BiRegularArrowBack } from 'solid-icons/bi';
+import { SiOpenaccess } from 'solid-icons/si';
 import { Component, createSignal, Match, onMount, Switch } from 'solid-js';
 import toast from 'solid-toast';
 import { Button } from '../../components/Button/Button';
@@ -16,7 +17,7 @@ const VMPermissions: Component = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = createSignal(false);
-  const [vm, setVM] = createSignal({});
+  const [vm, setVM] = createSignal<any>({});
 
   const getVM = async () => {
     try {
@@ -40,14 +41,17 @@ const VMPermissions: Component = () => {
     }
   })
 
-  const updatePermissions = async (permission: string) => {
+  const updatePermissionsState = (permission: string) => {
+    const { permissions }: any = vm();
+    const updatedPermissions = { ...permissions };
+    const isChecked = !updatedPermissions[permission];
+    updatedPermissions[permission] = isChecked;
+    setVM((prev: any) => ({ ...prev, permissions: { ...prev.permissions, ...updatedPermissions } }))
+  }
+
+  const updatePermissions = async () => {
     try {
       setIsLoading(true);
-      const { permissions }: any = vm();
-      const updatedPermissions = { ...permissions };
-      const isChecked = !updatedPermissions[permission];
-      updatedPermissions[permission] = isChecked;
-
       const {
         canForceStop,
         canHibernate,
@@ -58,7 +62,7 @@ const VMPermissions: Component = () => {
         canResume,
         canStart,
         canStop,
-      } = updatedPermissions;
+      } = vm().permissions;
 
       await toast.promise(
         updatePermissionsAPI(params.unraidVMId, params.userId, {
@@ -73,9 +77,9 @@ const VMPermissions: Component = () => {
           canStop,
         }),
         {
-          loading: `Setting permission ${permission} to ${isChecked}`,
-          success: `Set permission ${permission} to ${isChecked}`,
-          error: `There was an issue setting permission ${permission} to ${isChecked}`,
+          loading: `Updating permissions `,
+          success: `Updated permissions`,
+          error: `There was an issue updating the permissions`,
         }
       )
       await getVM();
@@ -109,96 +113,107 @@ const VMPermissions: Component = () => {
       </div>
       <Switch>
         <Match when={!isLoading()}>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canStart')}
-          >
-            <label>Start</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canStart}
-            />
+          <div>
+
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canStart')}
+            >
+              <label>Start</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canStart}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canStop')}
+            >
+              <label>Stop</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canStop}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canPause')}
+            >
+              <label>Pause</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canPause}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canRemoveVM')}
+            >
+              <label>Remove VM</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canRemoveVM}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canRemoveVMAndDisks')}
+            >
+              <label>Remove VM And Disks</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canRemoveVMAndDisks}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canHibernate')}
+            >
+              <label>Hibernate</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canHibernate}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canForceStop')}
+            >
+              <label>Force Stop</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canForceStop}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canRestart')}
+            >
+              <label>Restart</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canRestart}
+              />
+            </div>
+            <div
+              class={styles.permission}
+              onClick={() => updatePermissionsState('canResume')}
+            >
+              <label>Resume</label>
+              <input
+                type="checkbox"
+                checked={vm()?.permissions?.canResume}
+              />
+            </div>
           </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canStop')}
-          >
-            <label>Stop</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canStop}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canPause')}
-          >
-            <label>Pause</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canPause}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canRemoveVM')}
-          >
-            <label>Remove VM</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canRemoveVM}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canRemoveVMAndDisks')}
-          >
-            <label>Remove VM And Disks</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canRemoveVMAndDisks}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canHibernate')}
-          >
-            <label>Hibernate</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canHibernate}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canForceStop')}
-          >
-            <label>Force Stop</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canForceStop}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canRestart')}
-          >
-            <label>Restart</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canRestart}
-            />
-          </div>
-          <div
-            class={styles.permission}
-            onClick={() => updatePermissions('canResume')}
-          >
-            <label>Resume</label>
-            <input
-              type="checkbox"
-              checked={vm()?.permissions?.canResume}
-            />
-          </div>
+          <Button
+            text='Update Permissions'
+            Icon={SiOpenaccess}
+            onClick={updatePermissions}
+            style={{
+              margin: '10px',
+            }}
+          />
         </Match>
         <Match when={isLoading()}>
           <PageLoading />
