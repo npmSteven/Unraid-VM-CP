@@ -29,7 +29,7 @@ export const request = async ({
       options.headers['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    const response = await fetch(`http://${import.meta.env.VITE_API}/api/v1${path}`, options);
+    const response = await fetch(`http://${location.hostname}:8787/api/v1${path}`, options);
     const json = await response.json();
 
     if (typeof json?.success === 'boolean' && !json.success) {

@@ -9,7 +9,7 @@ export const config = {
     password: process.env.UNRAID_PASSWORD,
   },
   server: {
-    port: 8000,
+    port: 8787,
   },
   jwt: {
     secret: process.env.JWT_SECRET,

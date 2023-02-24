@@ -38,7 +38,6 @@ const Login: Component = () => {
 
   return (
     <div class={styles.login}>
-
       <div class={styles.brandContainer}>
         <IoServer class={styles.icon} size={150} />
         <div class={styles.brand}>Unraid VM CP</div>
