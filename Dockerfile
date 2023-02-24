@@ -8,16 +8,13 @@ COPY package*.json .
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
 
-# Install dependencies for the root directory, backend, and frontend
+# Install and build
 RUN npm install 
 RUN npm run build:all
 
-# Build the backend and frontend
-RUN cd backend && npm run build && cd ../frontend && npm run build
-
 # Expose the ports that the application will be listening on
-EXPOSE 8776
-EXPOSE 8777
+EXPOSE 3000
+EXPOSE 8000
 
 # Set the default command for the container to start the application
 CMD ["npm", "run", "start:all"]

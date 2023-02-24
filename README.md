@@ -15,6 +15,16 @@ We call the Unraid API directly, using endpoints that were found by inspecting n
 ## What happens if Unraid introduces a feature to create a managed user with VM access?
 If that feature becomes available and this project no longer addresses any other outstanding issues, then I will consider archiving it. It would be great if Unraid offers such functionality in the future.
 
+## Docker
+Build
+```
+docker build -t unraid-vm-cp .
+```
+Run
+```
+docker run -p 8000:8000 -p 3000:3000 --env-file ./.env -t unraid-vm-cp
+```
+
 ## Built With
 
 - [Node.js](https://nodejs.org/en/) - The JavaScript runtime used to run the server-side code.

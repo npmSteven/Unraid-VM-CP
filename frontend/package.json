@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "http": "serve -s dist -l 8776"
+    "http": "serve -s dist -l 3000"
   },
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
   "devDependencies": {
