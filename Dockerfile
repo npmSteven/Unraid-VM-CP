@@ -1,44 +1,23 @@
-# Use the official Node.js 14 image as the base image
-FROM node:lts-alpine
+# Use an official Node.js runtime as a parent image
+FROM node:16-alpine
 
-# Set the working directory inside the container
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files for backend to the container
-COPY backend/package*.json ./backend/
-
-# Install the backend dependencies
-RUN cd backend && npm install
-
-# Copy the entire backend application to the container
+COPY package*.json .
 COPY backend/ ./backend/
-
-# Build the backend
-RUN cd backend && npm run build
-
-# Copy the package.json and package-lock.json files for frontend to the container
-COPY frontend/package*.json ./frontend/
-
-# Install the frontend dependencies
-RUN cd frontend && npm install
-
-# Copy the entire frontend application to the container
 COPY frontend/ ./frontend/
 
-# Build the frontend
-RUN cd frontend && npm run build
+# Install dependencies for the root directory, backend, and frontend
+RUN npm install 
+RUN npm run build:all
 
-# Copy the start script to the container
-COPY start.sh .
+# Build the backend and frontend
+RUN cd backend && npm run build && cd ../frontend && npm run build
 
-# Set the environment variable
-ENV NODE_ENV=production
+# Expose the ports that the application will be listening on
+EXPOSE 8776
+EXPOSE 8777
 
-# Make the start script executable
-RUN chmod +x start.sh
-
-# Start the backend and frontend servers
-CMD [ "./start.sh" ]
-
-# Expose the port that the frontend will listen on
-EXPOSE 3000
+# Set the default command for the container to start the application
+CMD ["npm", "run", "start:all"]

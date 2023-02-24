@@ -3,11 +3,13 @@ lockfileVersion: 5.4
 specifiers:
   concurrently: ^7.6.0
   http-server: ^14.1.1
+  pnpm: ^7.27.1
   serve: ^14.2.0
 
 devDependencies:
   concurrently: 7.6.0
   http-server: 14.1.1
+  pnpm: 7.27.1
   serve: 14.2.0
 
 packages:
@@ -576,6 +578,12 @@ packages:
 
   /path-to-regexp/2.2.1:
     resolution: {integrity: sha512-gu9bD6Ta5bwGrrU8muHzVOBFFREpp2iRkVfhBJahwJ6p6Xw20SjT0MxLnwkjOibQmGSYhiUnf2FLe7k+jcFmGQ==}
+    dev: true
+
+  /pnpm/7.27.1:
+    resolution: {integrity: sha512-IpBeZ+71slENbuOXwbV4U6yxOMfEWEvlVuT6+ChZ1D80oF0eHyN4h/hc13UrzVXpXI3bf7sPfRWGb8TYkrvJUA==}
+    engines: {node: '>=14.6'}
+    hasBin: true
     dev: true
 
   /portfinder/1.0.32:
