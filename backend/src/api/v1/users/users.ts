@@ -5,7 +5,7 @@ import { config } from '../../../config.js';
 
 // Validation
 import { validateReq } from '../../../middleware/validateReq.js';
-import { checkPassword, checkUsername } from '../../../validation/validation.js';
+import { checkPassword, checkUsername, checkUUID } from '../../../validation/validation.js';
 
 // Middlware
 import { authCheck } from '../../../middleware/authCheck.js';
@@ -82,6 +82,38 @@ router.post('/',
       return res.json(respondSuccess({ user: sanitiseUser(newUser.dataValues) }))
     } catch (error) {
       console.error('ERROR - /users', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+/**
+ * Update username
+ */
+
+/**
+ * Update password
+ */
+
+/**
+ * Delete user
+ */
+router.delete(
+  '/:userId',
+  [
+    authCheck,
+    checkUUID('userId'),
+    validateReq,
+  ],
+  (req: IRequestAuth, res: Response) => {
+    try {
+      if (!req?.user?.isUnraidUser) {
+        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
+      }
+
+      
+    } catch (error) {
+      console.error('ERROR - /:userId delete', error);
       return errorHandler(res, error);
     }
   }

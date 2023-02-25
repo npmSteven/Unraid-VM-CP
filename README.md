@@ -3,6 +3,20 @@ Not yet released, WIP
 
 Unraid VM CP is a project that provides additional functionality for [Unraid](https://unraid.net/). The purpose of this project is to allow Unraid users to give access to manage their VMs without requiring the recipient to have their own Unraid login credentials.
 
+## Stack
+- Overall
+  - Docker
+  - concurrently
+  - pnpm
+- Frontend
+  - Solidjs
+  - TypeScript
+- Backend
+  - Nodejs
+  - TypeScript
+  - Sequlize (sqlite)
+  - express
+
 ## Features
 - Gives you the ability to grant access and permissions to specific VMs for designated users.
 - Able to control a VM without needing to login to [Unraid](https://unraid.net/).
