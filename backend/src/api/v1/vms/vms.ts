@@ -311,6 +311,7 @@ router.post('/:unraidVMId/start',
   [
     authCheck,
     checkUUID('unraidVMId'),
+    validateReq,
   ],
   async (req: IRequestAuth, res: Response) => {
     try {
@@ -344,6 +345,7 @@ router.post('/:unraidVMId/stop',
   [
     authCheck,
     checkUUID('unraidVMId'),
+    validateReq,
   ],
   async (req: IRequestAuth, res: Response) => {
     try {
@@ -377,6 +379,7 @@ router.post('/:unraidVMId/restart',
   [
     authCheck,
     checkUUID('unraidVMId'),
+    validateReq,
   ],
   async (req: IRequestAuth, res: Response) => {
     try {

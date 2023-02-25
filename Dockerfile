@@ -9,7 +9,7 @@ COPY frontend/ ./frontend/
 COPY backend/ ./backend/
 
 # Install and build
-RUN npm install 
+RUN npm install
 RUN npm run build:frontend
 RUN npm run build:backend
 
