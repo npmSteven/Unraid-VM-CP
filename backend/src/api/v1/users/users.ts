@@ -7,7 +7,7 @@ import { config } from '../../../config.js';
 import { validateReq } from '../../../middleware/validateReq.js';
 import { checkPassword, checkUsername, checkUUID } from '../../../validation/validation.js';
 
-// Middlware
+// Middleware
 import { authCheck } from '../../../middleware/authCheck.js';
 
 // Types
@@ -15,10 +15,11 @@ import { IRequestAuth } from '../../../types/IRequestAuth.js';
 import { IUser } from '../../../types/IUser.js';
 
 // Services
-import { createUser, getUserById, getUserByUsername, getUsers } from '../../../services/user.js';
+import { createUser, deleteUser, getUserById, getUserByUsername, getUsers, updateUserPassword, updateUserUsername } from '../../../services/user.js';
 import { sanitiseUser } from '../../../services/sanitise.js';
 import { respondSuccess } from '../../../services/responses.js';
 import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
+import { deleteUserVMPermissionsAll, deleteVMsAll } from '../../../services/vm.js';
 
 const router = express.Router();
 
@@ -90,10 +91,72 @@ router.post('/',
 /**
  * Update username
  */
+router.put(
+  '/:userId/username',
+  [
+    authCheck,
+    checkUUID('userId'),
+    checkUsername,
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      // Check is Unraid user
+      if (!req?.user?.isUnraidUser) {
+        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
+      }
+
+      // Check if the user exists
+      const user = await getUserById(req.params.userId);
+      if (!user) throw new NotFoundError('Unable to find user');
+
+      // Check if the username is already taken
+      const userWithUsername = await getUserByUsername(req.body.username);
+      if (userWithUsername) throw new ConflictRequestError('A user already exists with this username');
+
+      // Update user username
+      const updatedUser = await updateUserUsername(req.params.userId, req.body.username);
+
+      return res.json(respondSuccess(sanitiseUser(updatedUser.dataValues)));
+    } catch (error) {
+      console.error('ERROR - /:userId/username put', error);
+      return errorHandler(res, error);
+    }
+  }
+)
 
 /**
  * Update password
  */
+router.put(
+  '/:userId/password',
+  [
+    authCheck,
+    checkUUID('userId'),
+    checkPassword,
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      // Check is Unraid user
+      if (!req?.user?.isUnraidUser) {
+        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
+      }
+
+      // Check if the user exists
+      const user = await getUserById(req.params.userId);
+      if (!user) throw new NotFoundError('Unable to find user');
+
+      // Update user password
+      const updatedUser = await updateUserPassword(req.params.userId, req.body.password);
+
+      return res.json(respondSuccess(sanitiseUser(updatedUser.dataValues)));
+    } catch (error) {
+      console.error('ERROR - /:userId/password put', error);
+      return errorHandler(res, error);
+    }
+  }
+)
 
 /**
  * Delete user
@@ -105,13 +168,27 @@ router.delete(
     checkUUID('userId'),
     validateReq,
   ],
-  (req: IRequestAuth, res: Response) => {
+  async (req: IRequestAuth, res: Response) => {
     try {
+      // Check is Unraid user
       if (!req?.user?.isUnraidUser) {
         throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
       }
 
-      
+      // Check if the user exists
+      const user = await getUserById(req.params.userId);
+      if (!user) throw new NotFoundError('Unable to find user');
+
+      // Delete vms
+      await deleteVMsAll(req.params.userId);
+
+      // Delete permissions
+      await deleteUserVMPermissionsAll(req.params.userId)
+
+      // Delete user
+      const deletedUser = await deleteUser(req.params.userId);
+
+      return res.json(respondSuccess(sanitiseUser(deletedUser.dataValues)));
     } catch (error) {
       console.error('ERROR - /:userId delete', error);
       return errorHandler(res, error);

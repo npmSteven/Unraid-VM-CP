@@ -174,3 +174,23 @@ export const getUserVMPermissions = async (userId: string): Promise<Model<IUserV
     throw error;
   }
 };
+
+export const deleteVMsAll = async (userId: string): Promise<number> => {
+  try {
+    const vms = await VMModel.destroy({ where: { userId } });
+    return vms;
+  } catch (error) {
+    console.error('ERROR - deleteVMsAll():', error);
+    throw error;
+  }
+}
+
+export const deleteUserVMPermissionsAll = async (userId: string): Promise<number> => {
+  try {
+    const vmPermissions = await UserVMPermissionsModel.destroy({ where: { userId } });
+    return vmPermissions;
+  } catch (error) {
+    console.error('ERROR - deleteUserVMPermissions():', error);
+    throw error;
+  }
+}
