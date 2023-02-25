@@ -28,3 +28,48 @@ export const createUserAPI = async (username: string, password: string) => {
     throw error;
   }
 }
+
+export const deleteUserApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/users/${id}`,
+      method: 'DELETE',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - deleteUserApi():', error);
+    throw error;
+  }
+}
+
+export const updateUserUsernameApi = async (id: string, username: string) => {
+  try {
+    const json = await request({ 
+      path: `/users/${id}/username`,
+      method: 'PUT',
+      body: {
+        username,
+      }
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - updateUserUsernameApi():', error);
+    throw error;
+  }
+}
+
+export const updateUserPasswordApi = async (id: string, password: string) => {
+  try {
+    const json = await request({ 
+      path: `/users/${id}/password`,
+      method: 'PUT',
+      body: {
+        password,
+      }
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - updateUserPasswordApi():', error);
+    throw error;
+  }
+}
