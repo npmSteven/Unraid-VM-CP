@@ -18,7 +18,6 @@
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
   "devDependencies": {
     "concurrently": "^7.6.0",
-    "http-server": "^14.1.1",
     "pnpm": "^7.27.1",
     "serve": "^14.2.0"
   }
