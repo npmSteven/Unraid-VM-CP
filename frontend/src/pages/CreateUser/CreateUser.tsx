@@ -60,7 +60,7 @@ const CreateUser: Component = () => {
       </div>
       <div>
 
-        {/* Login Form */}
+        {/* Create User Form */}
         <Form class={styles.form} of={createUserForm} onSubmit={onSubmit}>
           <Field of={createUserForm} name="username">
             {(field) => (

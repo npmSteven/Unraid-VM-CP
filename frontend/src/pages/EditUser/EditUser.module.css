@@ -1,0 +1,25 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+.inputContainer>label {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.inputContainer>input {
+  height: 20px;
+  width: 200px;
+}
+
+.createUserButton {
+  margin-top: 15px;
+}

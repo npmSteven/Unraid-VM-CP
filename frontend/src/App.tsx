@@ -6,10 +6,14 @@ import Users from './pages/Users/Users';
 import VMs from './pages/VMs/VMs';
 import Login from './pages/Login/Login';
 import CreateUser from './pages/CreateUser/CreateUser';
-import { useAuth } from './contexts/auth';
-import { useUser } from './contexts/user';
 import LinkVM from './pages/LinkVM/LinkVM';
 import VMPermissions from './pages/VMPermissions/VMPermissions';
+import EditUser from './pages/EditUser/EditUser';
+
+// Contexts
+import { useAuth } from './contexts/auth';
+import { useUser } from './contexts/user';
+
 
 function Redirect(props: { children: any; when: boolean; to: string }) {
   const navigate = useNavigate();
@@ -56,6 +60,16 @@ export const App: Component = () => {
           return (
             <Redirect to='/login' when={!isAuthenticated()}>
               <Users />
+            </Redirect>
+          )
+        }}
+      />
+      <Route
+        path='/users/:userId/edit'
+        component={() => {
+          return (
+            <Redirect to='/login' when={!isAuthenticated()}>
+              <EditUser />
             </Redirect>
           )
         }}

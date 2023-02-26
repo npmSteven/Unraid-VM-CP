@@ -12,6 +12,18 @@ export const getUserApi = async () => {
   }
 }
 
+export const getUserByIdApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/users/${id}`,
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - getUserById()', error);
+    throw error;
+  }
+}
+
 export const createUserAPI = async (username: string, password: string) => {
   try {
     const json = await request({ 

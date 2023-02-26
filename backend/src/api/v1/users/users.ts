@@ -45,6 +45,32 @@ router.get('/',
   }
 )
 
+router.get(
+  '/:userId',
+  [
+    authCheck,
+    checkUUID('userId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      // Check is Unraid user
+      if (!req?.user?.isUnraidUser) {
+        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
+      }
+
+      // Check if the user exists
+      const user = await getUserById(req.params.userId);
+      if (!user) throw new NotFoundError('Unable to find user');
+
+      return res.json(respondSuccess(sanitiseUser(user.dataValues)));
+    } catch (error) {
+      console.error('ERROR - /:userId get', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
 type IUserCreateBody = {
   username: string
   password: string

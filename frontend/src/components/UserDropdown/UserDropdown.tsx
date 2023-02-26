@@ -35,6 +35,10 @@ export const UserDropdown: Component<Props> = (props: Props) => {
     navigate(`/users/${props.id}/vms`)
   }
 
+  const goToUserEdit = () => {
+    navigate(`/users/${props.id}/edit`)
+  }
+
   const deleteUser = async () => {
     try {
       setIsLoading(true);
@@ -61,7 +65,7 @@ export const UserDropdown: Component<Props> = (props: Props) => {
         {
           text: 'Edit',
           Icon: AiOutlineEdit,
-          onClick: () => {},
+          onClick: goToUserEdit,
         },
         {
           text: 'Delete',
