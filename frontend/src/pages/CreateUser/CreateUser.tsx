@@ -66,7 +66,7 @@ const CreateUser: Component = () => {
             {(field) => (
               <div class={styles.inputContainer}>
                 <label>Username</label>
-                <input {...field.props} type="text" value={field.value} />
+                <input {...field.props} type="text" autoCapitalize='none' value={field.value} />
               </div>
             )}
           </Field>

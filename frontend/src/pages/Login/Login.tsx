@@ -49,7 +49,7 @@ const Login: Component = () => {
           {(field) => (
             <div class={styles.inputContainer}>
               <label>Username</label>
-              <input {...field.props} type="text" />
+              <input {...field.props} type="text" autoCapitalize='none' />
             </div>
           )}
         </Field>
