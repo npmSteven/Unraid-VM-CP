@@ -37,7 +37,19 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
   const [open, setOpen] = createSignal(false);
   let btnEl;
 
-  const { startVM, stopVM, restartVM, unlinkVM, isLoading } = useVMActions(props.id, props.name);
+  const {
+    startVM,
+    stopVM,
+    restartVM,
+    forceStopVM,
+    removeVM,
+    removeVMAndDisks,
+    pauseVM,
+    resumeVM,
+    hibernateVM,
+    unlinkVM,
+    isLoading,
+  } = useVMActions(props.id, props.name);
 
   const renderInformationRow = (title: string, description: string) => (
     <div class={styles.informationRow}>
@@ -82,7 +94,21 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
             setOpen={setOpen}
             closeWhenOverlayClicked={false}
           >
-            {!props.isAdmin && <VMDropdown restartVM={restartVM} isLoading={isLoading} startVM={startVM} stopVM={stopVM} status={props.status} permissions={props.permissions} />}
+            {!props.isAdmin &&
+              <VMDropdown
+                startVM={startVM}
+                stopVM={stopVM}
+                restartVM={restartVM}
+                forceStopVM={forceStopVM}
+                removeVM={removeVM}
+                removeVMAndDisks={removeVMAndDisks}
+                pauseVM={pauseVM}
+                resumeVM={resumeVM}
+                hibernateVM={hibernateVM}
+                isLoading={isLoading}
+                status={props.status}
+                permissions={props.permissions}
+              />}
             {props.isAdmin && <VMAdminDropdown userId={props?.userId} id={props.id} unlinkVM={unlinkVM} isLoading={isLoading} />}
           </Dismiss>
         </div>

@@ -152,7 +152,7 @@ export const removeVMAndDisksVMUnraid = async (unraidVMId: string) => {
 
 export const forceStopVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-force-stop');
+    const data = await requestVMajax(unraidVMId, 'domain-destroy');
     return data;
   } catch (error) {
     console.error('ERROR - forceStopVMUnraid():', error);
@@ -192,7 +192,7 @@ export const resumeVMUnraid = async (unraidVMId: string) => {
 
 export const hibernateVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-hibernate');
+    const data = await requestVMajax(unraidVMId, 'domain-pmsuspend');
     return data;
   } catch (error) {
     console.error('ERROR - hibernateVMUnraid():', error);

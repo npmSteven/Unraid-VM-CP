@@ -7,7 +7,7 @@ export const getVMsApi = async () => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - getVMsApi()', error);
+    console.error('ERROR - getVMsApi():', error);
     throw error;
   }
 }
@@ -19,7 +19,7 @@ export const getVMApi = async (unraidVMId: string, userId: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - getVMApi()', error);
+    console.error('ERROR - getVMApi():', error);
     throw error;
   }
 }
@@ -31,7 +31,7 @@ export const getVMsUserApi = async (id: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - getVMsUserApi()', error);
+    console.error('ERROR - getVMsUserApi():', error);
     throw error;
   }
 }
@@ -56,7 +56,7 @@ export const linkVMApi = async (unraidVMId: string, userId: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - linkVMApi():', error);
+    console.error('ERROR - linkVMApi()::', error);
     throw error;
   }
 }
@@ -69,7 +69,7 @@ export const unlinkVMApi = async (unraidVMId: string, userId: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - unlinkVMApi():', error);
+    console.error('ERROR - unlinkVMApi()::', error);
     throw error;
   }
 }
@@ -82,7 +82,7 @@ export const startVMApi = async (id: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - startVMApi()', error);
+    console.error('ERROR - startVMApi():', error);
     throw error;
   }
 }
@@ -95,7 +95,7 @@ export const stopVMApi = async (id: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - stopVMApi()', error);
+    console.error('ERROR - stopVMApi():', error);
     throw error;
   }
 }
@@ -108,7 +108,85 @@ export const restartVMApi = async (id: string) => {
     });
     return json;
   } catch (error) {
-    console.error('ERROR - restartVMApi()', error);
+    console.error('ERROR - restartVMApi():', error);
+    throw error;
+  }
+}
+
+export const forceStopVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/force-stop`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - forceStopVMApi():', error);
+    throw error;
+  }
+}
+
+export const removeVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/remove-vm`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - removeVMApi():', error);
+    throw error;
+  }
+}
+
+export const removeVMAndDisksApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/remove-vm-and-disks`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - removeVMAndDisksApi():', error);
+    throw error;
+  }
+}
+
+export const pauseVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/pause`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - pauseVMApi():', error);
+    throw error;
+  }
+}
+
+export const resumeVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/resume`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - resumeVMApi():', error);
+    throw error;
+  }
+}
+
+export const hibernateVMApi = async (id: string) => {
+  try {
+    const json = await request({ 
+      path: `/vms/${id}/hibernate`,
+      method: 'POST',
+    });
+    return json;
+  } catch (error) {
+    console.error('ERROR - hibernateVMApi():', error);
     throw error;
   }
 }

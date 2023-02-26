@@ -24,11 +24,29 @@ type Props = {
   isLoading: Accessor<boolean>
   startVM: () => Promise<any>
   stopVM: () => Promise<any>
+  forceStopVM: () => Promise<any>
+  removeVM: () => Promise<any>
+  removeVMAndDisks: () => Promise<any>
+  pauseVM: () => Promise<any>
+  resumeVM: () => Promise<any>
+  hibernateVM: () => Promise<any>
   restartVM: () => Promise<any>
 }
 
 export const VMDropdown: Component<Props> = (props: Props) => {
-  const { permissions, startVM, stopVM, restartVM, isLoading } = props;
+  const { 
+    startVM,
+    stopVM,
+    forceStopVM,
+    removeVM,
+    removeVMAndDisks,
+    pauseVM,
+    resumeVM,
+    hibernateVM,
+    restartVM,
+    permissions,
+    isLoading,
+  } = props;
   const { isUnraidUser } = useUser();
 
   const buildStartedSections = () => {
@@ -53,7 +71,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Pause',
         Icon: FaRegularCirclePause,
-        onClick: () => {},
+        onClick: pauseVM,
       })
     }
 
@@ -68,14 +86,14 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Hibernate',
         Icon: ImSleepy,
-        onClick: () => {},
+        onClick: hibernateVM,
       })
     }
     if (permissions?.canForceStop || isUnraidUser()) {
       actions.push({
         text: 'Force Stop',
         Icon: AiOutlineStop,
-        onClick: () => {},
+        onClick: forceStopVM,
       })
     }
 
@@ -96,7 +114,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Resume',
         Icon: FaRegularCirclePlay,
-        onClick: () => {},
+        onClick: resumeVM,
       })
     }
 
@@ -104,7 +122,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Force Stop',
         Icon: AiOutlineStop,
-        onClick: () => {},
+        onClick: forceStopVM,
       })
     }
 
@@ -133,7 +151,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Remove VM',
         Icon: AiOutlineMinusCircle,
-        onClick: () => {},
+        onClick: removeVM,
       })
     }
 
@@ -141,7 +159,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       actions.push({
         text: 'Remove VM & Disks',
         Icon: FiTrash2,
-        onClick: () => {},
+        onClick: removeVMAndDisks,
       })
     }
 

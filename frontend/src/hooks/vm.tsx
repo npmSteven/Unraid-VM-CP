@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js"
 import toast from "solid-toast";
 import { useVMs } from "../contexts/vms";
-import { restartVMApi, startVMApi, stopVMApi, unlinkVMApi } from "../services/vms";
+import { forceStopVMApi, hibernateVMApi, pauseVMApi, removeVMAndDisksApi, removeVMApi, restartVMApi, resumeVMApi, startVMApi, stopVMApi, unlinkVMApi } from "../services/vms";
 
 export const useVMActions = (id: string, name: string) => {
   const [isLoading, setIsLoading] = createSignal(false);
@@ -54,7 +54,109 @@ export const useVMActions = (id: string, name: string) => {
     }
     catch (error) {
       setIsLoading(false);
-      console.error('ERROR - stopVM():', error);
+      console.error('ERROR - restartVM():', error);
+    }
+  }
+
+  const forceStopVM = async () => {
+    try {
+      setIsLoading(true);
+      await toast.promise(forceStopVMApi(id), {
+        loading: `Force stopping ${name}`,
+        success: `Force stopped ${name}`,
+        error: `There was an issue trying to force stopping ${name}`
+      })
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - forceStopVM():', error);
+    }
+  }
+
+  const removeVM = async () => {
+    try {
+      setIsLoading(true);
+      await toast.promise(removeVMApi(id), {
+        loading: `Removing ${name}`,
+        success: `Removed ${name}`,
+        error: `There was an issue trying to remove ${name}`
+      })
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - removeVM():', error);
+    }
+  }
+
+  const removeVMAndDisks = async () => {
+    try {
+      setIsLoading(true);
+      await toast.promise(removeVMAndDisksApi(id), {
+        loading: `Removing ${name} and disks`,
+        success: `Removed ${name} and disks`,
+        error: `There was an issue trying to remove ${name} and disks`
+      })
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - removeVMAndDisks():', error);
+    }
+  }
+
+  const pauseVM = async () => {
+    try {
+      setIsLoading(true);
+      await toast.promise(pauseVMApi(id), {
+        loading: `Pausing ${name}`,
+        success: `Paused ${name}`,
+        error: `There was an issue trying to pause ${name}`
+      })
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - pauseVM():', error);
+    }
+  }
+
+  const resumeVM = async () => {
+    try {
+      setIsLoading(true);
+      await toast.promise(resumeVMApi(id), {
+        loading: `Resuming ${name}`,
+        success: `Resumed ${name}`,
+        error: `There was an issue trying to resume ${name}`
+      })
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - resumeVM():', error);
+    }
+  }
+
+  const hibernateVM = async () => {
+    try {
+      setIsLoading(true);
+      await toast.promise(hibernateVMApi(id), {
+        loading: `Hibernating ${name}`,
+        success: `Hibernated ${name}`,
+        error: `There was an issue trying to hibernate ${name}`
+      })
+      await getVMs();
+      setIsLoading(false);
+    }
+    catch (error) {
+      setIsLoading(false);
+      console.error('ERROR - hibernateVM():', error);
     }
   }
 
@@ -78,9 +180,17 @@ export const useVMActions = (id: string, name: string) => {
 
   return {
     isLoading,
+    // Controls
     startVM,
     stopVM,
     restartVM,
+    forceStopVM,
+    removeVM,
+    removeVMAndDisks,
+    pauseVM,
+    resumeVM,
+    hibernateVM,
+
     unlinkVM
   }
 }
