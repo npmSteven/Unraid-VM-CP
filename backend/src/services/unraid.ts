@@ -108,7 +108,6 @@ const requestVMajax = async (unraidVMId: string, action: string) => {
   }
 }
 
-
 export const startVMUnraid = async (unraidVMId: string) => {
   try {
     const data = await requestVMajax(unraidVMId, 'domain-start');
@@ -128,7 +127,6 @@ export const stopVMUnraid = async (unraidVMId: string) => {
     throw error;
   }
 }
-
 
 export const removeVMUnraid = async (unraidVMId: string) => {
   try {
@@ -245,6 +243,8 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
       const cpus = $(el).find('td:nth-child(3) a').text();
       const osImg = `http://${unraid.ip}${$(el).find('.outer span.hand img').attr('src')}`;
       const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
+      const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
+
       const isAutoStart = onclickAttr.includes('autoconnect=true');
       const storage = $(el).find('td:nth-child(5)').text().match(/\d+G/)[0];
 
@@ -272,6 +272,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
         ips,
         osImg,
         isAutoStart,
+        vnc,
       }
     }).toArray()
     return vms;

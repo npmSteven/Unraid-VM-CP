@@ -6,7 +6,7 @@ import { forceStopVMApi, hibernateVMApi, pauseVMApi, removeVMAndDisksApi, remove
 export const useVMActions = (id: string, name: string) => {
   const [isLoading, setIsLoading] = createSignal(false);
 
-  const { getVMs, getVMsUser } = useVMs();
+  const { getVMs, getVMsUser, vms } = useVMs();
 
   const startVM = async () => {
     try {
@@ -160,6 +160,13 @@ export const useVMActions = (id: string, name: string) => {
     }
   }
 
+  const openVNC = () => {
+    const vm = vms().find((vm) => vm.id === id);
+    if (vm) {
+      window.open(`http://${location.hostname}${vm.vnc}`, '_blank');
+    }
+  }
+
   const unlinkVM = async (unraidVMId: string, userId: string) => {
     try {
       setIsLoading(true);
@@ -190,6 +197,7 @@ export const useVMActions = (id: string, name: string) => {
     pauseVM,
     resumeVM,
     hibernateVM,
+    openVNC,
 
     unlinkVM
   }

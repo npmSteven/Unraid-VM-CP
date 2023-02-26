@@ -114,6 +114,7 @@ export const VMs: Component = () => {
                   graphics={vm.graphics}
                   isAutoStart={vm.isAutoStart}
                   isAdmin={isAdminVMCard}
+                  vnc={vm.vnc}
                   ip={vm.ips.find(({ type }) => type === 'ipv4')?.address}
                   permissions={vm.permissions}
                 />

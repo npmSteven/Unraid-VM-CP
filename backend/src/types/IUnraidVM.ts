@@ -10,6 +10,7 @@ export type IUnraidVM = {
   storage: string
   os: string
   ips: any[]
+  vnc: string
   osImg: string
   isAutoStart: boolean
   permissions?: IUserVMPermissions

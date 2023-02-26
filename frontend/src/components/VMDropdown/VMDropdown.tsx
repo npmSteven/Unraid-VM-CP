@@ -15,12 +15,11 @@ import { FiTrash2 } from 'solid-icons/fi'
 
 // Components
 import { Dropdown } from '../Dropdown/Dropdown';
-import { IPermissions } from '../../types/IPermissions';
 import { useUser } from '../../contexts/user';
+import { RiDeviceComputerLine } from 'solid-icons/ri';
 
 type Props = {
-  status: IVMStatus,
-  permissions: IPermissions | undefined
+  vm: any;
   isLoading: Accessor<boolean>
   startVM: () => Promise<any>
   stopVM: () => Promise<any>
@@ -31,6 +30,7 @@ type Props = {
   resumeVM: () => Promise<any>
   hibernateVM: () => Promise<any>
   restartVM: () => Promise<any>
+  openVNC: () => void
 }
 
 export const VMDropdown: Component<Props> = (props: Props) => {
@@ -44,8 +44,9 @@ export const VMDropdown: Component<Props> = (props: Props) => {
     resumeVM,
     hibernateVM,
     restartVM,
-    permissions,
     isLoading,
+    openVNC,
+    vm,
   } = props;
   const { isUnraidUser } = useUser();
 
@@ -59,7 +60,15 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
     const { actions } = startedSections[0];
     
-    if (permissions?.canStop || isUnraidUser()) {
+    if (vm?.vnc && isUnraidUser()) {
+      actions.push({
+        text: 'Open VNC',
+        Icon: RiDeviceComputerLine,
+        onClick: openVNC,
+      })
+    }
+
+    if (vm?.permissions?.canStop || isUnraidUser()) {
       actions.push({
         text: 'Stop',
         Icon: FaSolidPowerOff,
@@ -67,7 +76,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions?.canPause || isUnraidUser()) {
+    if (vm?.permissions?.canPause || isUnraidUser()) {
       actions.push({
         text: 'Pause',
         Icon: FaRegularCirclePause,
@@ -75,21 +84,21 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions?.canRestart || isUnraidUser()) {
+    if (vm?.permissions?.canRestart || isUnraidUser()) {
       actions.push({
         text: 'Restart',
         Icon: FiRefreshCcw,
         onClick: restartVM,
       })
     }
-    if (permissions?.canHibernate || isUnraidUser()) {
+    if (vm?.permissions?.canHibernate || isUnraidUser()) {
       actions.push({
         text: 'Hibernate',
         Icon: ImSleepy,
         onClick: hibernateVM,
       })
     }
-    if (permissions?.canForceStop || isUnraidUser()) {
+    if (vm?.permissions?.canForceStop || isUnraidUser()) {
       actions.push({
         text: 'Force Stop',
         Icon: AiOutlineStop,
@@ -110,7 +119,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
     const { actions } = pausedSections[0];
 
-    if (permissions?.canResume || isUnraidUser()) {
+    if (vm?.permissions?.canResume || isUnraidUser()) {
       actions.push({
         text: 'Resume',
         Icon: FaRegularCirclePlay,
@@ -118,7 +127,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions?.canForceStop || isUnraidUser()) {
+    if (vm?.permissions?.canForceStop || isUnraidUser()) {
       actions.push({
         text: 'Force Stop',
         Icon: AiOutlineStop,
@@ -139,7 +148,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
     const { actions } = stoppedSections[0];
 
-    if (permissions?.canStart || isUnraidUser()) {
+    if (vm?.permissions?.canStart || isUnraidUser()) {
       actions.push({
         text: 'Start',
         Icon: FaRegularCirclePlay,
@@ -147,7 +156,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions?.canRemoveVM || isUnraidUser()) {
+    if (vm?.permissions?.canRemoveVM || isUnraidUser()) {
       actions.push({
         text: 'Remove VM',
         Icon: AiOutlineMinusCircle,
@@ -155,7 +164,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
       })
     }
 
-    if (permissions?.canRemoveVMAndDisks || isUnraidUser()) {
+    if (vm?.permissions?.canRemoveVMAndDisks || isUnraidUser()) {
       actions.push({
         text: 'Remove VM & Disks',
         Icon: FiTrash2,
@@ -168,7 +177,7 @@ export const VMDropdown: Component<Props> = (props: Props) => {
 
 
   const getSectionsByStatus = (): IDropdownSection[] => {
-    switch(props.status) {
+    switch(vm.status) {
       case 'paused':
         return buildPausedSections();
       case 'started':

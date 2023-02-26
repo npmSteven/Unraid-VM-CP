@@ -27,6 +27,7 @@ type Props = {
   storage: string
   cpus: string
   isAutoStart: boolean
+  vnc?: string
   userId?: string | undefined
   ip?: string
   isAdmin?: boolean
@@ -48,6 +49,7 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
     resumeVM,
     hibernateVM,
     unlinkVM,
+    openVNC,
     isLoading,
   } = useVMActions(props.id, props.name);
 
@@ -105,9 +107,9 @@ export const VMCard: Component<Props> = (props: Props): JSX.Element => {
                 pauseVM={pauseVM}
                 resumeVM={resumeVM}
                 hibernateVM={hibernateVM}
+                openVNC={openVNC}
+                vm={props}
                 isLoading={isLoading}
-                status={props.status}
-                permissions={props.permissions}
               />}
             {props.isAdmin && <VMAdminDropdown userId={props?.userId} id={props.id} unlinkVM={unlinkVM} isLoading={isLoading} />}
           </Dismiss>
