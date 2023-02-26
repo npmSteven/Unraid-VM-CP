@@ -7,7 +7,7 @@ import { validateReq } from '../../../middleware/validateReq.js';
 // Services
 import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
 import { respondSuccess } from '../../../services/responses.js';
-import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid, restartVMUnraid } from '../../../services/unraid.js';
+import { getVMByIdUnraid, getVMsUnraid, startVMUnraid, stopVMUnraid, restartVMUnraid, pauseVMUnraid, resumeVMUnraid, hibernateVMUnraid, forceStopVMUnraid, removeVMUnraid, removeVMAndDisksVMUnraid } from '../../../services/unraid.js';
 import { getUserById } from '../../../services/user.js';
 import { checkIsVMLinkedToUser, createUserVMPermissions, deleteUserVMPermissions, getLinkableVMs, getVMByUserIdAndUnraidVMId, getVMsByUserId, linkVMToUser, unlinkVMFromUser, getUserVMPermissionByUserIdAndVMId, getVMByUserIdAndUnraidVMIdNoPermissions } from '../../../services/vm.js';
 
@@ -404,6 +404,210 @@ router.post('/:unraidVMId/restart',
       return res.json(respondSuccess(data));
     } catch (error) {
       console.error('ERROR - /:unraidVMId/restart', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/pause',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canPause) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await pauseVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/pause', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/resume',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canResume) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await resumeVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/resume', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/hibernate',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canHibernate) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await hibernateVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/hibernate', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/force-stop',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canForceStop) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await forceStopVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/force-stop', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/remove-vm',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canRemoveVM) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await removeVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/remove-vm', error);
+      return errorHandler(res, error);
+    }
+  }
+)
+
+router.post('/:unraidVMId/remove-vm-and-disks',
+  [
+    authCheck,
+    checkUUID('unraidVMId'),
+    validateReq,
+  ],
+  async (req: IRequestAuth, res: Response) => {
+    try {
+      const { unraidVMId } = req.params;
+
+      // Check if unraidVMId exists
+      const vmUnraid = await getVMByIdUnraid(unraidVMId);
+      if (!vmUnraid) throw new NotFoundError('Provided vm id does not exist');
+
+      if (!req.user.isUnraidUser) {
+        // Check if the vm is already linked to the user
+        const isVMLinkedToUser = await checkIsVMLinkedToUser(unraidVMId, req.user.id);
+        if (!isVMLinkedToUser) {
+          throw new ConflictRequestError('VM not linked');
+        }
+        const vm = await getVMByUserIdAndUnraidVMId(req.user.id, vmUnraid.id);
+        if (!vm.permissions.canRemoveVMAndDisks) throw new ForbiddenError('You do not have the permissions');   
+      }
+
+      const data = await removeVMAndDisksVMUnraid(unraidVMId);
+
+      return res.json(respondSuccess(data));
+    } catch (error) {
+      console.error('ERROR - /:unraidVMId/remove-vm-and-disks', error);
       return errorHandler(res, error);
     }
   }

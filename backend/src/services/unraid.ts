@@ -129,21 +129,26 @@ export const stopVMUnraid = async (unraidVMId: string) => {
   }
 }
 
-// export const removeVMUnraid = async () => {
-//   try {
-//   } catch (error) {
-//     console.error('ERROR - removeVMUnraid():', error);
-//     throw error;
-//   }
-// }
 
-// export const removeVMAndDisksVMUnraid = async () => {
-//   try {
-//   } catch (error) {
-//     console.error('ERROR - removeVMAndDisksVMUnraid():', error);
-//     throw error;
-//   }
-// }
+export const removeVMUnraid = async (unraidVMId: string) => {
+  try {
+    const data = await requestVMajax(unraidVMId, 'domain-undefine');
+    return data;
+  } catch (error) {
+    console.error('ERROR - removeVMUnraid():', error);
+    throw error;
+  }
+}
+
+export const removeVMAndDisksVMUnraid = async (unraidVMId: string) => {
+  try {
+    const data = await requestVMajax(unraidVMId, 'domain-delete');
+    return data;
+  } catch (error) {
+    console.error('ERROR - removeVMAndDisksVMUnraid():', error);
+    throw error;
+  }
+}
 
 export const forceStopVMUnraid = async (unraidVMId: string) => {
   try {
