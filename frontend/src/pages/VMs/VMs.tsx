@@ -97,9 +97,8 @@ export const VMs: Component = () => {
         <Match when={!isLoading()}>
           <div
             style={{
-              display: 'flex',
-              "flex-wrap": 'wrap',
-              "justify-content": 'center',
+              display: 'grid',
+              'grid-template-columns': 'repeat(auto-fit, minmax(350px, 1fr) )',
             }}
           >
             {!isAdminVMCard &&
