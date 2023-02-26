@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev:backend": "cd backend && concurrently --kill-others \"pnpm run build:watch\" \"pnpm run dev\"",
+    "dev:frontend": "cd frontend && pnpm run dev",
     "build:backend": "cd backend && pnpm i && pnpm run build",
     "build:frontend": "cd frontend && pnpm i && pnpm run build",
     "build:all": "pnpm run build:backend && pnpm run build:frontend",
