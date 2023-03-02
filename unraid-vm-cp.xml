@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Unraid-VM-CP</Name>
+  <Repository>stevenrafferty/unraid-vm-cp</Repository>
+  <Registry>https://hub.docker.com/r/stevenrafferty/unraid-vm-cp</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support/>
+  <Project/>
+  <Overview>Unraid VM CP is a project that provides additional functionality for Unraid. The purpose of this project is to allow Unraid users to give access to manage their VMs without requiring the recipient to have their own Unraid login credentials.&#xD;
+GitHub: https://github.com/npmSteven/Unraid-VM-CP&#xD;
+Docker Hub: https://hub.docker.com/r/stevenrafferty/unraid-vm-cp</Overview>
+  <Category/>
+  <WebUI>http://[IP]:[PORT:8786]</WebUI>
+  <TemplateURL/>
+  <Icon>https://cdn-icons-png.flaticon.com/512/622/622397.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>1677755795</DateInstalled>
+  <DonateText>Buy me a coffee</DonateText>
+  <DonateLink>https://www.buymeacoffee.com/npmSteven</DonateLink>
+  <Requires/>
+  <Config Name="Backend Port" Target="8787" Default="8787" Mode="tcp" Description="Backend Port (Do not change)" Type="Port" Display="always" Required="false" Mask="false">8787</Config>
+  <Config Name="Frontend Port" Target="8786" Default="8786" Mode="tcp" Description="Frontend Port (Do not change)" Type="Port" Display="always" Required="false" Mask="false">8786</Config>
+  <Config Name="UNRAID_USERNAME" Target="UNRAID_USERNAME" Default="" Mode="" Description="UNRAID_USERNAME" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="UNRAID_PASSWORD" Target="UNRAID_PASSWORD" Default="" Mode="" Description="UNRAID_PASSWORD" Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="UNRAID_IP" Target="UNRAID_IP" Default="" Mode="" Description="UNRAID_IP" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="JWT_SECRET" Target="JWT_SECRET" Default="" Mode="" Description="JWT_SECRET (Enter random letters and number here at least 16 charaters)" Type="Variable" Display="always" Required="false" Mask="false"/>
+</Container>
