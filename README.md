@@ -1,5 +1,5 @@
 # Unraid VM CP (Alpha)
-Not yet released, WIP
+In Alpha
 
 Unraid VM CP is a project that provides additional functionality for [Unraid](https://unraid.net/). The purpose of this project is to allow Unraid users to give access to manage their VMs without requiring the recipient to have their own Unraid login credentials.
 
