@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio';
+import {load} from 'cheerio';
 import axios from 'axios';
 
 import { config } from '../config.js';
@@ -39,7 +39,7 @@ const getCSRFTokenUnraid = async () => {
         Cookie: cookie,
       }
     });
-    const $ = cheerio.load(response.data);
+    const $ = load(response.data);
     const csrfToken = $('input[name="csrf_token"]').val();
     setCSRFToken(csrfToken);
   } catch (error) {
@@ -218,63 +218,62 @@ const getVMsHTML = async () => {
   }
 }
 
-/**
- * Note: We cache the response for 5 seconds as sometimes we call this function multiple times
- */
+export const extractVMsFromHTML = (vmsHTML, unraidIP) => {
+  const $ = load(vmsHTML, { xmlMode: true });
+  const vms: IUnraidVM[] = $('.outer').map((_, el) => {
+    const onclickAttr = $(el).find('span.hand').attr('onclick');
+    const parentId = $(el).parent().parent().attr('parent-id');
+    
+    const id = onclickAttr.match(/addVMContext\('.*?','(.*?)'/)[1];
+    const name = $(el).find('.inner a').text();
+    
+    const sortableEl = $(`[parent-id="${parentId}"]`);
+    const graphics = $(sortableEl).find('td:nth-child(6)').text();
+    const memory = $(sortableEl).find('td:nth-child(4)').text();
+    const storage = $(sortableEl).find('td:nth-child(5)').text().match(/\d+G/)?.[0] || '';
+
+    const cpus = $(`a.vcpu-${id}`).text();
+    const osImg = `http://${unraidIP}${$(el).find('span.hand img').attr('src')}`;
+    const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
+    const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
+    const state = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','(.*?)'/)[1];
+
+    const isAutoStart = onclickAttr.includes('autoconnect=true');
+
+    // IP
+    const ips = []
+    $(`[child-id="${parentId}"]`).find('tbody tr').each((_, element) => {
+      const ipType = $(element).find('td:nth-child(3)').text().trim();
+      const ipAddress = $(element).find('td:nth-child(4)').text().trim();
+      const ipPrefix = $(element).find('td:nth-child(5)').text().trim();
+
+      if (ipType === 'ipv4' || ipType === 'ipv6') {
+        ips.push({ type: ipType, address: ipAddress, prefix: ipPrefix });
+      }
+    });
+
+    return {
+      id,
+      name,
+      state,
+      graphics,
+      memory,
+      cpus,
+      storage,
+      os,
+      ips,
+      osImg,
+      isAutoStart,
+      vnc,
+    }
+  }).toArray()
+  return vms;
+}
+
 export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
   try {
     const vmsHTML = await getVMsHTML();
-    
-    const $ = cheerio.load(vmsHTML, { xmlMode: true });
-    const vms: IUnraidVM[] = $('.outer').map((_, el) => {
-      const onclickAttr = $(el).find('span.hand').attr('onclick');
-      const parentId = $(el).parent().parent().attr('parent-id');
-      
-      const id = onclickAttr.match(/addVMContext\('.*?','(.*?)'/)[1];
-      const name = $(el).find('.inner a').text();
-      
-      const sortableEl = $(`[parent-id="${parentId}"]`);
-      const graphics = $(sortableEl).find('td:nth-child(6)').text();
-      const memory = $(sortableEl).find('td:nth-child(4)').text();
-      const storage = $(sortableEl).find('td:nth-child(5)').text().match(/\d+G/)?.[0] || '';
-
-      const cpus = $(`a.vcpu-${id}`).text();
-      const osImg = `http://${unraid.ip}${$(el).find('span.hand img').attr('src')}`;
-      const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
-      const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
-      const state = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','(.*?)'/)[1];
-
-      const isAutoStart = onclickAttr.includes('autoconnect=true');
-
-      // IP
-      const ips = []
-      $(`[child-id="${parentId}"]`).find('tbody tr').each((_, element) => {
-        const ipType = $(element).find('td:nth-child(3)').text().trim();
-        const ipAddress = $(element).find('td:nth-child(4)').text().trim();
-        const ipPrefix = $(element).find('td:nth-child(5)').text().trim();
-
-        if (ipType === 'ipv4' || ipType === 'ipv6') {
-          ips.push({ type: ipType, address: ipAddress, prefix: ipPrefix });
-        }
-      });
-
-      return {
-        id,
-        name,
-        state,
-        graphics,
-        memory,
-        cpus,
-        storage,
-        os,
-        ips,
-        osImg,
-        isAutoStart,
-        vnc,
-      }
-    }).toArray()
-
-    return vms;
+    return extractVMsFromHTML(vmsHTML, unraid.ip);
   } catch (error) {
     console.error('ERROR - getVMs()', error);
     throw error;
