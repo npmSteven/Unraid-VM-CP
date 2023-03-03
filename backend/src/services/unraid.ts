@@ -226,22 +226,25 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
     const vmsHTML = await getVMsHTML();
     
     const $ = cheerio.load(vmsHTML, { xmlMode: true });
-    const vms: IUnraidVM[] = $('.sortable').map((_, el) => {
-      const onclickAttr = $(el).find('.outer span.hand').attr('onclick');
-      const parentId = $(el).attr('parent-id');
-
+    const vms: IUnraidVM[] = $('.outer').map((_, el) => {
+      const onclickAttr = $(el).find('span.hand').attr('onclick');
+      const parentId = $(el).parent().parent().attr('parent-id');
+      
       const id = onclickAttr.match(/addVMContext\('.*?','(.*?)'/)[1];
       const name = $(el).find('.inner a').text();
-      const graphics = $(el).find('td:nth-child(6)').text();
-      const memory = $(el).find('td:nth-child(4)').text();
-      const cpus = $(el).find('td:nth-child(3) a').text();
-      const osImg = `http://${unraid.ip}${$(el).find('.outer span.hand img').attr('src')}`;
+      
+      const sortableEl = $(`[parent-id="${parentId}"]`);
+      const graphics = $(sortableEl).find('td:nth-child(6)').text();
+      const memory = $(sortableEl).find('td:nth-child(4)').text();
+      const storage = $(sortableEl).find('td:nth-child(5)').text().match(/\d+G/)?.[0] || '';
+
+      const cpus = $(`a.vcpu-${id}`).text();
+      const osImg = `http://${unraid.ip}${$(el).find('span.hand img').attr('src')}`;
       const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
       const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
       const state = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','(.*?)'/)[1];
-      
+
       const isAutoStart = onclickAttr.includes('autoconnect=true');
-      const storage = $(el).find('td:nth-child(5)').text().match(/\d+G/)[0];
 
       // IP
       const ips = []
@@ -270,6 +273,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
         vnc,
       }
     }).toArray()
+
     return vms;
   } catch (error) {
     console.error('ERROR - getVMs()', error);
