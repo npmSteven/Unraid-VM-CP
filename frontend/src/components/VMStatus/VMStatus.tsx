@@ -15,9 +15,9 @@ export const VMStatus: Component<Props> = (props) => {
 
   const getStatusClass = () => {
     switch (status) {
-      case 'started':
+      case 'running':
         return styles.started;
-      case 'stopped':
+      case 'shutoff':
         return styles.stopped;
       case 'paused':
         return styles.paused;

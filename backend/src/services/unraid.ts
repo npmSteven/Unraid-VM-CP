@@ -1,6 +1,5 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
-import cache from 'memory-cache';
 
 import { config } from '../config.js';
 import { BadRequestError, ForbiddenError } from './ErrorHandler.js';
@@ -223,10 +222,6 @@ const getVMsHTML = async () => {
  * Note: We cache the response for 5 seconds as sometimes we call this function multiple times
  */
 export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
-  const cachedVms = cache.get('vms');
-  if (cachedVms) {
-    return cachedVms;
-  }
   try {
     const vmsHTML = await getVMsHTML();
     
@@ -238,13 +233,13 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
       const id = onclickAttr.match(/addVMContext\('.*?','(.*?)'/)[1];
       const name = $(el).find('.inner a').text();
       const graphics = $(el).find('td:nth-child(6)').text();
-      const state = $(el).find('.state').text();
       const memory = $(el).find('td:nth-child(4)').text();
       const cpus = $(el).find('td:nth-child(3) a').text();
       const osImg = `http://${unraid.ip}${$(el).find('.outer span.hand img').attr('src')}`;
       const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
       const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
-
+      const state = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','(.*?)'/)[1];
+      
       const isAutoStart = onclickAttr.includes('autoconnect=true');
       const storage = $(el).find('td:nth-child(5)').text().match(/\d+G/)[0];
 

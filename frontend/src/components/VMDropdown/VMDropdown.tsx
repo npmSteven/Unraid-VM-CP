@@ -180,9 +180,9 @@ export const VMDropdown: Component<Props> = (props: Props) => {
     switch(vm.status) {
       case 'paused':
         return buildPausedSections();
-      case 'started':
+      case 'running':
         return buildStartedSections();
-      case 'stopped':
+      case 'shutoff':
         return buildStoppedSections();
       default:
         return [];

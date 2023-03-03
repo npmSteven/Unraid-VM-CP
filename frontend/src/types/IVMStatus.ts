@@ -1,1 +1,1 @@
-export type IVMStatus = 'stopped' | 'paused' | 'started';
+export type IVMStatus = 'shutoff' | 'paused' | 'running';
