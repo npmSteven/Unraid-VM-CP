@@ -94,7 +94,7 @@ export const VMs: Component = () => {
         </div>
       )}
       <Switch>
-        <Match when={!isLoading()}>
+        <Match when={!isLoading() && vms().length >= 1}>
           <div
             style={{
               display: 'grid',
@@ -140,6 +140,9 @@ export const VMs: Component = () => {
         </Match>
         <Match when={isLoading()}>
           <PageLoading />
+        </Match>
+        <Match when={!isLoading() && vms().length === 0}>
+          <h3 style={{ "text-align": 'center', "font-weight": 500 }}>No VM's to display</h3>
         </Match>
       </Switch>
     </div>

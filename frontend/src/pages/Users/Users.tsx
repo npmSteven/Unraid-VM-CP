@@ -45,7 +45,7 @@ const Users: Component = () => {
       </div>
 
       <Switch>
-        <Match when={!isLoading()}>
+        <Match when={!isLoading() && users().length >= 1}>
           {/* Users */}
           <div
             style={{
@@ -60,6 +60,9 @@ const Users: Component = () => {
         </Match>
         <Match when={isLoading()}>
           <PageLoading />
+        </Match>
+        <Match when={!isLoading() && users().length === 0}>
+          <h3 style={{ "text-align": 'center', "font-weight": 500 }}>No Users to display</h3>
         </Match>
       </Switch>
 
