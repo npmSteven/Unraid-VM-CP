@@ -2,7 +2,7 @@ import { extractVMsFromHTML } from "../src/services/unraid"
 import { unraidVMsResponse1, unraidVMsResponse2 } from '../test_data/unraid_vms_responses';
 describe('Unraid', () => {
   describe('getVMsHTML()', () => {
-    test('should return array of vms with correct props response 1', () => {
+    it('should return array of vms with correct props response 1', () => {
       const vms = extractVMsFromHTML(unraidVMsResponse1, '1.1.1.1');
       expect(vms).toHaveLength(4);
       expect(vms).toEqual([
@@ -64,7 +64,69 @@ describe('Unraid', () => {
         }
       ])
     })
-    test('should return array of vms with correct props response 2', () => {
+    it('should return array of vms with port response 1', () => {
+      const vms = extractVMsFromHTML(unraidVMsResponse1, '1.1.1.1:5686');
+      expect(vms).toHaveLength(4);
+      expect(vms).toEqual([
+        {
+          id: 'cf088cf9-8a6f-b5a2-67bd-d4f784306f2a',
+          name: 'CentOS',
+          state: 'shutoff',
+          graphics: 'VNC:auto',
+          memory: '1024M',
+          cpus: '1',
+          storage: '50G',
+          os: 'CentOS',
+          ips: [],
+          osImg: 'http://1.1.1.1:5686/plugins/dynamix.vm.manager/templates/images/centos.png',
+          isAutoStart: false,
+          vnc: ''
+        },
+        {
+          id: 'e416981a-5110-d3f0-bda0-f8d3a5b9dda6',
+          name: 'CoreOS',
+          state: 'shutoff',
+          graphics: 'VNC:auto',
+          memory: '1024M',
+          cpus: '1',
+          storage: '10G',
+          os: 'CoreOS',
+          ips: [],
+          osImg: 'http://1.1.1.1:5686/plugins/dynamix.vm.manager/templates/images/coreos.png',
+          isAutoStart: false,
+          vnc: ''
+        },
+        {
+          id: 'f1626dbd-9eaa-218c-268d-9f73e2047057',
+          name: 'Linux',
+          state: 'shutoff',
+          graphics: 'VNC:auto',
+          memory: '1024M',
+          cpus: '1',
+          storage: '20G',
+          os: 'Linux',
+          ips: [],
+          osImg: 'http://1.1.1.1:5686/plugins/dynamix.vm.manager/templates/images/linux.png',
+          isAutoStart: false,
+          vnc: ''
+        },
+        {
+          id: 'bf2cfa68-7d12-fa52-c4f6-50f1fa0a8735',
+          name: 'Windows 11',
+          state: 'shutoff',
+          graphics: 'VNC:auto',
+          memory: '4096M',
+          cpus: '1',
+          storage: '64G',
+          os: 'Windows 11',
+          ips: [],
+          osImg: 'http://1.1.1.1:5686/plugins/dynamix.vm.manager/templates/images/windows11.png',
+          isAutoStart: false,
+          vnc: ''
+        }
+      ])
+    })
+    it('should return array of vms with correct props response 2', () => {
       const vms = extractVMsFromHTML(unraidVMsResponse2, '1.1.1.1');
       expect(vms).toHaveLength(6);
       expect(vms).toEqual([
