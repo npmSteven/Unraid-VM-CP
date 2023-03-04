@@ -26,7 +26,7 @@ Docker Hub: https://hub.docker.com/r/stevenrafferty/unraid-vm-cp</Overview>
   <Config Name="Backend Port" Target="8787" Default="8787" Mode="tcp" Description="Backend Port (Do not change)" Type="Port" Display="always" Required="false" Mask="false">8787</Config>
   <Config Name="Frontend Port" Target="8786" Default="8786" Mode="tcp" Description="Frontend Port (Do not change)" Type="Port" Display="always" Required="false" Mask="false">8786</Config>
   <Config Name="UNRAID_USERNAME" Target="UNRAID_USERNAME" Default="" Mode="" Description="UNRAID_USERNAME" Type="Variable" Display="always" Required="true" Mask="false"/>
-  <Config Name="UNRAID_PASSWORD" Target="UNRAID_PASSWORD" Default="" Mode="" Description="UNRAID_PASSWORD" Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="UNRAID_PASSWORD" Target="UNRAID_PASSWORD" Default="" Mode="" Description="Please ensure that your flash share is secure as this password will be stored in plaintext there" Type="Variable" Display="always" Required="true" Mask="true"/>
   <Config Name="UNRAID_IP" Target="UNRAID_IP" Default="" Mode="" Description="UNRAID_IP" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="JWT_SECRET" Target="JWT_SECRET" Default="" Mode="" Description="JWT_SECRET (Enter random letters and number here at least 16 charaters)" Type="Variable" Display="always" Required="false" Mask="false"/>
 </Container>
