@@ -27,6 +27,8 @@ const getCSRFToken = () => {
   return csrfTokenState.csrfToken;
 }
 
+const unraidURI = `http${unraid.isHTTPS ? 's' : ''}://${unraid.ip}`;
+
 const getCSRFTokenUnraid = async () => {
   try {
     const cookie = getCookie();
@@ -34,7 +36,7 @@ const getCSRFTokenUnraid = async () => {
       throw new ForbiddenError('Not authenticated with unraid');
     }
     const response = await axios({
-      url: `http://${unraid.ip}/Dashboard`,
+      url: `${unraidURI}/Dashboard`,
       headers: {
         Cookie: cookie,
       }
@@ -43,7 +45,7 @@ const getCSRFTokenUnraid = async () => {
     const csrfToken = $('input[name="csrf_token"]').val();
     setCSRFToken(csrfToken);
   } catch (error) {
-    console.error('ERROR');
+    console.error('ERROR - getCSRFTokenUnraid():', error);
     throw error;
   }
 }
@@ -51,7 +53,7 @@ const getCSRFTokenUnraid = async () => {
 export const login = async () => {
   try {
     const response = await axios({
-      url: `http://${unraid.ip}/login`,
+      url: `${unraidURI}/login`,
       method: 'post',
       data: {
         username: unraid.username,
@@ -76,7 +78,7 @@ export const login = async () => {
   }
 }
 
-const VMajaxURL = `http://${unraid.ip}/plugins/dynamix.vm.manager/include/VMajax.php`
+const VMajaxURL = `${unraidURI}/plugins/dynamix.vm.manager/include/VMajax.php`
 const requestVMajax = async (unraidVMId: string, action: string) => {
   try {
     const cookie = getCookie();
@@ -109,8 +111,7 @@ const requestVMajax = async (unraidVMId: string, action: string) => {
 
 export const startVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-start');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-start')
   } catch (error) {
     console.error('ERROR - startVMUnraid():', error);
     throw error;
@@ -119,8 +120,7 @@ export const startVMUnraid = async (unraidVMId: string) => {
 
 export const stopVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-stop');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-stop');
   } catch (error) {
     console.error('ERROR - stopVMUnraid():', error);
     throw error;
@@ -129,8 +129,7 @@ export const stopVMUnraid = async (unraidVMId: string) => {
 
 export const removeVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-undefine');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-undefine');
   } catch (error) {
     console.error('ERROR - removeVMUnraid():', error);
     throw error;
@@ -139,8 +138,7 @@ export const removeVMUnraid = async (unraidVMId: string) => {
 
 export const removeVMAndDisksVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-delete');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-delete');
   } catch (error) {
     console.error('ERROR - removeVMAndDisksVMUnraid():', error);
     throw error;
@@ -149,8 +147,7 @@ export const removeVMAndDisksVMUnraid = async (unraidVMId: string) => {
 
 export const forceStopVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-destroy');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-destroy');
   } catch (error) {
     console.error('ERROR - forceStopVMUnraid():', error);
     throw error;
@@ -159,8 +156,7 @@ export const forceStopVMUnraid = async (unraidVMId: string) => {
 
 export const restartVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-restart');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-restart');
   } catch (error) {
     console.error('ERROR - restartVMUnraid():', error);
     throw error;
@@ -169,8 +165,7 @@ export const restartVMUnraid = async (unraidVMId: string) => {
 
 export const pauseVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-pause');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-pause');
   } catch (error) {
     console.error('ERROR - pauseVMUnraid():', error);
     throw error;
@@ -179,8 +174,7 @@ export const pauseVMUnraid = async (unraidVMId: string) => {
 
 export const resumeVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-resume');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-resume');
   } catch (error) {
     console.error('ERROR - resumeVMUnraid():', error);
     throw error;
@@ -189,8 +183,7 @@ export const resumeVMUnraid = async (unraidVMId: string) => {
 
 export const hibernateVMUnraid = async (unraidVMId: string) => {
   try {
-    const data = await requestVMajax(unraidVMId, 'domain-pmsuspend');
-    return data;
+    return requestVMajax(unraidVMId, 'domain-pmsuspend');
   } catch (error) {
     console.error('ERROR - hibernateVMUnraid():', error);
     throw error;
@@ -203,7 +196,7 @@ const getVMsHTML = async () => {
     if (!cookie) {
       throw new ForbiddenError('Not authenticated with unraid');
     }
-    const VMMachinesURL = `http://${unraid.ip}/plugins/dynamix.vm.manager/include/VMMachines.php`
+    const VMMachinesURL = `${unraidURI}/plugins/dynamix.vm.manager/include/VMMachines.php`
     const response = await axios({
       url: VMMachinesURL,
       headers: {
@@ -273,7 +266,7 @@ export const extractVMsFromHTML = (vmsHTML, unraidIP) => {
 export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
   try {
     const vmsHTML = await getVMsHTML();
-    return extractVMsFromHTML(vmsHTML, unraid.ip);
+    return extractVMsFromHTML(vmsHTML, unraidURI);
   } catch (error) {
     console.error('ERROR - getVMs()', error);
     throw error;
@@ -283,8 +276,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
 export const getVMsByIdsUnraid = async (unraidVMIds) => {
   try {
     const unraidVMs = await getVMsUnraid();
-    const filteredUnraidVMs = unraidVMs.filter((unraidVM) => unraidVMIds.includes(unraidVM.id));
-    return filteredUnraidVMs;
+    return unraidVMs.filter((unraidVM) => unraidVMIds.includes(unraidVM.id));
   } catch (error) {
     console.error('ERROR - getVMsByIds()', error);
     throw error;
