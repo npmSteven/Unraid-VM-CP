@@ -1,18 +1,21 @@
 import { useNavigate, useParams } from '@solidjs/router';
-import { BiRegularArrowBack } from 'solid-icons/bi';
 import { Component, createSignal, Match, onMount, Switch } from 'solid-js';
+
+// Contexts
 import { useVMs } from '../../contexts/vms';
+
+// Icons
+import { BiRegularArrowBack } from 'solid-icons/bi';
+import { AiOutlineLink } from 'solid-icons/ai';
 
 // Components
 import { Button } from '../../components/Button/Button';
 import { Navbar } from '../../components/Navbar/Navbar';
 import { VMCard } from '../../components/VMCard/VMCard';
+import { PageLoading } from '../../components/PageLoading/PageLoading';
 
 // Styles
 import styles from './VMs.module.css';
-import { Spinner } from '../../components/Spinner/Spinner';
-import { AiOutlineLink } from 'solid-icons/ai';
-import { PageLoading } from '../../components/PageLoading/PageLoading';
 
 export const VMs: Component = () => {
   const params = useParams();
@@ -94,7 +97,7 @@ export const VMs: Component = () => {
         </div>
       )}
       <Switch>
-        <Match when={!isLoading() && vms().length >= 1}>
+        <Match when={!isLoading() && (vms().length >= 1 || vmsUser().length >= 1)}>
           <div
             style={{
               display: 'grid',
@@ -122,8 +125,8 @@ export const VMs: Component = () => {
             {isAdminVMCard &&
               vmsUser().map((vm) => (
                 <VMCard
-                  userId={params.userId}
                   id={vm.id}
+                  userId={params.userId}
                   status={vm.state}
                   name={vm.name}
                   os={vm.os}
@@ -141,7 +144,7 @@ export const VMs: Component = () => {
         <Match when={isLoading()}>
           <PageLoading />
         </Match>
-        <Match when={!isLoading() && vms().length === 0}>
+        <Match when={!isLoading() && (vms().length === 0 || vmsUser().length === 0)}>
           <h3 style={{ "text-align": 'center', "font-weight": 500 }}>No VM's to display</h3>
         </Match>
       </Switch>
