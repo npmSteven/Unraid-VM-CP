@@ -3,6 +3,9 @@ In Alpha
 
 Unraid VM CP is a project that provides additional functionality for [Unraid](https://unraid.net/). The purpose of this project is to allow Unraid users to give access to manage their VMs without requiring the recipient to have their own Unraid login credentials.
 
+## Notice
+I work on this project in my spare time, so sometimes I won't be able to update it or fix issues as quickly as I want, but I remain committed to supporting it. If this project has been helpful to you, please consider sponsoring it so that I can continue working on it.
+
 ## Stack
 - Overall
   - Docker
