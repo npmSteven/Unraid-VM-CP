@@ -11,19 +11,19 @@
   },
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
   "devDependencies": {
-    "pnpm": "^7.27.1",
-    "serve": "^14.2.0",
+    "pnpm": "^7.33.7",
+    "serve": "^14.2.4",
     "typescript": "^4.9.5",
-    "vite": "^4.1.1",
-    "vite-plugin-solid": "^2.5.0"
+    "vite": "^4.5.14",
+    "vite-plugin-solid": "^2.11.8"
   },
   "dependencies": {
     "@modular-forms/solid": "^0.10.0",
-    "@solidjs/router": "^0.7.0",
+    "@solidjs/router": "^0.7.1",
     "jwt-decode": "^3.1.2",
-    "solid-dismiss": "^1.6.5",
-    "solid-icons": "^1.0.4",
-    "solid-js": "^1.6.10",
+    "solid-dismiss": "^1.8.2",
+    "solid-icons": "^1.1.0",
+    "solid-js": "^1.9.9",
     "solid-toast": "^0.4.0"
   }
 }

@@ -12,38 +12,38 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0(solid-js@1.9.9)
       '@solidjs/router':
-        specifier: ^0.7.0
+        specifier: ^0.7.1
         version: 0.7.1(solid-js@1.9.9)
       jwt-decode:
         specifier: ^3.1.2
         version: 3.1.2
       solid-dismiss:
-        specifier: ^1.6.5
+        specifier: ^1.8.2
         version: 1.8.2(solid-js@1.9.9)
       solid-icons:
-        specifier: ^1.0.4
+        specifier: ^1.1.0
         version: 1.1.0(solid-js@1.9.9)
       solid-js:
-        specifier: ^1.6.10
+        specifier: ^1.9.9
         version: 1.9.9
       solid-toast:
         specifier: ^0.4.0
         version: 0.4.0(solid-js@1.9.9)
     devDependencies:
       pnpm:
-        specifier: ^7.27.1
+        specifier: ^7.33.7
         version: 7.33.7
       serve:
-        specifier: ^14.2.0
+        specifier: ^14.2.4
         version: 14.2.4
       typescript:
         specifier: ^4.9.5
         version: 4.9.5
       vite:
-        specifier: ^4.1.1
+        specifier: ^4.5.14
         version: 4.5.14
       vite-plugin-solid:
-        specifier: ^2.5.0
+        specifier: ^2.11.8
         version: 2.11.8(solid-js@1.9.9)(vite@4.5.14)
 
 packages:
