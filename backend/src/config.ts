@@ -12,14 +12,16 @@ const parseTrustProxy = (value?: string): boolean | number | string => {
 
 const unraidIsHTTPS = process.env.UNRAID_IS_HTTPS !== '' && process.env.UNRAID_IS_HTTPS === 'true';
 const unraidIp = process.env.UNRAID_IP;
+const unraidPort = process.env.UNRAID_PORT;
 
 export const config = {
   unraid: {
     ip: unraidIp,
+    port: unraidPort,
     isHTTPS: unraidIsHTTPS,
     username: process.env.UNRAID_USERNAME,
     password: process.env.UNRAID_PASSWORD,
-    baseUrl: `http${unraidIsHTTPS ? 's' : ''}://${unraidIp}`,
+    baseUrl: `http${unraidIsHTTPS ? 's' : ''}://${unraidIp}${unraidPort ? `:${unraidPort}` : ''}`,
   },
   server: {
     port: parseInt(process.env.SERVER_PORT || '8787', 10),

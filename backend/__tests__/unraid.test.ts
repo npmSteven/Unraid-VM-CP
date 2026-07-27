@@ -3,7 +3,7 @@ import { unraidVMsResponse1, unraidVMsResponse2 } from '../test_data/unraid_vms_
 describe('Unraid', () => {
   describe('getVMsHTML()', () => {
     it('should return array of vms with correct props response 1', () => {
-      const vms = extractVMsFromHTML(unraidVMsResponse1, '1.1.1.1');
+      const vms = extractVMsFromHTML(unraidVMsResponse1, 'http://1.1.1.1');
       expect(vms).toHaveLength(4);
       expect(vms).toEqual([
         {
@@ -65,7 +65,7 @@ describe('Unraid', () => {
       ])
     })
     it('should return array of vms with port response 1', () => {
-      const vms = extractVMsFromHTML(unraidVMsResponse1, '1.1.1.1:5686');
+      const vms = extractVMsFromHTML(unraidVMsResponse1, 'http://1.1.1.1:5686');
       expect(vms).toHaveLength(4);
       expect(vms).toEqual([
         {
@@ -127,7 +127,7 @@ describe('Unraid', () => {
       ])
     })
     it('should return array of vms with correct props response 2', () => {
-      const vms = extractVMsFromHTML(unraidVMsResponse2, '1.1.1.1');
+      const vms = extractVMsFromHTML(unraidVMsResponse2, 'http://1.1.1.1');
       expect(vms).toHaveLength(6);
       expect(vms).toEqual([
         {
