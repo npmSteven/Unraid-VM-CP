@@ -3,6 +3,7 @@
   "packages": {
     ".": {
       "release-type": "node",
+      "include-component-in-tag": false,
       "extra-files": [
         "frontend/package.json",
         "backend/package.json"
