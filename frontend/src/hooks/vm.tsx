@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js"
 import toast from "solid-toast";
 import { useVMs } from "../contexts/vms";
+import { getUnraidBaseUrl } from "../services/config";
 import { forceStopVMApi, hibernateVMApi, pauseVMApi, removeVMAndDisksApi, removeVMApi, restartVMApi, resumeVMApi, startVMApi, stopVMApi, unlinkVMApi } from "../services/vms";
 
 export const useVMActions = (id: string, name: string) => {
@@ -160,10 +161,11 @@ export const useVMActions = (id: string, name: string) => {
     }
   }
 
-  const openVNC = () => {
-    const vm = vms().find((vm) => vm.id === id);
-    if (vm) {
-      window.open(`http://${location.hostname}${vm.vnc}`, '_blank');
+  const openVNC = async () => {
+    const v = vms().find((v) => v.id === id);
+    if (v) {
+      const baseUrl = await getUnraidBaseUrl();
+      window.open(`${baseUrl}${v.vnc}`, '_blank');
     }
   }
 

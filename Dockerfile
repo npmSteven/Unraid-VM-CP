@@ -15,7 +15,6 @@ RUN pnpm install && \
     pnpm run build:frontend && \
     pnpm run build:backend
 
-EXPOSE 8786
 EXPOSE 8787
 
-CMD ["pnpm", "run", "start:all"]
+CMD ["pnpm", "run", "start:prod"]
