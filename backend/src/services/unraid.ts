@@ -27,7 +27,7 @@ const getCSRFToken = () => {
   return csrfTokenState.csrfToken;
 }
 
-const unraidURI = `http${unraid.isHTTPS ? 's' : ''}://${unraid.ip}`;
+const unraidURI = `http${unraid.isHTTPS ? 's' : ''}://${unraid.ip}${unraid.port ? `:${unraid.port}` : ''}`;
 
 const getCSRFTokenUnraid = async () => {
   try {
