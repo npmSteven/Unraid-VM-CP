@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <Container version="2">
   <Name>Unraid-VM-CP</Name>
-  <Repository>stevenrafferty/unraid-vm-cp</Repository>
-  <Registry>https://hub.docker.com/r/stevenrafferty/unraid-vm-cp</Registry>
+  <Repository>ghcr.io/npmsteven/unraid-vm-cp</Repository>
+  <Registry>https://github.com/npmsteven/Unraid-VM-CP/pkgs/container/unraid-vm-cp</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>sh</Shell>
@@ -11,7 +11,7 @@
   <Project/>
   <Overview>Unraid VM CP is a project that provides additional functionality for Unraid. The purpose of this project is to allow Unraid users to give access to manage their VMs without requiring the recipient to have their own Unraid login credentials.&#xD;
 GitHub: https://github.com/npmSteven/Unraid-VM-CP&#xD;
-Docker Hub: https://hub.docker.com/r/stevenrafferty/unraid-vm-cp</Overview>
+GitHub Container Registry: https://github.com/npmsteven/Unraid-VM-CP/pkgs/container/unraid-vm-cp</Overview>
   <Category/>
   <WebUI>http://[IP]:[PORT:8786]</WebUI>
   <TemplateURL/>
