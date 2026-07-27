@@ -7,7 +7,7 @@ import { IUserVMPermissions } from '../types/IUserVMPermissions.js';
 
 export const UserVMPermissionsModel: ModelStatic<Model<IUserVMPermissions, IUserVMPermissions>> = sequelize.define('user_vm_permissions', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
     unique: true,
     primaryKey: true,
@@ -20,7 +20,7 @@ export const UserVMPermissionsModel: ModelStatic<Model<IUserVMPermissions, IUser
     allowNull: false,
   },
   userId: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
   },
   

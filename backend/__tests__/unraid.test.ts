@@ -1,5 +1,5 @@
-import { extractVMsFromHTML } from "../src/services/unraid"
-import { unraidVMsResponse1, unraidVMsResponse2 } from '../test_data/unraid_vms_responses';
+import { extractVMsFromHTML } from "../src/services/unraid.js"
+import { unraidVMsResponse1, unraidVMsResponse2 } from '../test_data/unraid_vms_responses.js';
 describe('Unraid', () => {
   describe('getVMsHTML()', () => {
     it('should return array of vms with correct props response 1', () => {

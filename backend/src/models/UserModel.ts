@@ -8,7 +8,7 @@ import { IUser } from '../types/IUser.js';
 
 export const UserModel: ModelStatic<Model<IUser, IUser>> = sequelize.define('users', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
     unique: true,
     primaryKey: true,
