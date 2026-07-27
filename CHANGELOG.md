@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.1.0...v1.1.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* pass release tag to build workflow to avoid invalid Docker tag ([a26e545](https://github.com/npmSteven/Unraid-VM-CP/commit/a26e54588329647c7025e01b9d82a6f5da1d0f2f)), closes [#7](https://github.com/npmSteven/Unraid-VM-CP/issues/7)
+
 ## [1.1.0](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.0.0...v1.1.0) (2026-07-27)
 
 
