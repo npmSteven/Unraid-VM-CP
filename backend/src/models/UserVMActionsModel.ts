@@ -7,7 +7,7 @@ import { IUserVMActions } from '../types/IUserVMActions.js';
 
 export const UserVMActionsModel: ModelStatic<Model<IUserVMActions, IUserVMActions>> = sequelize.define('user_vm_actions', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
     unique: true,
     primaryKey: true,
@@ -20,7 +20,7 @@ export const UserVMActionsModel: ModelStatic<Model<IUserVMActions, IUserVMAction
     allowNull: false,
   },
   userId: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
   },
 

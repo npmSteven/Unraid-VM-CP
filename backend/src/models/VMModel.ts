@@ -7,7 +7,7 @@ import { IVM } from '../types/IVM.js';
 
 export const VMModel: ModelStatic<Model<IVM, IVM>> = sequelize.define('vms', {
   id: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
     unique: true,
     primaryKey: true,
@@ -15,12 +15,12 @@ export const VMModel: ModelStatic<Model<IVM, IVM>> = sequelize.define('vms', {
   },
   
   unraidVMId: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
   },
 
   userId: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
     allowNull: false,
     references: {
       model: 'users',

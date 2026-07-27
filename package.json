@@ -16,9 +16,9 @@
   "keywords": [],
   "author": "",
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
+  "packageManager": "pnpm@10.14.0",
   "devDependencies": {
-    "concurrently": "^7.6.0",
-    "pnpm": "^7.27.1",
-    "serve": "^14.2.0"
+    "concurrently": "^9.1.2",
+    "serve": "^14.2.4"
   }
 }

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
+    "module": "Node16",
     "lib": ["ES2022"],
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "rootDir": ".",
     "outDir": "build",
     "allowSyntheticDefaultImports": true,
@@ -18,7 +18,8 @@
     "noImplicitAny": false,
     "noImplicitThis": false,
     "strictNullChecks": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*", "__tests__/**/*"]
 }
