@@ -11,7 +11,8 @@
     "build:all": "pnpm run build:backend && pnpm run build:frontend",
     "start:backend": "cd backend && pnpm run start",
     "start:frontend": "cd frontend && pnpm run http",
-    "start:all": "concurrently --kill-others \"pnpm run start:backend\" \"pnpm run start:frontend\""
+    "start:all": "concurrently --kill-others \"pnpm run start:backend\" \"pnpm run start:frontend\"",
+    "start:prod": "pnpm run start:backend"
   },
   "keywords": [],
   "author": "",

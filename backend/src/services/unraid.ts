@@ -227,7 +227,7 @@ export const extractVMsFromHTML = (vmsHTML, unraidIP) => {
     if (imgSrc && imgSrc.startsWith('./')) {
       imgSrc = imgSrc.substring(1);
     }
-    const osImg = `http://${unraidIP}${imgSrc}`;
+    const osImg = `${unraidIP}${imgSrc}`;
 
     const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
     const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
