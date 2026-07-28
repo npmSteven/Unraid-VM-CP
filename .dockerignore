@@ -1,2 +1,35 @@
-**/node_modules
 node_modules
+.env
+.env.*
+*.sqlite
+*.log
+
+# Beads / Dolt files
+.beads/
+.dolt/
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Build artifacts
+dist
+build
+coverage
+
+# Bun
+bun.lockb
+
+# IDE
+.vscode
+.idea
+
+# Docs
+*.md
+!README.md
+LICENSE

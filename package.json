@@ -6,17 +6,16 @@
   "scripts": {
     "dev:backend": "cd backend && bun --watch src/server.ts",
     "dev:frontend": "cd frontend && bunx --bun vite",
-    "build:frontend": "cd frontend && pnpm i && bunx --bun vite build",
-    "build:all": "pnpm run build:frontend",
+    "build:frontend": "cd frontend && bun install && bun run build",
+    "build:all": "bun run build:frontend",
     "start:backend": "cd backend && bun run src/server.ts",
-    "start:frontend": "cd frontend && pnpm run http",
-    "start:all": "concurrently --kill-others \"pnpm run start:backend\" \"pnpm run start:frontend\"",
-    "start:prod": "pnpm run start:backend"
+    "start:frontend": "cd frontend && bun run http",
+    "start:all": "concurrently --kill-others \"bun run start:backend\" \"bun run start:frontend\"",
+    "start:prod": "bun run start:backend"
   },
   "keywords": [],
   "author": "",
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
-  "packageManager": "pnpm@10.14.0",
   "devDependencies": {
     "concurrently": "^9.1.2",
     "serve": "^14.2.4"
