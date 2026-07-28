@@ -7,13 +7,22 @@ COPY backend/package.json backend/
 COPY frontend/package.json frontend/
 
 RUN cd backend && bun install --production && \
-    cd /app/frontend && bun install --trust && bun run build
+    cd /app/frontend && bun install --trust
+
+COPY frontend/index.html frontend/
+COPY frontend/src frontend/src/
+COPY frontend/tsconfig.json frontend/
+COPY frontend/vite.config.ts frontend/
+
+RUN cd /app/frontend && bun run build
 
 FROM base AS release
 COPY --from=install /app/backend/node_modules backend/node_modules
 COPY --from=install /app/frontend/dist frontend/dist
 COPY backend/src backend/src/
 COPY backend/package.json backend/
+
+RUN chown -R bun:bun /app
 
 USER bun
 EXPOSE 8787
