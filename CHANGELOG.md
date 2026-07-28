@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.1.1...v1.2.0) (2026-07-28)
+
+
+### Features
+
+* migrate 6 VM actions from VMajax.php to GraphQL API ([1472dec](https://github.com/npmSteven/Unraid-VM-CP/commit/1472deca61d9ede4ee58b5989cbdd2e1956de6ab))
+* migrate 6 VM actions to GraphQL API ([854bf86](https://github.com/npmSteven/Unraid-VM-CP/commit/854bf86ddfb43b59a1d7b1aaff571145d9dcf207))
+* migrate backend to Bun — Elysia, Drizzle, bun:sqlite, bun test ([653065d](https://github.com/npmSteven/Unraid-VM-CP/commit/653065dbbba5fce9791c19314454be91662ef4e1))
+* migrate backend to Bun — Elysia, Drizzle, bun:sqlite, bun test ([5e5ee74](https://github.com/npmSteven/Unraid-VM-CP/commit/5e5ee74fdc0eee8e23dc1742e094159dd110c968))
+
 ## [1.1.1](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.1.0...v1.1.1) (2026-07-27)
 
 
