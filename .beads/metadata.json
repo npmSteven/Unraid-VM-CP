@@ -1,7 +1,0 @@
-{
-  "database": "dolt",
-  "backend": "dolt",
-  "dolt_mode": "embedded",
-  "dolt_database": "Unraid_VM_CP",
-  "project_id": "8dddb848-42d3-4487-a9e1-82384af3c824"
-}
