@@ -1,7 +1,6 @@
 import { Elysia } from "elysia";
 import { jwt } from "@elysiajs/jwt";
 import { config } from "../config.js";
-import { login } from "../services/unraid.js";
 
 export const authGuard = (app: Elysia) =>
   app
@@ -10,7 +9,7 @@ export const authGuard = (app: Elysia) =>
       secret: config.jwt.secret,
     }))
     .guard({
-      beforeHandle: async ({ jwt, headers, set }) => {
+      beforeHandle: async ({ jwt, headers, set, unraidClient }) => {
         const auth = headers.authorization;
         if (!auth?.startsWith("Bearer ")) {
           set.status = 401;
@@ -22,7 +21,7 @@ export const authGuard = (app: Elysia) =>
           set.status = 401;
           return { success: false, payload: ["Token has expired or is invalid"] };
         }
-        try { await login(); } catch { /* Unraid unreachable, proceed anyway */ }
+        try { await unraidClient.login(); } catch { /* Unraid unreachable, proceed anyway */ }
       },
       resolve: ({ headers }) => {
         const auth = headers.authorization!;

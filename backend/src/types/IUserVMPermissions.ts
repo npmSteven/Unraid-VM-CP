@@ -14,3 +14,5 @@ export type IUserVMPermissions = {
   createdAt: number;
   updatedAt: number;
 }
+
+export type VMActionPermission = keyof Pick<IUserVMPermissions, 'canStart' | 'canStop' | 'canRestart' | 'canRemoveVM' | 'canRemoveVMAndDisks' | 'canForceStop' | 'canPause' | 'canHibernate' | 'canResume'>;

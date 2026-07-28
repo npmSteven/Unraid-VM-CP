@@ -3,9 +3,9 @@ import { BadRequestError } from './ErrorHandler.js';
 
 const GQL_URL = `${config.unraid.baseUrl}/graphql`;
 
-let _getCookie: (() => string) | undefined;
+let _getCookie: (() => string | undefined) | undefined;
 
-export function initGraphQLClient(getCookie: () => string) {
+export function initGraphQLClient(getCookie: () => string | undefined) {
   _getCookie = getCookie;
 }
 

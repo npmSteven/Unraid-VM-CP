@@ -7,11 +7,9 @@ import { eq } from "drizzle-orm";
 import { users } from "../src/db/schema.js";
 
 const TEST_SECRET = "test-auth-secret-16char+";
-let db: ReturnType<typeof drizzle>;
-let sqlite: Database;
 
-sqlite = new Database(":memory:");
-db = drizzle(sqlite);
+const sqlite = new Database(":memory:");
+const db = drizzle(sqlite);
 db.run(`CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   username TEXT NOT NULL UNIQUE,
