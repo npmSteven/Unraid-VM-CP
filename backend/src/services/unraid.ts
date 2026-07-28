@@ -4,6 +4,7 @@ import axios from 'axios';
 import { config } from '../config.js';
 import { BadRequestError, ForbiddenError } from './ErrorHandler.js';
 import { IUnraidVM } from '../types/IUnraidVM.js';
+import { startVM, stopVM, forceStopVM, rebootVM, pauseVM, resumeVM, initGraphQLClient } from './unraid-graphql.js';
 
 const { unraid } = config;
 
@@ -13,7 +14,7 @@ const setCookie = (cookie) => {
   cookieState.unraid = cookie;
 }
 
-const getCookie = () => {
+export const getCookie = () => {
   return cookieState?.unraid;
 }
 
@@ -26,6 +27,18 @@ const setCSRFToken = (csrfToken) => {
 const getCSRFToken = () => {
   return csrfTokenState.csrfToken;
 }
+
+let csrfTokenPromise: Promise<void> | null = null;
+
+const ensureCSRFToken = async () => {
+  if (getCSRFToken()) return;
+  if (csrfTokenPromise) return csrfTokenPromise;
+  csrfTokenPromise = getCSRFTokenUnraid();
+  await csrfTokenPromise;
+  csrfTokenPromise = null;
+}
+
+initGraphQLClient(getCookie);
 
 const unraidURI = `http${unraid.isHTTPS ? 's' : ''}://${unraid.ip}${unraid.port ? `:${unraid.port}` : ''}`;
 
@@ -71,7 +84,6 @@ export const login = async () => {
     if (!cookies) throw new ForbiddenError('Unable to login to unraid');
     const unraidCookie = cookies.find((cookie) => cookie.startsWith('unraid_'));
     setCookie(unraidCookie)
-    await getCSRFTokenUnraid();
   } catch (error) {
     console.error('ERROR - login():', error);
     throw error;
@@ -111,7 +123,7 @@ const requestVMajax = async (unraidVMId: string, action: string) => {
 
 export const startVMUnraid = async (unraidVMId: string) => {
   try {
-    return requestVMajax(unraidVMId, 'domain-start')
+    return await startVM(unraidVMId);
   } catch (error) {
     console.error('ERROR - startVMUnraid():', error);
     throw error;
@@ -120,15 +132,62 @@ export const startVMUnraid = async (unraidVMId: string) => {
 
 export const stopVMUnraid = async (unraidVMId: string) => {
   try {
-    return requestVMajax(unraidVMId, 'domain-stop');
+    return await stopVM(unraidVMId);
   } catch (error) {
     console.error('ERROR - stopVMUnraid():', error);
     throw error;
   }
 }
 
+export const forceStopVMUnraid = async (unraidVMId: string) => {
+  try {
+    return await forceStopVM(unraidVMId);
+  } catch (error) {
+    console.error('ERROR - forceStopVMUnraid():', error);
+    throw error;
+  }
+}
+
+export const restartVMUnraid = async (unraidVMId: string) => {
+  try {
+    return await rebootVM(unraidVMId);
+  } catch (error) {
+    console.error('ERROR - restartVMUnraid():', error);
+    throw error;
+  }
+}
+
+export const pauseVMUnraid = async (unraidVMId: string) => {
+  try {
+    return await pauseVM(unraidVMId);
+  } catch (error) {
+    console.error('ERROR - pauseVMUnraid():', error);
+    throw error;
+  }
+}
+
+export const resumeVMUnraid = async (unraidVMId: string) => {
+  try {
+    return await resumeVM(unraidVMId);
+  } catch (error) {
+    console.error('ERROR - resumeVMUnraid():', error);
+    throw error;
+  }
+}
+
+export const hibernateVMUnraid = async (unraidVMId: string) => {
+  try {
+    await ensureCSRFToken();
+    return requestVMajax(unraidVMId, 'domain-pmsuspend');
+  } catch (error) {
+    console.error('ERROR - hibernateVMUnraid():', error);
+    throw error;
+  }
+}
+
 export const removeVMUnraid = async (unraidVMId: string) => {
   try {
+    await ensureCSRFToken();
     return requestVMajax(unraidVMId, 'domain-undefine');
   } catch (error) {
     console.error('ERROR - removeVMUnraid():', error);
@@ -138,54 +197,10 @@ export const removeVMUnraid = async (unraidVMId: string) => {
 
 export const removeVMAndDisksVMUnraid = async (unraidVMId: string) => {
   try {
+    await ensureCSRFToken();
     return requestVMajax(unraidVMId, 'domain-delete');
   } catch (error) {
     console.error('ERROR - removeVMAndDisksVMUnraid():', error);
-    throw error;
-  }
-}
-
-export const forceStopVMUnraid = async (unraidVMId: string) => {
-  try {
-    return requestVMajax(unraidVMId, 'domain-destroy');
-  } catch (error) {
-    console.error('ERROR - forceStopVMUnraid():', error);
-    throw error;
-  }
-}
-
-export const restartVMUnraid = async (unraidVMId: string) => {
-  try {
-    return requestVMajax(unraidVMId, 'domain-restart');
-  } catch (error) {
-    console.error('ERROR - restartVMUnraid():', error);
-    throw error;
-  }
-}
-
-export const pauseVMUnraid = async (unraidVMId: string) => {
-  try {
-    return requestVMajax(unraidVMId, 'domain-pause');
-  } catch (error) {
-    console.error('ERROR - pauseVMUnraid():', error);
-    throw error;
-  }
-}
-
-export const resumeVMUnraid = async (unraidVMId: string) => {
-  try {
-    return requestVMajax(unraidVMId, 'domain-resume');
-  } catch (error) {
-    console.error('ERROR - resumeVMUnraid():', error);
-    throw error;
-  }
-}
-
-export const hibernateVMUnraid = async (unraidVMId: string) => {
-  try {
-    return requestVMajax(unraidVMId, 'domain-pmsuspend');
-  } catch (error) {
-    console.error('ERROR - hibernateVMUnraid():', error);
     throw error;
   }
 }
