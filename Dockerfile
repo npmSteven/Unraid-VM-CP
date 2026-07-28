@@ -1,8 +1,6 @@
-FROM node:22-alpine
+FROM oven/bun:1-alpine
 
 WORKDIR /app
-
-RUN apk add --no-cache python3 make g++
 
 RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
 
@@ -12,9 +10,8 @@ COPY frontend/ ./frontend/
 COPY backend/ ./backend/
 
 RUN pnpm install && \
-    pnpm run build:frontend && \
-    pnpm run build:backend
+    pnpm run build:frontend
 
 EXPOSE 8787
 
-CMD ["pnpm", "run", "start:prod"]
+CMD ["bun", "run", "backend/src/server.ts"]

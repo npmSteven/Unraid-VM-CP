@@ -1,65 +1,50 @@
-import express, { Request, Response } from 'express';
-import jsonwebtoken from 'jsonwebtoken';
-import bcryptjs from 'bcryptjs';
+import { Elysia, t } from "elysia";
+import { jwt } from "@elysiajs/jwt";
+import { config } from "../../../config.js";
+import { getUserByUsername } from "../../../services/user.js";
+import { UnauthorizedError } from "../../../services/ErrorHandler.js";
+import { respondSuccess } from "../../../services/responses.js";
 
-import { config } from '../../../config.js';
-
-
-// Validation
-import { checkPassword, checkUsername } from '../../../validation/validation.js';
-import { validateReq } from '../../../middleware/validateReq.js';
-
-// Services
-import { getUserByUsername } from '../../../services/user.js';
-import { errorHandler, UnauthorizedError } from '../../../services/ErrorHandler.js';
-import { respondSuccess } from '../../../services/responses.js';
-
-const router = express.Router();
-
-type ILoginBody = {
-  username: string
-  password: string
-}
-
-/**
- * Login route needs to handle giving access tokens to both users from db and a root user
- */
-router.post('/login',
-  [
-    checkUsername,
-    checkPassword,
-    validateReq,
-  ],
-  async (req: Request<any, any, ILoginBody>, res: Response) => {
+export const authRoutes = new Elysia({ prefix: "/api/v1/auth" })
+  .use(jwt({
+    name: "jwt",
+    secret: config.jwt.secret,
+    exp: "30d",
+  }))
+  .post("/login", async ({ jwt, body }) => {
     try {
-      const { username, password } = req.body;
+      const { username, password } = body;
+      const { unraid } = config;
 
-      // Unraid User
-      const { unraid, jwt } = config;
-      
       if (unraid.username === username && unraid.password === password) {
-        const accessToken = jsonwebtoken.sign({ isUnraidUser: true, id: unraid.username }, jwt.secret, { expiresIn: '30d' });
-        return res.json(respondSuccess({
-          accessToken,
-        }))
+        const accessToken = await jwt.sign({ isUnraidUser: true, id: unraid.username });
+        return respondSuccess({ accessToken });
       }
 
-      // DB User
       const user = await getUserByUsername(username);
       if (!user) throw new UnauthorizedError('Username or password is incorrect');
-      const isMatch: boolean = await bcryptjs.compare(password, user.dataValues.password);
+
+      const isMatch = await Bun.password.verify(password, user.password);
       if (!isMatch) throw new UnauthorizedError('Username or password is incorrect');
 
-      const accessToken = jsonwebtoken.sign({ isUnraidUser: false, id: user.dataValues.id }, jwt.secret, { expiresIn: '30d' });
-
-      return res.json(respondSuccess({
-        accessToken,
-      }))
+      const accessToken = await jwt.sign({ isUnraidUser: false, id: user.id });
+      return respondSuccess({ accessToken });
     } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        return Response.json(
+          { success: false, payload: [error.message] },
+          { status: 401 },
+        );
+      }
       console.error('ERROR - /login', error);
-      return errorHandler(res, error);
+      return Response.json(
+        { success: false, payload: ["Internal server error"] },
+        { status: 500 },
+      );
     }
-  }
-);
-
-export default router;
+  }, {
+    body: t.Object({
+      username: t.String({ minLength: 3, maxLength: 16 }),
+      password: t.String({ minLength: 6, maxLength: 255 }),
+    }),
+  });

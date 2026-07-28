@@ -1,28 +1,17 @@
-import express, { Response } from 'express';
+import { Elysia } from "elysia";
+import { config } from "../../../config.js";
+import { authGuard } from "../../../middleware/auth.js";
+import { errorHandler } from "../../../services/ErrorHandler.js";
+import { respondSuccess } from "../../../services/responses.js";
 
-import { config } from '../../../config.js';
-import { authCheck } from '../../../middleware/authCheck.js';
-import { validateReq } from '../../../middleware/validateReq.js';
-import { errorHandler } from '../../../services/ErrorHandler.js';
-import { respondSuccess } from '../../../services/responses.js';
-
-const router = express.Router();
-
-router.get('/',
-  [
-    authCheck,
-    validateReq,
-  ],
-  async (_req: any, res: Response) => {
+export const configRoutes = new Elysia({ prefix: "/api/v1/config" })
+  .use(authGuard)
+  .get("/", async () => {
     try {
-      return res.json(respondSuccess({
+      return respondSuccess({
         unraidBaseUrl: config.unraid.baseUrl,
-      }));
+      });
     } catch (error) {
-      console.error('ERROR - /config', error);
-      return errorHandler(res, error);
+      return errorHandler(error as Error);
     }
-  }
-);
-
-export default router;
+  });

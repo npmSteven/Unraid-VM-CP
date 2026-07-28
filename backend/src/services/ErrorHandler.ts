@@ -1,47 +1,41 @@
-import { Response } from "express";
 import { respondErrorMessage, respondInternalServerError } from "./responses.js";
 
 export class UnauthorizedError extends Error {
-  statusCode: number;
-  constructor (message: string) {
-      super(message);
-      this.statusCode = 401;
+  statusCode = 401;
+  constructor(message: string) {
+    super(message);
   }
 }
 
 export class ForbiddenError extends Error {
-  statusCode: number;
-  constructor (message: string) {
-      super(message);
-      this.statusCode = 403;
+  statusCode = 403;
+  constructor(message: string) {
+    super(message);
   }
 }
 
 export class NotFoundError extends Error {
-  statusCode: number;
-  constructor (message: string) {
-      super(message);
-      this.statusCode = 404;
+  statusCode = 404;
+  constructor(message: string) {
+    super(message);
   }
 }
 
 export class BadRequestError extends Error {
-  statusCode: number;
-  constructor (message: string) {
-      super(message);
-      this.statusCode = 400;
+  statusCode = 400;
+  constructor(message: string) {
+    super(message);
   }
 }
 
 export class ConflictRequestError extends Error {
-  statusCode: number;
-  constructor (message: string) {
-      super(message);
-      this.statusCode = 409;
+  statusCode = 409;
+  constructor(message: string) {
+    super(message);
   }
 }
 
-export const errorHandler = (res: Response, error: Error) => {
+export const errorHandler = (error: Error) => {
   console.error('ERROR', error);
   if (
     error instanceof UnauthorizedError ||
@@ -50,7 +44,7 @@ export const errorHandler = (res: Response, error: Error) => {
     error instanceof BadRequestError ||
     error instanceof ConflictRequestError
   ) {
-    return res.status(error.statusCode).json(respondErrorMessage(error.message));
+    return Response.json(respondErrorMessage(error.message), { status: error.statusCode });
   }
-  return res.status(500).json(respondInternalServerError());
+  return Response.json(respondInternalServerError(), { status: 500 });
 }

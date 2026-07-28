@@ -1,17 +1,16 @@
-import axios from 'axios';
 import { config } from '../config.js';
 import { BadRequestError } from './ErrorHandler.js';
 
 const GQL_URL = `${config.unraid.baseUrl}/graphql`;
 
-let _getCookie: () => string;
+let _getCookie: (() => string) | undefined;
 
 export function initGraphQLClient(getCookie: () => string) {
   _getCookie = getCookie;
 }
 
 export function _resetForTests() {
-  _getCookie = undefined as unknown as () => string;
+  _getCookie = undefined;
 }
 
 async function gql(query: string, variables: Record<string, unknown>) {
@@ -22,12 +21,12 @@ async function gql(query: string, variables: Record<string, unknown>) {
   if (!cookie) {
     throw new BadRequestError('Not authenticated with Unraid');
   }
-  const { data } = await axios({
-    url: GQL_URL,
+  const response = await fetch(GQL_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Cookie: cookie },
-    data: { query, variables },
+    body: JSON.stringify({ query, variables }),
   });
+  const data = await response.json();
   if (data.errors?.length) {
     throw new BadRequestError(data.errors[0].message);
   }
