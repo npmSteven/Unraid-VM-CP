@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.2.0...v1.2.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* auth guard pattern — function-based plugin, Docker perms, frontend source ([fa9a8e6](https://github.com/npmSteven/Unraid-VM-CP/commit/fa9a8e69b891c2cdef3cdd7a33f4fc60e2ae54f5))
+* Dockerfile — replace pnpm with bun install, add optimizations ([fb1181a](https://github.com/npmSteven/Unraid-VM-CP/commit/fb1181ae60c41d7e54989863d963a34414f620b8))
+
 ## [1.2.0](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.1.1...v1.2.0) (2026-07-28)
 
 
