@@ -1,57 +1,34 @@
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
+import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
+import { staticPlugin } from "@elysiajs/static";
+import { config } from "./config.js";
+import { authRoutes } from "./api/v1/auth/auth.js";
+import { configRoutes } from "./api/v1/config/config.js";
+import { userRoutes } from "./api/v1/users/users.js";
+import { vmRoutes } from "./api/v1/vms/vms.js";
 
-import { config } from './config.js';
-import { sequelize } from './services/db.js';
-import { syncModels } from './models/syncModels.js';
+const app = new Elysia()
+  .use(cors({
+    origin: config.cors.origin,
+    credentials: true,
+  }))
+  .use(authRoutes)
+  .use(configRoutes)
+  .use(userRoutes)
+  .use(vmRoutes);
 
-// Routes
-import authRoute from './api/v1/auth/auth.js';
-import configRoute from './api/v1/config/config.js';
-import userRoute from './api/v1/users/users.js';
-import vmRoute from './api/v1/vms/vms.js';
+if (config.server.serveFrontend) {
+  app.use(staticPlugin({
+    assets: config.server.frontendDistPath,
+    prefix: "/",
+    alwaysStatic: false,
+  }));
+  app.get("*", ({ path }) => {
+    if (path.startsWith("/api/")) return;
+    return Bun.file(`${config.server.frontendDistPath}/index.html`);
+  });
+}
 
-const app = express();
-
-app.set('trust proxy', config.server.trustProxy);
-
-app.use(cors({
-  origin: config.cors.origin,
-  credentials: true,
-}));
-
-app.use(express.json({ limit: '1mb' }));
-
-(async () => {
-  try {    
-    // Connect to DB
-    await sequelize.authenticate();
-
-    // Sync Models
-    await syncModels()
-
-    // Routes
-    app.use('/api/v1/auth', authRoute);
-    app.use('/api/v1/config', configRoute);
-    app.use('/api/v1/users', userRoute);
-    app.use('/api/v1/vms', vmRoute);
-
-    if (config.server.serveFrontend) {
-      const distPath = path.resolve(config.server.frontendDistPath);
-      app.use(express.static(distPath));
-      app.get('*', (_req, res, next) => {
-        if (_req.path.startsWith('/api')) return next();
-        res.sendFile(path.join(distPath, 'index.html'));
-      });
-    }
-
-    // Start express
-    app.listen(config.server.port, () => {
-      console.log(`Backend has started on port ${config.server.port}`)
-    });
-  } catch (error) {
-    console.error('ERROR - Failed to start backend', error);
-    process.exit(1);
-  }
-})();
+app.listen(config.server.port, () => {
+  console.log(`Backend has started on port ${config.server.port}`);
+});

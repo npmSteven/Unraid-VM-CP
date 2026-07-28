@@ -1,225 +1,130 @@
-import express, { Response } from 'express';
-import { Model } from 'sequelize';
+import { Elysia, t } from "elysia";
+import { config } from "../../../config.js";
+import { authGuard } from "../../../middleware/auth.js";
+import { createUser, deleteUser, getUserById, getUserByUsername, getUsers, updateUserPassword, updateUserUsername } from "../../../services/user.js";
+import { sanitiseUser } from "../../../services/sanitise.js";
+import { respondSuccess } from "../../../services/responses.js";
+import { ConflictRequestError, ForbiddenError, NotFoundError } from "../../../services/ErrorHandler.js";
+import { deleteUserVMPermissionsAll, deleteVMsAll } from "../../../services/vm.js";
 
-import { config } from '../../../config.js';
-
-// Validation
-import { validateReq } from '../../../middleware/validateReq.js';
-import { checkPassword, checkUsername, checkUUID } from '../../../validation/validation.js';
-
-// Middleware
-import { authCheck } from '../../../middleware/authCheck.js';
-
-// Types
-import { IRequestAuth } from '../../../types/IRequestAuth.js';
-import { IUser } from '../../../types/IUser.js';
-
-// Services
-import { createUser, deleteUser, getUserById, getUserByUsername, getUsers, updateUserPassword, updateUserUsername } from '../../../services/user.js';
-import { sanitiseUser } from '../../../services/sanitise.js';
-import { respondSuccess } from '../../../services/responses.js';
-import { ConflictRequestError, errorHandler, ForbiddenError, NotFoundError } from '../../../services/ErrorHandler.js';
-import { deleteUserVMPermissionsAll, deleteVMsAll } from '../../../services/vm.js';
-
-const router = express.Router();
-
-router.get('/',
-  [
-    authCheck,
-  ], async (req: IRequestAuth, res: Response) => {
+export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
+  .use(authGuard)
+  .get("/", async ({ user }) => {
     try {
-      if (req.user.isUnraidUser) {
-        const users = await getUsers();
-        const sanitisedUsers = users.map((u: Model<IUser, IUser>) => sanitiseUser(u.dataValues))
-        return res.json(respondSuccess({ user: { id: req.user.id, isUnraidUser: req.user.isUnraidUser }, users: sanitisedUsers }));
+      if (user.isUnraidUser) {
+        const allUsers = getUsers();
+        const sanitisedUsers = allUsers.map((u) => sanitiseUser(u));
+        return respondSuccess({
+          user: { id: user.id, isUnraidUser: user.isUnraidUser },
+          users: sanitisedUsers,
+        });
       }
-
-      const user = await getUserById(req.user.id);
-      if (!user) throw new NotFoundError('Unable to find user');
-
-      return res.json(respondSuccess({ user: sanitiseUser(user.dataValues) }));
+      const u = getUserById(user.id);
+      if (!u) throw new NotFoundError('Unable to find user');
+      return respondSuccess({ user: sanitiseUser(u) });
     } catch (error) {
-      console.error('ERROR - /users', error);
-      return errorHandler(res, error);
+      return handleError(error);
     }
-  }
-)
-
-router.get(
-  '/:userId',
-  [
-    authCheck,
-    checkUUID('userId'),
-    validateReq,
-  ],
-  async (req: IRequestAuth, res: Response) => {
+  })
+  .get("/:userId", async ({ user, params }) => {
     try {
-      // Check is Unraid user
-      if (!req?.user?.isUnraidUser) {
-        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
-      }
-
-      // Check if the user exists
-      const user = await getUserById(req.params.userId);
-      if (!user) throw new NotFoundError('Unable to find user');
-
-      return res.json(respondSuccess(sanitiseUser(user.dataValues)));
+      if (!user.isUnraidUser) throw new ForbiddenError('Only unraid users are allowed');
+      const u = getUserById(params.userId);
+      if (!u) throw new NotFoundError('Unable to find user');
+      return respondSuccess(sanitiseUser(u));
     } catch (error) {
-      console.error('ERROR - /:userId get', error);
-      return errorHandler(res, error);
+      return handleError(error);
     }
-  }
-)
-
-type IUserCreateBody = {
-  username: string
-  password: string
-}
-
-/**
- * Create a user
- */
-router.post('/',
-  [
-    authCheck,
-    checkUsername,
-    checkPassword,
-    validateReq,
-  ], async (req: IRequestAuth<IUserCreateBody>, res: Response) => {
+  }, {
+    params: t.Object({ userId: t.String({ format: "uuid" }) }),
+  })
+  .post("/", async ({ user, body }) => {
     try {
-      // Check is Unraid user
-      if (!req?.user?.isUnraidUser) {
-        throw new ForbiddenError('You must be logged in as an unraid user, to call this endpoint');
+      if (!user.isUnraidUser) throw new ForbiddenError('Must be logged in as unraid user');
+      const { username, password } = body;
+
+      if (username === config.unraid.username) {
+        throw new ConflictRequestError('Cannot use a username that an unraid user has');
       }
 
-      const { username, password } = req.body;
-      const { unraid } = config;
+      const existing = getUserByUsername(username);
+      if (existing) throw new ConflictRequestError('A user already exists with this username');
 
-      // Check if username is unraid username
-      if (username === unraid.username) {
-        throw new ConflictRequestError('Cannot use a username that an unraid user has')
-      }
-
-      // Check if username is already taken
-      const user = await getUserByUsername(username);
-      if (user) throw new ConflictRequestError('A user already exists with this username')
-      
       const newUser = await createUser(username, password);
-
-      return res.json(respondSuccess({ user: sanitiseUser(newUser.dataValues) }))
+      return respondSuccess({ user: sanitiseUser(newUser) });
     } catch (error) {
-      console.error('ERROR - /users', error);
-      return errorHandler(res, error);
+      return handleError(error);
     }
-  }
-)
-
-/**
- * Update username
- */
-router.put(
-  '/:userId/username',
-  [
-    authCheck,
-    checkUUID('userId'),
-    checkUsername,
-    validateReq,
-  ],
-  async (req: IRequestAuth, res: Response) => {
+  }, {
+    body: t.Object({
+      username: t.String({ minLength: 3, maxLength: 16 }),
+      password: t.String({ minLength: 6, maxLength: 255 }),
+    }),
+  })
+  .put("/:userId/username", async ({ user, params, body }) => {
     try {
-      // Check is Unraid user
-      if (!req?.user?.isUnraidUser) {
-        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
-      }
+      if (!user.isUnraidUser) throw new ForbiddenError('Only unraid users are allowed');
 
-      // Check if the user exists
-      const user = await getUserById(req.params.userId);
-      if (!user) throw new NotFoundError('Unable to find user');
+      const u = getUserById(params.userId);
+      if (!u) throw new NotFoundError('Unable to find user');
 
-      // Check if the username is already taken
-      const userWithUsername = await getUserByUsername(req.body.username);
-      if (userWithUsername) throw new ConflictRequestError('A user already exists with this username');
+      const existing = getUserByUsername(body.username);
+      if (existing) throw new ConflictRequestError('A user already exists with this username');
 
-      // Update user username
-      const updatedUser = await updateUserUsername(req.params.userId, req.body.username);
-
-      return res.json(respondSuccess(sanitiseUser(updatedUser.dataValues)));
+      const updated = updateUserUsername(params.userId, body.username);
+      return respondSuccess(sanitiseUser(updated));
     } catch (error) {
-      console.error('ERROR - /:userId/username put', error);
-      return errorHandler(res, error);
+      return handleError(error);
     }
-  }
-)
-
-/**
- * Update password
- */
-router.put(
-  '/:userId/password',
-  [
-    authCheck,
-    checkUUID('userId'),
-    checkPassword,
-    validateReq,
-  ],
-  async (req: IRequestAuth, res: Response) => {
+  }, {
+    params: t.Object({ userId: t.String({ format: "uuid" }) }),
+    body: t.Object({ username: t.String({ minLength: 3, maxLength: 16 }) }),
+  })
+  .put("/:userId/password", async ({ user, params, body }) => {
     try {
-      // Check is Unraid user
-      if (!req?.user?.isUnraidUser) {
-        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
-      }
+      if (!user.isUnraidUser) throw new ForbiddenError('Only unraid users are allowed');
 
-      // Check if the user exists
-      const user = await getUserById(req.params.userId);
-      if (!user) throw new NotFoundError('Unable to find user');
+      const u = getUserById(params.userId);
+      if (!u) throw new NotFoundError('Unable to find user');
 
-      // Update user password
-      const updatedUser = await updateUserPassword(req.params.userId, req.body.password);
-
-      return res.json(respondSuccess(sanitiseUser(updatedUser.dataValues)));
+      const updated = await updateUserPassword(params.userId, body.password);
+      return respondSuccess(sanitiseUser(updated));
     } catch (error) {
-      console.error('ERROR - /:userId/password put', error);
-      return errorHandler(res, error);
+      return handleError(error);
     }
-  }
-)
-
-/**
- * Delete user
- */
-router.delete(
-  '/:userId',
-  [
-    authCheck,
-    checkUUID('userId'),
-    validateReq,
-  ],
-  async (req: IRequestAuth, res: Response) => {
+  }, {
+    params: t.Object({ userId: t.String({ format: "uuid" }) }),
+    body: t.Object({ password: t.String({ minLength: 6, maxLength: 255 }) }),
+  })
+  .delete("/:userId", async ({ user, params }) => {
     try {
-      // Check is Unraid user
-      if (!req?.user?.isUnraidUser) {
-        throw new ForbiddenError('Only unraid users are allowed to use this endpoint');
-      }
+      if (!user.isUnraidUser) throw new ForbiddenError('Only unraid users are allowed');
 
-      // Check if the user exists
-      const user = await getUserById(req.params.userId);
-      if (!user) throw new NotFoundError('Unable to find user');
+      const u = getUserById(params.userId);
+      if (!u) throw new NotFoundError('Unable to find user');
 
-      // Delete vms
-      await deleteVMsAll(req.params.userId);
+      deleteVMsAll(params.userId);
+      deleteUserVMPermissionsAll(params.userId);
+      const deleted = deleteUser(params.userId);
 
-      // Delete permissions
-      await deleteUserVMPermissionsAll(req.params.userId)
-
-      // Delete user
-      const deletedUser = await deleteUser(req.params.userId);
-
-      return res.json(respondSuccess(sanitiseUser(deletedUser.dataValues)));
+      return respondSuccess(sanitiseUser(deleted));
     } catch (error) {
-      console.error('ERROR - /:userId delete', error);
-      return errorHandler(res, error);
+      return handleError(error);
     }
-  }
-)
+  }, {
+    params: t.Object({ userId: t.String({ format: "uuid" }) }),
+  });
 
-export default router;
+function handleError(error: unknown): Response {
+  if (error instanceof NotFoundError) {
+    return Response.json({ success: false, payload: [error.message] }, { status: 404 });
+  }
+  if (error instanceof ForbiddenError) {
+    return Response.json({ success: false, payload: [error.message] }, { status: 403 });
+  }
+  if (error instanceof ConflictRequestError) {
+    return Response.json({ success: false, payload: [error.message] }, { status: 409 });
+  }
+  console.error('ERROR', error);
+  return Response.json({ success: false, payload: ["Internal server error"] }, { status: 500 });
+}

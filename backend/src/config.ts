@@ -1,7 +1,3 @@
-import * as dotenv from 'dotenv'
-
-dotenv.config();
-
 const parseTrustProxy = (value?: string): boolean | number | string => {
   if (!value || value === 'false') return false;
   if (value === 'true') return true;
@@ -10,29 +6,29 @@ const parseTrustProxy = (value?: string): boolean | number | string => {
   return value;
 };
 
-const unraidIsHTTPS = process.env.UNRAID_IS_HTTPS !== '' && process.env.UNRAID_IS_HTTPS === 'true';
-const unraidIp = process.env.UNRAID_IP;
-const unraidPort = process.env.UNRAID_PORT;
+const unraidIsHTTPS = Bun.env.UNRAID_IS_HTTPS === 'true';
+const unraidIp = Bun.env.UNRAID_IP!;
+const unraidPort = Bun.env.UNRAID_PORT;
 
 export const config = {
   unraid: {
     ip: unraidIp,
     port: unraidPort,
     isHTTPS: unraidIsHTTPS,
-    username: process.env.UNRAID_USERNAME,
-    password: process.env.UNRAID_PASSWORD,
+    username: Bun.env.UNRAID_USERNAME!,
+    password: Bun.env.UNRAID_PASSWORD!,
     baseUrl: `http${unraidIsHTTPS ? 's' : ''}://${unraidIp}${unraidPort ? `:${unraidPort}` : ''}`,
   },
   server: {
-    port: parseInt(process.env.SERVER_PORT || '8787', 10),
-    serveFrontend: process.env.SERVE_FRONTEND !== 'false',
-    frontendDistPath: process.env.FRONTEND_DIST_PATH || '../frontend/dist',
-    trustProxy: parseTrustProxy(process.env.TRUST_PROXY),
+    port: parseInt(Bun.env.SERVER_PORT || '8787', 10),
+    serveFrontend: Bun.env.SERVE_FRONTEND !== 'false',
+    frontendDistPath: Bun.env.FRONTEND_DIST_PATH || '../frontend/dist',
+    trustProxy: parseTrustProxy(Bun.env.TRUST_PROXY),
   },
   cors: {
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: Bun.env.CORS_ORIGIN || '*',
   },
   jwt: {
-    secret: process.env.JWT_SECRET,
+    secret: Bun.env.JWT_SECRET!,
   }
 };

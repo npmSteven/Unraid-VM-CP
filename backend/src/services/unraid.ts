@@ -1,16 +1,14 @@
-import {load} from 'cheerio';
-import axios from 'axios';
-
 import { config } from '../config.js';
 import { BadRequestError, ForbiddenError } from './ErrorHandler.js';
 import { IUnraidVM } from '../types/IUnraidVM.js';
 import { startVM, stopVM, forceStopVM, rebootVM, pauseVM, resumeVM, initGraphQLClient } from './unraid-graphql.js';
+import { extractVMsFromHTML } from './extract-vms.js';
 
 const { unraid } = config;
 
-const cookieState: any = {};
+const cookieState: { unraid?: string } = {};
 
-const setCookie = (cookie) => {
+const setCookie = (cookie: string) => {
   cookieState.unraid = cookie;
 }
 
@@ -18,9 +16,9 @@ export const getCookie = () => {
   return cookieState?.unraid;
 }
 
-const csrfTokenState: any = {};
+const csrfTokenState: { csrfToken?: string } = {};
 
-const setCSRFToken = (csrfToken) => {
+const setCSRFToken = (csrfToken: string) => {
   csrfTokenState.csrfToken = csrfToken;
 }
 
@@ -48,13 +46,12 @@ const getCSRFTokenUnraid = async () => {
     if (!cookie) {
       throw new ForbiddenError('Not authenticated with unraid');
     }
-    const response = await axios({
-      url: `${unraidURI}/Dashboard`,
-      headers: {
-        Cookie: cookie,
-      }
+    const response = await fetch(`${unraidURI}/Dashboard`, {
+      headers: { Cookie: cookie },
     });
-    const $ = load(response.data);
+    const html = await response.text();
+    const { load } = await import('cheerio');
+    const $ = load(html);
     const csrfToken = $('input[name="csrf_token"]').val();
     setCSRFToken(csrfToken);
   } catch (error) {
@@ -65,24 +62,32 @@ const getCSRFTokenUnraid = async () => {
 
 export const login = async () => {
   try {
-    const response = await axios({
-      url: `${unraidURI}/login`,
+    const response = await fetch(`${unraidURI}/login`, {
       method: 'post',
-      data: {
+      body: new URLSearchParams({
         username: unraid.username,
         password: unraid.password,
-      },
-      maxRedirects: 0,
-      validateStatus: (status) => status >= 200 && status < 303,
+      }),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': '*/*',
       },
-      responseType: 'stream',
+      redirect: 'manual',
     });
-    const cookies = response.headers['set-cookie'];
-    if (!cookies) throw new ForbiddenError('Unable to login to unraid');
+    const cookies = response.headers.getSetCookie?.() ?? [];
+    if (!cookies.length) {
+      const setCookieHeader = response.headers.get('set-cookie');
+      if (setCookieHeader) {
+        const unraidCookie = setCookieHeader.split(',').find((c: string) => c.trim().startsWith('unraid_'));
+        if (unraidCookie) {
+          setCookie(unraidCookie.trim());
+          return;
+        }
+      }
+      throw new ForbiddenError('Unable to login to unraid');
+    }
     const unraidCookie = cookies.find((cookie) => cookie.startsWith('unraid_'));
+    if (!unraidCookie) throw new ForbiddenError('Unable to login to unraid');
     setCookie(unraidCookie)
   } catch (error) {
     console.error('ERROR - login():', error);
@@ -97,24 +102,24 @@ const requestVMajax = async (unraidVMId: string, action: string) => {
     if (!cookie) {
       throw new ForbiddenError('Not authenticated with unraid');
     }
-    const response = await axios({
-      url: VMajaxURL,
+    const response = await fetch(VMajaxURL, {
       method: 'POST',
       headers: {
         'Accept': '*/*',
         'Content-Type': 'application/x-www-form-urlencoded',
         'Cookie': cookie,
       },
-      data: {
+      body: new URLSearchParams({
         uuid: unraidVMId,
         action: action,
-        csrf_token: getCSRFToken()
-      }
-    })
-    if (response?.data?.error) {
-      throw new BadRequestError(response.data.error)
+        csrf_token: getCSRFToken() || '',
+      }),
+    });
+    const data = await response.json();
+    if (data?.error) {
+      throw new BadRequestError(data.error)
     }
-    return response.data;
+    return data;
   } catch (error) {
     console.error('ERROR - requestVMajax():', error);
     throw error;
@@ -212,96 +217,17 @@ const getVMsHTML = async () => {
       throw new ForbiddenError('Not authenticated with unraid');
     }
     const VMMachinesURL = `${unraidURI}/plugins/dynamix.vm.manager/include/VMMachines.php`
-    const response = await axios({
-      url: VMMachinesURL,
+    const response = await fetch(VMMachinesURL, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Cookie': cookie,
       },
-    })
-    return response.data;
+    });
+    return response.text();
   } catch (error) {
     console.error('ERROR - getVMsHTML()', error);
     throw error;
   }
-}
-
-export const extractVMsFromHTML = (vmsHTML, unraidIP) => {
-  const $ = load(vmsHTML, { xmlMode: true });
-  const hasParentId = $('[parent-id]').length > 0;
-  const vmSections = hasParentId ? [] : vmsHTML.split(/<span class="outer">/).slice(1);
-
-  const vms: IUnraidVM[] = $('.outer').map((i, el) => {
-    const onclickAttr = $(el).find('span.hand').attr('onclick');
-
-    const id = onclickAttr.match(/addVMContext\('.*?','(.*?)'/)[1];
-    const name = $(el).find('.inner a').text();
-    const cpus = $(`a.vcpu-${id}`).text();
-
-    let imgSrc = $(el).find('span.hand img').attr('src');
-    if (imgSrc && imgSrc.startsWith('./')) {
-      imgSrc = imgSrc.substring(1);
-    }
-    const osImg = `${unraidIP}${imgSrc}`;
-
-    const os = onclickAttr.match(/addVMContext\('.*?','.*?','(.*?)'/)[1];
-    const vnc = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','.*?','(.*?)'/)[1];
-    const state = onclickAttr.match(/addVMContext\('.*?','.*?','.*?','(.*?)'/)[1];
-    const isAutoStart = onclickAttr.includes('autoconnect=true');
-
-    let graphics: string;
-    let memory: string;
-    let storage: string;
-    let ips: { type: string; address: string; prefix: string }[];
-
-    if (hasParentId) {
-      const parentId = $(el).parent().parent().attr('parent-id');
-      const sortableEl = $(`[parent-id="${parentId}"]`);
-      graphics = $(sortableEl).find('td:nth-child(6)').text();
-      memory = $(sortableEl).find('td:nth-child(4)').text();
-      storage = $(sortableEl).find('td:nth-child(5)').text().match(/\d+G/)?.[0] || '';
-
-      ips = [];
-      $(`[child-id="${parentId}"]`).find('tbody tr').each((_, element) => {
-        const ipType = $(element).find('td:nth-child(3)').text().trim();
-        const ipAddress = $(element).find('td:nth-child(4)').text().trim();
-        const ipPrefix = $(element).find('td:nth-child(5)').text().trim();
-
-        if (ipType === 'ipv4' || ipType === 'ipv6') {
-          ips.push({ type: ipType, address: ipAddress, prefix: ipPrefix });
-        }
-      });
-    } else {
-      const section = vmSections[i] || '';
-      const nextOuter = section.indexOf('<span class="outer">');
-      const vmHtml = nextOuter > 0 ? section.substring(0, nextOuter) : section;
-
-      const memMatch = vmHtml.match(/(\d+M)/);
-      const storMatch = vmHtml.match(/\d+\s*\/\s*(\d+G)/);
-      const gfxMatch = vmHtml.match(/(VNC:\w*)/);
-
-      memory = memMatch ? memMatch[1] : '';
-      storage = storMatch ? storMatch[1] : '';
-      graphics = gfxMatch ? gfxMatch[1] : '';
-      ips = [];
-    }
-
-    return {
-      id,
-      name,
-      state,
-      graphics,
-      memory,
-      cpus,
-      storage,
-      os,
-      ips,
-      osImg,
-      isAutoStart,
-      vnc,
-    }
-  }).toArray()
-  return vms;
 }
 
 export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
@@ -314,7 +240,7 @@ export const getVMsUnraid = async (): Promise<IUnraidVM[]> => {
   }
 }
 
-export const getVMsByIdsUnraid = async (unraidVMIds) => {
+export const getVMsByIdsUnraid = async (unraidVMIds: string[]) => {
   try {
     const unraidVMs = await getVMsUnraid();
     return unraidVMs.filter((unraidVM) => unraidVMIds.includes(unraidVM.id));
