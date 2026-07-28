@@ -4,7 +4,7 @@ import { authGuard } from "../../../middleware/auth.js";
 import { createUser, deleteUser, getUserById, getUserByUsername, getUsers, updateUserPassword, updateUserUsername } from "../../../services/user.js";
 import { sanitiseUser } from "../../../services/sanitise.js";
 import { respondSuccess } from "../../../services/responses.js";
-import { ConflictRequestError, ForbiddenError, NotFoundError } from "../../../services/ErrorHandler.js";
+import { ConflictRequestError, ForbiddenError, NotFoundError, errorHandler } from "../../../services/ErrorHandler.js";
 import { deleteUserVMPermissionsAll, deleteVMsAll } from "../../../services/vm.js";
 
 export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
@@ -23,7 +23,7 @@ export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
       if (!u) throw new NotFoundError('Unable to find user');
       return respondSuccess({ user: sanitiseUser(u) });
     } catch (error) {
-      return handleError(error);
+      return errorHandler(error as Error);
     }
   })
   .get("/:userId", async ({ user, params }) => {
@@ -33,7 +33,7 @@ export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
       if (!u) throw new NotFoundError('Unable to find user');
       return respondSuccess(sanitiseUser(u));
     } catch (error) {
-      return handleError(error);
+      return errorHandler(error as Error);
     }
   }, {
     params: t.Object({ userId: t.String({ format: "uuid" }) }),
@@ -53,7 +53,7 @@ export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
       const newUser = await createUser(username, password);
       return respondSuccess({ user: sanitiseUser(newUser) });
     } catch (error) {
-      return handleError(error);
+      return errorHandler(error as Error);
     }
   }, {
     body: t.Object({
@@ -74,7 +74,7 @@ export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
       const updated = updateUserUsername(params.userId, body.username);
       return respondSuccess(sanitiseUser(updated));
     } catch (error) {
-      return handleError(error);
+      return errorHandler(error as Error);
     }
   }, {
     params: t.Object({ userId: t.String({ format: "uuid" }) }),
@@ -90,7 +90,7 @@ export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
       const updated = await updateUserPassword(params.userId, body.password);
       return respondSuccess(sanitiseUser(updated));
     } catch (error) {
-      return handleError(error);
+      return errorHandler(error as Error);
     }
   }, {
     params: t.Object({ userId: t.String({ format: "uuid" }) }),
@@ -109,22 +109,9 @@ export const userRoutes = new Elysia({ prefix: "/api/v1/users" })
 
       return respondSuccess(sanitiseUser(deleted));
     } catch (error) {
-      return handleError(error);
+      return errorHandler(error as Error);
     }
   }, {
     params: t.Object({ userId: t.String({ format: "uuid" }) }),
   });
 
-function handleError(error: unknown): Response {
-  if (error instanceof NotFoundError) {
-    return Response.json({ success: false, payload: [error.message] }, { status: 404 });
-  }
-  if (error instanceof ForbiddenError) {
-    return Response.json({ success: false, payload: [error.message] }, { status: 403 });
-  }
-  if (error instanceof ConflictRequestError) {
-    return Response.json({ success: false, payload: [error.message] }, { status: 409 });
-  }
-  console.error('ERROR', error);
-  return Response.json({ success: false, payload: ["Internal server error"] }, { status: 500 });
-}

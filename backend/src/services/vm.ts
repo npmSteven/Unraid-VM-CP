@@ -2,13 +2,19 @@ import { eq, and } from "drizzle-orm";
 import db from "../db/index.js";
 import { vms, userVmPermissions } from "../db/schema.js";
 import { NotFoundError } from "./ErrorHandler.js";
-import { getVMByIdUnraid, getVMsByIdsUnraid, getVMsUnraid } from "./unraid.js";
+import type { UnraidClient } from "./UnraidClient.js";
 
-export const getVMsByUserId = async (userId: string) => {
+const getLinkedVMEntry = (unraidVMId: string, userId: string) => {
+  return db.select().from(vms).where(
+    and(eq(vms.unraidVMId, unraidVMId), eq(vms.userId, userId))
+  ).get();
+};
+
+export const getVMsByUserId = async (userId: string, client: UnraidClient) => {
   try {
     const userVMs = db.select().from(vms).where(eq(vms.userId, userId)).all();
     const vmIds = userVMs.map((vm) => vm.unraidVMId);
-    const unraidVMs = await getVMsByIdsUnraid(vmIds);
+    const unraidVMs = await client.getVMsByIdsUnraid(vmIds);
     const userVMPermissions = getUserVMPermissions(userId);
 
     const unraidVMsWithPermissions = unraidVMs.filter((unraidVM) => {
@@ -27,12 +33,10 @@ export const getVMsByUserId = async (userId: string) => {
   }
 }
 
-export const getVMByUserIdAndUnraidVMId = async (userId: string, unraidVMId: string) => {
+export const getVMByUserIdAndUnraidVMId = async (userId: string, unraidVMId: string, client: UnraidClient) => {
   try {
-    const unraidVM = await getVMByIdUnraid(unraidVMId);
-    const userVM = db.select().from(vms).where(
-      and(eq(vms.userId, userId), eq(vms.unraidVMId, unraidVMId))
-    ).get();
+    const unraidVM = await client.getVMByIdUnraid(unraidVMId);
+    const userVM = getLinkedVMEntry(unraidVMId, userId);
     const userVMPermissions = getUserVMPermissionByUserIdAndVMId(userId, userVM!.id);
     unraidVM!.permissions = userVMPermissions;
     return unraidVM;
@@ -42,11 +46,11 @@ export const getVMByUserIdAndUnraidVMId = async (userId: string, unraidVMId: str
   }
 }
 
-export const getLinkableVMs = async (userId: string) => {
+export const getLinkableVMs = async (userId: string, client: UnraidClient) => {
   try {
     const userVMs = db.select().from(vms).where(eq(vms.userId, userId)).all();
     const vmIds = userVMs.map((vm) => vm.unraidVMId);
-    const unraidVMs = await getVMsUnraid();
+    const unraidVMs = await client.getVMsUnraid();
     return unraidVMs.filter((unraidVM) => !vmIds.includes(unraidVM.id));
   } catch (error) {
     console.error('ERROR - getLinkableVMs():', error);
@@ -56,10 +60,7 @@ export const getLinkableVMs = async (userId: string) => {
 
 export const checkIsVMLinkedToUser = (unraidVMId: string, userId: string): boolean => {
   try {
-    const vm = db.select().from(vms).where(
-      and(eq(vms.unraidVMId, unraidVMId), eq(vms.userId, userId))
-    ).get();
-    return !!vm;
+    return !!getLinkedVMEntry(unraidVMId, userId);
   } catch (error) {
     console.error('ERROR - checkIsVMLinkedToUser():', error);
     throw error;
@@ -84,9 +85,7 @@ export const linkVMToUser = (unraidVMId: string, userId: string) => {
 
 export const getVMByUserIdAndUnraidVMIdNoPermissions = (unraidVMId: string, userId: string) => {
   try {
-    const vm = db.select().from(vms).where(
-      and(eq(vms.unraidVMId, unraidVMId), eq(vms.userId, userId))
-    ).get();
+    const vm = getLinkedVMEntry(unraidVMId, userId);
     if (!vm) {
       throw new NotFoundError('Cannot find linked vm, unable to delete');
     }
@@ -99,9 +98,7 @@ export const getVMByUserIdAndUnraidVMIdNoPermissions = (unraidVMId: string, user
 
 export const unlinkVMFromUser = (unraidVMId: string, userId: string) => {
   try {
-    const vm = db.select().from(vms).where(
-      and(eq(vms.unraidVMId, unraidVMId), eq(vms.userId, userId))
-    ).get();
+    const vm = getLinkedVMEntry(unraidVMId, userId);
     if (!vm) {
       throw new NotFoundError('Cannot find linked vm, unable to delete');
     }

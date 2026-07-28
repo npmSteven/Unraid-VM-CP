@@ -2,16 +2,15 @@ import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { staticPlugin } from "@elysiajs/static";
 import { config } from "./config.js";
-import { ensureTables } from "./db/sync.js";
+import { unraidClientPlugin } from "./plugins/unraidClient.js";
 import { authRoutes } from "./api/v1/auth/auth.js";
 import { configRoutes } from "./api/v1/config/config.js";
 import { userRoutes } from "./api/v1/users/users.js";
 import { vmRoutes } from "./api/v1/vms/vms.js";
 
-ensureTables();
-
 const app = new Elysia()
   .get("/health", () => ({ status: "ok" }))
+  .use(unraidClientPlugin)
   .use(cors({
     origin: config.cors.origin,
     credentials: true,

@@ -83,4 +83,29 @@ describe('extractVMsFromHTML', () => {
     expect(vms[3].state).toBe('running');
     expect(vms[3].isAutoStart).toBe(true);
   })
+
+  it('returns empty array for HTML with no VMs', () => {
+    const html = '<html><body><div class="no-vms">No VMs found</div></body></html>';
+    const vms = extractVMsFromHTML(html, 'http://1.1.1.1');
+    expect(vms).toHaveLength(0);
+  })
+
+  it('returns empty array for empty HTML string', () => {
+    const vms = extractVMsFromHTML('', 'http://1.1.1.1');
+    expect(vms).toHaveLength(0);
+  })
+
+  it('handles img src starting with ./ correctly', () => {
+    const html = `<span class="outer"><span class="hand" onclick="addVMContext('a','b1c2de3f-1234-5678-90ab-cdef00000001','Linux','shutoff','')"><img src="./plugins/dynamix.vm.manager/templates/images/linux.png"></span><span class="inner"><a>Test</a></span></span>`;
+    const vms = extractVMsFromHTML(html, 'http://192.168.1.1');
+    expect(vms).toHaveLength(1);
+    expect(vms[0].osImg).toBe('http://192.168.1.1/plugins/dynamix.vm.manager/templates/images/linux.png');
+  })
+
+  it('detects autostart VMs', () => {
+    const html = `<span class="outer"><span class="hand" onclick="addVMContext('a','b1c2de3f-1234-5678-90ab-cdef00000001','Linux','shutoff','',true,'autoconnect=true')"><img src="/images/linux.png"></span><span class="inner"><a>AutoVM</a></span></span>`;
+    const vms = extractVMsFromHTML(html, 'http://1.1.1.1');
+    expect(vms).toHaveLength(1);
+    expect(vms[0].isAutoStart).toBe(true);
+  })
 })
