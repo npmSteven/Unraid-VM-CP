@@ -1,0 +1,31 @@
+# Add these labels to your Unraid VM CP service in docker-compose.yml
+# when running behind Traefik.
+#
+# Assumes Traefik is already running with the 'web' and 'websecure'
+# entrypoints configured, and a certificate resolver named 'letsencrypt'.
+
+services:
+  unraid-vm-cp:
+    # ... your existing config ...
+    labels:
+      - "traefik.enable=true"
+
+      # HTTP → HTTPS redirect
+      - "traefik.http.routers.unraid-vm-cp.rule=Host(`vm-control.example.com`)"
+      - "traefik.http.routers.unraid-vm-cp.entrypoints=web"
+      - "traefik.http.routers.unraid-vm-cp.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+      # HTTPS router
+      - "traefik.http.routers.unraid-vm-cp-secure.rule=Host(`vm-control.example.com`)"
+      - "traefik.http.routers.unraid-vm-cp-secure.entrypoints=websecure"
+      - "traefik.http.routers.unraid-vm-cp-secure.tls=true"
+      - "traefik.http.routers.unraid-vm-cp-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.unraid-vm-cp-secure.service=unraid-vm-cp"
+
+      # Backend service
+      - "traefik.http.services.unraid-vm-cp.loadbalancer.server.port=8787"
+
+    # Remove the ports section if Traefik handles all ingress
+    # ports:
+    #   - "8787:8787"

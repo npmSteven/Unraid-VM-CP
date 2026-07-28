@@ -1,0 +1,9 @@
+# Caddy reverse proxy for Unraid VM CP
+# Place in /etc/caddy/Caddyfile or your Caddy config location
+#
+# Caddy handles SSL automatically via Let's Encrypt.
+# No separate cert management needed.
+
+vm-control.example.com {
+    reverse_proxy 127.0.0.1:8787
+}

@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  unraid-vm-cp:
+    image: ghcr.io/npmsteven/unraid-vm-cp:latest
+    container_name: unraid-vm-cp
+    restart: unless-stopped
+    ports:
+      - "8787:8787"
+    environment:
+      - UNRAID_IP=${UNRAID_IP}
+      - UNRAID_PORT=${UNRAID_PORT:-}
+      - UNRAID_IS_HTTPS=${UNRAID_IS_HTTPS}
+      - UNRAID_USERNAME=${UNRAID_USERNAME}
+      - UNRAID_PASSWORD=${UNRAID_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      # Optional — uncomment and set if needed:
+      # - SERVER_PORT=8787
+      # - SERVE_FRONTEND=true
+      # - CORS_ORIGIN=https://your-domain.com
+      # - TRUST_PROXY=true
+    env_file:
+      - .env
+    volumes:
+      - data:/app/backend
+    healthcheck:
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:8787/health').then(r => process.exit(r.status === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  data:
