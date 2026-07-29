@@ -1,17 +1,20 @@
 {
   "name": "unraid-vm-cp",
   "version": "1.2.1",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev:backend": "cd backend && bun --watch src/server.ts",
-    "dev:frontend": "cd frontend && bunx --bun vite",
-    "build:frontend": "cd frontend && bun install && bun run build",
-    "build:all": "bun run build:frontend",
-    "start:backend": "cd backend && bun run src/server.ts",
-    "start:frontend": "cd frontend && bun run http",
-    "start:all": "concurrently --kill-others \"bun run start:backend\" \"bun run start:frontend\"",
-    "start:prod": "bun run start:backend"
+    "dev:backend": "bun run --cwd apps/backend dev",
+    "dev:frontend": "bun run --cwd apps/frontend dev",
+    "build:frontend": "bun run --cwd apps/frontend build",
+    "start": "bun run --cwd apps/backend start",
+    "test": "bun test --recursive",
+    "test:packages": "bun test packages",
+    "test:backend": "bun test apps/backend",
+    "lint": "bun run --cwd apps/backend lint"
   },
   "keywords": [],
   "author": "",

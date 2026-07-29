@@ -3,24 +3,30 @@ WORKDIR /app
 
 FROM base AS install
 COPY package.json ./
-COPY backend/package.json backend/
-COPY frontend/package.json frontend/
+COPY apps/backend/package.json apps/backend/
+COPY apps/frontend/package.json apps/frontend/
+COPY packages/shared-types/package.json packages/shared-types/
+COPY packages/shared-utils/package.json packages/shared-utils/
+COPY packages/unraid-client/package.json packages/unraid-client/
+COPY packages/mock-unraid/package.json packages/mock-unraid/
 
-RUN cd backend && bun install --production && \
-    cd /app/frontend && bun install --trust
+COPY packages/ packages/
 
-COPY frontend/index.html frontend/
-COPY frontend/src frontend/src/
-COPY frontend/tsconfig.json frontend/
-COPY frontend/vite.config.ts frontend/
+RUN bun install --trust
 
-RUN cd /app/frontend && bun run build
+COPY apps/frontend/index.html apps/frontend/
+COPY apps/frontend/src apps/frontend/src/
+COPY apps/frontend/tsconfig.json apps/frontend/
+COPY apps/frontend/vite.config.ts apps/frontend/
+
+RUN bun run build:frontend
 
 FROM base AS release
-COPY --from=install /app/backend/node_modules backend/node_modules
-COPY --from=install /app/frontend/dist frontend/dist
-COPY backend/src backend/src/
-COPY backend/package.json backend/
+COPY --from=install /app/node_modules node_modules
+COPY --from=install /app/apps/frontend/dist apps/frontend/dist
+COPY --from=install /app/packages packages
+COPY apps/backend apps/backend
+COPY package.json ./
 
 RUN chown -R bun:bun /app
 
@@ -30,4 +36,4 @@ EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD bun -e "fetch('http://localhost:8787/health').then(r => {process.exit(r.status===200?0:1)})"
 
-CMD ["bun", "run", "backend/src/server.ts"]
+CMD ["bun", "run", "apps/backend/src/server.ts"]

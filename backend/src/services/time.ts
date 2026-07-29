@@ -1,3 +1,0 @@
-export const getCurrentTimestampInSeconds = (): number => {
-  return Math.floor(Date.now() / 1000);
-}

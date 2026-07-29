@@ -1,0 +1,17 @@
+{
+  "name": "@unraid-vm-cp/shared-types",
+  "version": "1.2.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "^4.4.3",
+    "neverthrow": "^8.2.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.3"
+  },
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE"
+}

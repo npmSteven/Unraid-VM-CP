@@ -5,8 +5,12 @@
       "release-type": "node",
       "include-component-in-tag": false,
       "extra-files": [
-        "frontend/package.json",
-        "backend/package.json"
+        "apps/frontend/package.json",
+        "apps/backend/package.json",
+        "packages/shared-types/package.json",
+        "packages/shared-utils/package.json",
+        "packages/unraid-client/package.json",
+        "packages/mock-unraid/package.json"
       ]
     }
   }

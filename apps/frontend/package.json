@@ -1,0 +1,41 @@
+{
+  "name": "vite-template-solid",
+  "version": "1.2.1",
+  "description": "",
+  "scripts": {
+    "start": "bunx --bun vite",
+    "dev": "bunx --bun vite",
+    "build": "bunx --bun vite build",
+    "serve": "vite preview",
+    "http": "serve -s dist -l tcp://0.0.0.0:8786",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
+  "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
+    "@testing-library/jest-dom": "^7.0.0",
+    "jsdom": "^30.0.0",
+    "serve": "^14.2.4",
+    "typescript": "~5.7.3",
+    "vite": "^6.3.1",
+    "vite-plugin-solid": "^2.11.14",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "@modular-forms/solid": "^0.25.1",
+    "@solidjs/router": "^0.15.4",
+    "jwt-decode": "^4.0.0",
+    "solid-dismiss": "^1.8.2",
+    "solid-icons": "^1.1.0",
+    "solid-js": "^1.9.5",
+    "solid-toast": "^0.5.0",
+    "@unraid-vm-cp/shared-types": "workspace:*",
+    "@unraid-vm-cp/shared-utils": "workspace:*"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
