@@ -27,6 +27,13 @@ This project uses **bd** (beads) for issue tracking. Run `bd prime` for full wor
 
 ---
 
+## Dev Server Rule
+
+**NEVER run dev servers (`bun run dev`, `bun run dev:backend`, `bun run dev:frontend`, `npm run dev`, etc.).**
+The user manages running and restarting dev servers themselves in their own environment. Agents should only run non-blocking validation commands (such as unit/integration tests or build commands) when verifying code correctness.
+
+---
+
 ## Deployment & Repository Overview
 
 - **Backend**: `backend/` — Bun + Elysia server, SQLite database via Drizzle ORM.

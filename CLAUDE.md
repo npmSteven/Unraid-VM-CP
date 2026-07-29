@@ -6,7 +6,7 @@ This file provides instructions, architecture notes, build commands, and workflo
 
 ## Critical Workflow Rules
 
-### 1. Git Branching & Push Safety (DO NOT COMMITT TO MASTER DIRECTLY)
+### 1. Git Branching & Push Safety (DO NOT COMMIT TO MASTER DIRECTLY)
 - **NEVER commit plans, major feature work, or architectural refactor changes directly to `master`.**
 - **ALWAYS create a dedicated feature branch**:
   ```bash
@@ -14,6 +14,10 @@ This file provides instructions, architecture notes, build commands, and workflo
   ```
 - Push feature branch to remote (`git push -u origin feature/<name>`) and present a Pull Request link or summary to the user.
 - `master` is reserved for release merges and PR integrations.
+
+### 2. Dev Server Rule (DO NOT RUN DEV SERVERS)
+- **NEVER run dev servers (`bun run dev`, `bun run dev:backend`, `bun run dev:frontend`, `npm run dev`, etc.).**
+- The user manages running and restarting dev servers in their own environment. Agents should only run non-blocking validation commands (`bun test`, `bun run build:frontend`) to verify code correctness.
 
 ---
 
