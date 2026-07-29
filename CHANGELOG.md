@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.2.1...v1.3.0) (2026-07-29)
+
+
+### Features
+
+* restructure into apps/ and packages/, build mock-unraid, refactor to neverthrow Result ([71b2e46](https://github.com/npmSteven/Unraid-VM-CP/commit/71b2e46069ac0e44420f121f226498181267e5c0))
+* workspace restructure into apps/ + packages/ and mock-unraid server ([e228d93](https://github.com/npmSteven/Unraid-VM-CP/commit/e228d930295e874ca9b29a07dce5844d26ddc62a))
+
 ## [1.2.1](https://github.com/npmSteven/Unraid-VM-CP/compare/v1.2.0...v1.2.1) (2026-07-28)
 
 
