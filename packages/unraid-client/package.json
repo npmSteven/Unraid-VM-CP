@@ -1,0 +1,17 @@
+{
+  "name": "@unraid-vm-cp/unraid-client",
+  "version": "1.2.1",
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@unraid-vm-cp/shared-types": "workspace:*",
+    "cheerio": "1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.3"
+  },
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE"
+}
