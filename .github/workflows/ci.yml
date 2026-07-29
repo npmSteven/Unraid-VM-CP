@@ -28,7 +28,7 @@ jobs:
         run: bun install
 
       - name: Run All Tests (Packages & Apps)
-        run: bun test
+        run: bun run test
 
       - name: Build Frontend Bundle
         run: bun run build:frontend
