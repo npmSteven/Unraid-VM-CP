@@ -11,7 +11,7 @@
     "dev:frontend": "bun run --cwd apps/frontend dev",
     "build:frontend": "bun run --cwd apps/frontend build",
     "start": "bun run --cwd apps/backend start",
-    "test": "bun test --recursive",
+    "test": "bun test packages apps/backend && bun run --cwd apps/frontend test",
     "test:packages": "bun test packages",
     "test:backend": "bun test apps/backend",
     "lint": "bun run --cwd apps/backend lint"

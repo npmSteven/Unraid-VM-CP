@@ -1,0 +1,37 @@
+name: CI Quality Gates
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+      - 'feature/**'
+      - 'feat/**'
+
+jobs:
+  test-and-build:
+    name: Test & Build Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun Environment
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run All Tests (Packages & Apps)
+        run: bun run test
+
+      - name: Build Frontend Bundle
+        run: bun run build:frontend
+
+      - name: Verify Docker Container Build
+        run: docker build -t unraid-vm-cp:ci .
