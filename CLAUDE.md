@@ -1,6 +1,54 @@
-# Project Instructions for AI Agents
+# Project Instructions for AI Agents (CLAUDE.md)
 
-This file provides instructions and context for AI coding agents working on this project.
+This file provides instructions, architecture notes, build commands, and workflow rules for AI coding agents.
+
+---
+
+## Critical Workflow Rules
+
+### 1. Git Branching & Push Safety (DO NOT COMMITT TO MASTER DIRECTLY)
+- **NEVER commit plans, major feature work, or architectural refactor changes directly to `master`.**
+- **ALWAYS create a dedicated feature branch**:
+  ```bash
+  git checkout -b feature/<descriptive-name>
+  ```
+- Push feature branch to remote (`git push -u origin feature/<name>`) and present a Pull Request link or summary to the user.
+- `master` is reserved for release merges and PR integrations.
+
+---
+
+## Architecture & Current Flows
+
+- **Core Runtime**: Bun JS runtime across backend & frontend.
+- **Backend (`backend/`)**: Elysia web framework server, Drizzle ORM with SQLite database for storing local users, linked Unraid VMs, and granular user permissions. Integrates with Unraid hypervisor via HTTP/GraphQL.
+- **Frontend (`frontend/`)**: SolidJS single-page web app built with Vite and standard CSS modules.
+- **Monorepo Proposed Architecture**: Monorepo restructuring (`apps/` + `packages/` + `mock-unraid`) is tracked on branch `feature/workspace-restructure-and-mock-unraid`.
+
+---
+
+## Build, Test & Deployment Commands
+
+```bash
+# Install workspace dependencies
+bun install
+
+# Run backend dev server
+bun run dev:backend
+
+# Run frontend dev server
+bun run dev:frontend
+
+# Build frontend production bundle
+bun run build:frontend
+
+# Run tests
+bun test
+
+# Build production Docker image
+docker build -t unraid-vm-cp .
+```
+
+---
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->
 ## Beads Issue Tracker
@@ -22,20 +70,18 @@ bd close <id>         # Complete work
 - Run `bd prime` for detailed command reference and session close protocol
 - Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
 
-**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/SYNC_CONCEPTS.md for details and anti-patterns.
-
 ## Session Completion
 
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds on your feature branch.
 
 **MANDATORY WORKFLOW:**
 
 1. **File issues for remaining work** - Create issues for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
+4. **PUSH FEATURE BRANCH TO REMOTE**:
    ```bash
-   git pull --rebase
+   git pull --rebase origin <feature-branch>
    git push
    git status  # MUST show "up to date with origin"
    ```
@@ -49,22 +95,3 @@ bd close <id>         # Complete work
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
 <!-- END BEADS INTEGRATION -->
-
-
-## Build & Test
-
-_Add your build and test commands here_
-
-```bash
-# Example:
-# npm install
-# npm test
-```
-
-## Architecture Overview
-
-_Add a brief overview of your project architecture_
-
-## Conventions & Patterns
-
-_Add your project-specific conventions here_
